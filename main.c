@@ -2,141 +2,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define true 1
-#define false 0
-
-#define open 1
-#define closed 2
-
-#define VARIABLEBLOCK 2
-#define COMMANDBLOCK 3
-
-#define COMMANDBEGIN_STR "{%"
-#define COMMANDEND_STR "%}"
-#define VARIABLEBEGIN_STR "{{"
-#define VARIABLEEND_STR "}}"
-
-enum {
-    COMMANDBEGIN,
-    COMMANDEND,
-    VARIABLEBEGIN,
-    VARIABLEEND,
-    VARIABLENAME,
-    COMMANDNAME,
-    INDEXOPEN,
-    INDEXCLOSE,
-    INDEXVAL,
-    SPACE,
-    CHAR,
-    STRING,
-    EQUALS,
-    GREATERTHEN,
-    LESSTHEN,
-
-};
-
-struct token_s
-{
-    char val;
-    int type;
-    struct token_s *prev;
-    struct token_s *next;
-};
-
-struct status_s
-{
-    int lookfor;
-    int just_save;
-};
-
-typedef struct token_s token_t;
-typedef struct status_s status_t;
-
-int addToken(token_t *anker, char token, int type)
-{
-    token_t *hptr = anker,
-            *new;
-
-    while(hptr->next)
-    {
-        hptr = hptr->next;
-    }
-    
-    if((new = malloc(sizeof(token_t))) == NULL)
-    {
-        return(false);
-    }
-
-    hptr->next = new;
-    new->prev = hptr;
-    new->next = NULL;
-
-    new->type = type;
-    new->val = token;
-
-    return(true);
-}
-
-void printTokens(token_t *anker)
-{
-    token_t *hptr = anker->next;
-
-    while(hptr)
-    {
-        switch(hptr->type)
-        {
-            case VARIABLEBEGIN:
-                printf("Begin Var\n");
-                break;
-            case VARIABLEEND:
-                printf("End Var\n");
-                break;
-            case INDEXOPEN:
-                printf("Index open\n");
-                break;
-            case INDEXCLOSE:
-                printf("Index close\n");
-                break;
-            case CHAR:
-                printf("Alphanumeric Char\n");
-                break;
-            case STRING:
-                printf("String start/ende\n");
-                break;
-            case EQUALS:
-                printf("gleich\n");
-                break;
-            case GREATERTHEN:
-                printf("groesser als");
-                break;
-            case LESSTHEN:
-                printf("kleiner als");
-                break;
-            case SPACE:
-                printf("Space\n");
-                break;
-        }
-        hptr = hptr->next;
-    }
-}
-
-void deleteTokens(token_t *anker)
-{
-    token_t *hptr = anker,
-            *prev;
-
-    //Zum ende der Liste gehen
-    while(hptr->next)
-        hptr = hptr->next;
-
-    prev = hptr->prev;
-    while(prev)
-    {
-        free(hptr);
-        hptr = prev;
-        prev = hptr->prev;
-    }
-}
+#include "parser.h"
+#include "token_handling.h"
 
 //Gibt den Typ des Blocker zurueck. Wenn nichts gefunden false 
 //Variablenblock = VARIABLENBLOCK
@@ -183,210 +50,36 @@ int searchBlockEnd(char *str, char **pos, int type)
     return(false);
 }
 
-
-int getVarnameLength(token_t *anker)
+int saveLine(char *line, status_t *stat)
 {
-    token_t *hptr = anker->next;
-    int length = 0;
-
-    while(hptr)
+    if(stat->sizeof_sav_buff == 0)
     {
-        if(hptr->type == INDEXOPEN)
-        {
-            break;
-        }
-        if(hptr->type == CHAR)
-        {
-            length++;
-        }
-        hptr = hptr->next;
+        stat->save_buff = malloc(sizeof(char*));
+        stat->save_buff[0] = malloc(strlen(line)+1);
+        strcpy(stat->save_buff[0], line);
+        stat->sizeof_sav_buff = 1;
     }
-
-    return(length);
-}
-
-void getVarname(token_t *anker, char *buff)
-{
-    token_t *hptr = anker->next;
-    int length = 0;
-
-    while(hptr)
+    else
     {
-        if(hptr->type == INDEXOPEN)
-        {
-            break;
-        }
-        if(hptr->type == CHAR)
-        {
-            buff[length++] = hptr->val;
-        }
-        hptr = hptr->next;
+        stat->sizeof_sav_buff++;
+        stat->save_buff = realloc(stat->save_buff, sizeof(char*)*stat->sizeof_sav_buff);
+        stat->save_buff[stat->sizeof_sav_buff-1] = malloc(strlen(line)+1);
+        strcpy(stat->save_buff[stat->sizeof_sav_buff-1], line);
     }
-    buff[length] = '\0';
-}
-
-//Sucht den Index raus. 
-//Returnwerte: false = kein Index gefunden
-//                 1 = 1 Index gefunden
-//                 2 = 2 Index gefunden
-//                 3 = 3 Index gefunden
-//Die gefundenn werden in das Array index_num geschrieben
-int getIndex(token_t *anker, int *index_num)
-{
-    int index_type = 0,
-        in_brackets = false,
-        closed_found = false,
-        i = 0;
-
-    token_t *hptr = anker->next;
-    char c_index[4];
-
-    while(hptr)
-    {
-        if(hptr->type == INDEXOPEN && in_brackets == true)
-        {
-            fprintf(stderr, "Syntax Error. Missing \"]\"\n");
-            return(-1);
-        }
-        else if(hptr->type == INDEXOPEN && in_brackets == false)
-        {
-            in_brackets = true;
-            index_type++;
-        }
-        else if(hptr->type == CHAR && in_brackets == true)
-        {
-            c_index[i++] = hptr->val; 
-        }
-        else if(hptr->type == INDEXCLOSE && in_brackets == false)
-        {
-            fprintf(stderr, "Syntax Error. Missing \"[\"\n");
-            return(-2);
-        }
-        else if(hptr->type == INDEXCLOSE && in_brackets == true)
-        {
-            in_brackets = false;
-            c_index[i] = '\0';
-            if((index_num[0] = atoi(c_index)) == 0 && c_index[0] != '0')
-            {
-                fprintf(stderr, "Conv Error\n");
-                return(-3);
-            }
-        } 
-        hptr = hptr->next;
-    }
-    return(index_type);
-}
-
-int parseVariable(char *begin, char *end)
-{
-    char *curpos = begin,
-         *variablename;
-    token_t anker;
-    int varname_length, 
-        index_type,
-        index_num[3] = {-1, -1, -1},
-        ret;
-
-    anker.next = NULL;
-    anker.prev = NULL;
-
-    while(curpos != end)
-    {
-        switch(curpos[0])
-        {
-            case '{':
-                addToken(&anker, curpos[0], VARIABLEBEGIN);
-                break;
-            case '[':
-                addToken(&anker, curpos[0], INDEXOPEN);
-                break;
-            case ']':
-                addToken(&anker, curpos[0], INDEXCLOSE);
-                break;
-            case '}':
-                addToken(&anker, curpos[0], VARIABLEEND);
-                break;
-            case ' ':
-                addToken(&anker, curpos[0], SPACE);
-                break;
-            default:
-                addToken(&anker, curpos[0], CHAR);
-                break;
-                
-        }
-        curpos++;
-    }
-    printTokens(&anker);
-    if((varname_length = getVarnameLength(&anker)) == 0) 
-    {
-        fprintf(stderr, "Keine Variable gefunden\n");
-        return(-1);
-    }
-    varname_length++;
-    if((variablename = malloc(varname_length)) == NULL)
-    {
-        return(-2);
-    }
-
-    getVarname(&anker, variablename);
-    free(variablename);
-
-    deleteTokens(&anker);
-    printf("------------------------------------------------------\n");
     return(0);
 }
 
-
-int parseCommand(char *begin, char *end)
+void freeLineBuff(status_t *stat)
 {
-    token_t anker;
-    char *curpos = begin;
+    int i;
 
-    anker.next = NULL;
-    anker.prev = NULL;
-
-    while(curpos != end)
+    for(i=stat->sizeof_sav_buff-1; i > 0; i--)
     {
-        switch(curpos[0])
-        {
-            case '{':
-                addToken(&anker, curpos[0], COMMANDBEGIN);
-                break;
-            case '}':
-                addToken(&anker, curpos[0], COMMANDBEGIN);
-                break;
-            case '%':
-                addToken(&anker, curpos[0], COMMANDEND);
-                break;
-            case '[':
-                addToken(&anker, curpos[0], INDEXOPEN);
-                break;
-            case ']':
-                addToken(&anker, curpos[0], INDEXCLOSE);
-                break;
-            case ' ':
-                addToken(&anker, curpos[0], SPACE);
-                break;
-            case '"':
-                addToken(&anker, curpos[0], STRING);
-                break;
-             case '=':
-                addToken(&anker, curpos[0], EQUALS);
-                break;
-             case '>':
-                addToken(&anker, curpos[0], GREATERTHEN);
-                break;
-             case '<':
-                addToken(&anker, curpos[0], LESSTHEN);
-                break;
-            default:
-                addToken(&anker, curpos[0], CHAR);
-                break;
-        }
-        curpos++;
+        free(stat->save_buff[i]);
     }
-    printTokens(&anker);
-    return(0);
+    free(stat->save_buff);
+    stat->save_buff = NULL;
+    stat->sizeof_sav_buff = 0;
 }
 
 int parseLine(char *line, status_t *status)
@@ -394,11 +87,12 @@ int parseLine(char *line, status_t *status)
     char *inputstr = line,
          *begin,
          *end,
-         *prev_end = NULL;
+         *prev_end = NULL,
+         *backup_line = line;
     int len = strlen(line),
         i,
         inblock = false,
-        restlength = -1,
+        restlength = strlen(line),
         between_len;
 
     printf("parse: [%s]\n", inputstr);
@@ -426,11 +120,20 @@ int parseLine(char *line, status_t *status)
             }
             else if(inblock == VARIABLEBLOCK)
             {
+                if(status->just_save)
+                {
+                    saveLine(line, status);
+                    break;
+                }
                 parseVariable(begin, end);
             }
             else if(inblock == COMMANDBLOCK)
             {
-                parseCommand(begin, end);
+                if(parseCommand(begin, end, status) == JUSTSAVE)
+                {
+                    saveLine(backup_line, status);
+                    break;
+                }
             }
             restlength=strlen(end+2);
             prev_end = inputstr = end+2;
@@ -440,6 +143,8 @@ int parseLine(char *line, status_t *status)
         {
             printf("kenn ich nicht: [%s]\n", inputstr);
             restlength = restlength - strlen(inputstr);
+            if(status->just_save)
+                saveLine(line, status);
         }
     }
 
@@ -448,7 +153,34 @@ int parseLine(char *line, status_t *status)
 int main()
 {
     status_t status;  
+    int i;
 
-    char *inputstr = "{% if test == \"Test Hello\" %}";
-    parseLine(inputstr);
+#define INPUTSTRS_LENGTH 6
+
+    char *inputstrs[INPUTSTRS_LENGTH] = 
+    {
+        "{% for test == \"Hello World\" %}",
+        "{% for bla == bla %}",
+        "{{ Test }} Hello World {{Noch ein Test}}",
+        "{% end-for %}",
+        "{{balbalbal}}",
+        "{% end-for %}"
+    };
+
+    status.in_for = 0;
+    status.in_if = 0;
+    status.save_buff= NULL;
+    status.sizeof_sav_buff = 0;
+
+    for(i=0; i < INPUTSTRS_LENGTH; i++)
+    {
+        parseLine(inputstrs[i], &status);
+    }
+
+    for(i=0; i < status.sizeof_sav_buff; i++)
+    {
+        printf("%s\n", status.save_buff[i]);
+    }
+
+    freeLineBuff(&status);
 }
