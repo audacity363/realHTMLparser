@@ -159,12 +159,12 @@ int main()
 
     char *inputstrs[INPUTSTRS_LENGTH] = 
     {
-        "{% for test == \"Hello World\" %}",
+        "{% if test < \"Hello World\" %}",
         "{% for bla == bla %}",
         "{{ Test }} Hello World {{Noch ein Test}}",
         "{% end-for %}",
         "{{balbalbal}}",
-        "{% end-for %}"
+        "{% end-if %}"
     };
 
     status.in_for = 0;

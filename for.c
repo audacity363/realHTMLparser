@@ -7,7 +7,6 @@
 
 int for_handling(token_t *anker, status_t *stat)
 {
-    printf("Hallo ich bin ein if\n");
     if(stat->just_save == true)
     {
         stat->in_for++;
@@ -31,15 +30,12 @@ int end_for_handling(token_t *anker, status_t *stat)
     }
     if(--stat->in_for != 0)
     {
-        printf("Ende eines for blocks erreicht\n");
         return(JUSTSAVE);
     }
     if(stat->lookfor != FORBLOCK)
     {
-        printf("Ende eines for blocks erreicht\n");
         return(JUSTSAVE);
     }
-    printf("OK fuere nun for aus\n");
     printf("---------for body-------\n");
     for(i=1; i < stat->sizeof_sav_buff; i++)
     {

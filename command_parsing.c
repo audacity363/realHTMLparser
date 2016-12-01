@@ -4,6 +4,7 @@
 
 #include "parser.h"
 #include "token_handling.h"
+#include "command_parsing.h"
 #include "if.h"
 #include "for.h"
 
@@ -29,7 +30,6 @@ int (*function_dic_v[FUNCTION_DIC_LENGTH])(token_t *anker, status_t *stat) = {
 int printVars_handling(token_t *anker, status_t *stat)
 {
     printf("Ich gebe alle Variablen aus\n");
-    printTokens(anker);
     return(0);
 }
 
@@ -123,19 +123,58 @@ int getCommandName(token_t *anker, char *cmd_name)
     return(0);
 }
 
-token_t *jumpToOffset(token_t *anker, int offset)
+
+int lineToTokens(token_t *anker, char *begin, char *end)
 {
-    token_t *hptr = anker->next;
-    int i;
+    char *curpos = begin;
 
-    for(i=1; i <= offset; i++)
+    while(curpos != end)
     {
-        if(!hptr)
-            break;
-        hptr = hptr->next;
+        switch(curpos[0])
+        {
+            case '{':
+                addToken(anker, curpos[0], BLOCKSTART);
+                break;
+            case '%':
+                addToken(anker, curpos[0], CMDSTARTEND);
+                break;
+            case '}':
+                addToken(anker, curpos[0], BLOCKEND);
+                break;
+            case '[':
+                addToken(anker, curpos[0], INDEXOPEN);
+                break;
+            case ']':
+                addToken(anker, curpos[0], INDEXCLOSE);
+                break;
+            case ' ':
+                addToken(anker, curpos[0], SPACE);
+                break;
+            case '"':
+                addToken(anker, curpos[0], STRING);
+                break;
+            case '=':
+                addToken(anker, curpos[0], EQUALS);
+                break;
+            case '>':
+                addToken(anker, curpos[0], GREATERTHEN);
+                break;
+            case '<':
+                addToken(anker, curpos[0], LESSTHEN);
+                break;
+            case '(':
+                addToken(anker, curpos[0], CLINGTO);
+                break;
+            case ')':
+                addToken(anker, curpos[0], CLAMPS);
+                break;
+            default:
+                addToken(anker, curpos[0], CHAR);
+                break;
+        }
+        curpos++;
     }
-
-    return(hptr);
+    return(0);
 }
 
 
@@ -151,56 +190,9 @@ int parseCommand(char *begin, char *end, status_t *stat)
     anker.next = NULL;
     anker.prev = NULL;
 
-    while(curpos != end)
-    {
-        switch(curpos[0])
-        {
-            case '{':
-                addToken(&anker, curpos[0], COMMANDBEGIN);
-                break;
-            case '}':
-                addToken(&anker, curpos[0], COMMANDBEGIN);
-                break;
-            case '%':
-                addToken(&anker, curpos[0], COMMANDEND);
-                break;
-            case '[':
-                addToken(&anker, curpos[0], INDEXOPEN);
-                break;
-            case ']':
-                addToken(&anker, curpos[0], INDEXCLOSE);
-                break;
-            case ' ':
-                addToken(&anker, curpos[0], SPACE);
-                break;
-            case '"':
-                addToken(&anker, curpos[0], STRING);
-                break;
-            case '=':
-                addToken(&anker, curpos[0], EQUALS);
-                break;
-            case '>':
-                addToken(&anker, curpos[0], GREATERTHEN);
-                break;
-            case '<':
-                addToken(&anker, curpos[0], LESSTHEN);
-                break;
-            case '(':
-                addToken(&anker, curpos[0], CLINGTO);
-                break;
-            case ')':
-                addToken(&anker, curpos[0], CLAMPS);
-                break;
-            default:
-                addToken(&anker, curpos[0], CHAR);
-                break;
-        }
-        curpos++;
-    }
+    lineToTokens(&anker, begin, end);
 
     cmd_name_length = getCommandLength(&anker, &end_cmd_offset);
-
-    printf("Commandlength: [%d]\n", cmd_name_length);
 
     if((cmd_name = malloc(cmd_name_length+1)) == NULL)
     {
@@ -209,8 +201,6 @@ int parseCommand(char *begin, char *end, status_t *stat)
     }
 
     getCommandName(&anker, cmd_name);
-
-    printf("Found CMD: [%s]\n", cmd_name);
 
     if((cmd_func = getCommandFunction(cmd_name)) == NULL)
     {

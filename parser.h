@@ -34,7 +34,17 @@ enum {
     GREATERTHEN,
     LESSTHEN,
     CLINGTO,
-    CLAMPS
+    CLAMPS,
+    BLOCKSTART,
+    BLOCKEND,
+    CMDSTARTEND
+};
+
+enum {
+    VARIABLE,
+    STR,
+    INT,
+    COMPARE
 };
 
 struct token_s
@@ -55,5 +65,15 @@ struct status_s
     char **save_buff;
 };
 
+struct if_parms_s
+{
+    char *val;
+    int val_length;
+    int type;
+    struct if_parms_s *prev;
+    struct if_parms_s *next;
+};
+
 typedef struct token_s token_t;
 typedef struct status_s status_t;
+typedef struct if_parms_s if_parms_t;

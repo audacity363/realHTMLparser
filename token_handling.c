@@ -78,6 +78,15 @@ void printTokens(token_t *anker)
             case CLAMPS:
                 printf("Clamps\n");
                 break;
+            case BLOCKSTART:
+                printf("Block open\n");
+                break;
+            case BLOCKEND:
+                printf("Block closed\n");
+                break;
+            case CMDSTARTEND:
+                printf("Command block start/end\n");
+                break;
             default:
                 printf("unkown Token\n");
                 break;
@@ -102,4 +111,19 @@ void deleteTokens(token_t *anker)
         hptr = prev;
         prev = hptr->prev;
     }
+}
+
+token_t *jumpToOffset(token_t *anker, int offset)
+{
+    token_t *hptr = anker->next;
+    int i;
+
+    for(i=1; i <= offset; i++)
+    {
+        if(!hptr)
+            break;
+        hptr = hptr->next;
+    }
+
+    return(hptr);
 }
