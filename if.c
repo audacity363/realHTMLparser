@@ -6,6 +6,7 @@
 #include "token_handling.h"
 #include "command_parsing.h"
 #include "if.h"
+#include "exec_if.h"
 
 int if_handling(token_t *anker, status_t *stat)
 {
@@ -216,13 +217,6 @@ int end_if_handling(token_t *anker, status_t *stat)
     {
         return(JUSTSAVE);
     }
-    printf("OK fuere nun if aus\n");
-    printf("---------If body-------\n");
-    for(i=1; i < stat->sizeof_sav_buff; i++)
-    {
-        printf("%s\n", stat->save_buff[i]);
-    }
-    printf("-----------------------\n");
 
     if_head = stat->save_buff[0];
     parseIfHead(&head, if_head);
@@ -239,6 +233,8 @@ int end_if_handling(token_t *anker, status_t *stat)
 
     stat->just_save = false;
     stat->lookfor = 0;
+
+    exec_if(&parms, stat->save_buff, stat->sizeof_sav_buff);
 
     freeLineBuff(stat);
     return(0);
