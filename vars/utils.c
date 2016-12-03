@@ -5,6 +5,27 @@
 #include "vars.h"
 #include "utils.h"
 
+int initVarAnker(vars_t **anker)
+{
+    if(!(*anker = malloc(sizeof(vars_t))))
+    {
+        return(MEMORY_ALLOC_ERROR);
+    }
+
+    if(!((*anker)->name = malloc(1)))
+    {
+        free(*anker);
+        return(MEMORY_ALLOC_ERROR);
+    }
+
+    (*anker)->name[0] = '\0';
+    (*anker)->type = -1;
+    (*anker)->prev = NULL;
+    (*anker)->next_lvl = NULL;
+    (*anker)->next = NULL;
+    return(0);
+}
+
 vars_t *goToAnkerEnd(vars_t *anker)
 {
     vars_t *hptr = anker;

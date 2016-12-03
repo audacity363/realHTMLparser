@@ -33,8 +33,7 @@ int addGroup(vars_t *anker, char *name)
     end->next = new;
     new->prev = end;
     new->next = NULL;
-
-
+    return(0);
 }
 
 int addInteger(vars_t *anker, char *group, char *name, int val)

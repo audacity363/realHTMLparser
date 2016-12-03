@@ -1,3 +1,5 @@
+#ifndef REAHLHTMLVARS
+#define REALHTMLVARS
 #define true 1
 #define false 0
 
@@ -8,6 +10,7 @@
 #define GRP_ALREADY_DEFINED 5
 #define X_INDEX_OUT_OF_RANGE 6
 #define Y_INDEX_OUT_OF_RANGE 7
+#define ANKER_ALREADY_INIT 8
 
 
 struct variables_s
@@ -39,16 +42,6 @@ enum {
     THREEDBOOL
 };
 
-char *var_errorstrs[7] = 
-{
-    "Variable already defined",
-    "Error while allocating memory",
-    "Variable not defined",
-    "Group not defined",
-    "Group already defined",
-    "X Index out of range",
-    "Y Index out of range"
-};
-
 typedef struct variables_s vars_t;
 typedef int bool;
+#endif
