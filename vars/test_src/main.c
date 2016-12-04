@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <wchar.h>
+#include <locale.h>
 
 #include "vars.h"
 #include "error_vars.h"
@@ -9,6 +11,10 @@ int main()
 {
     vars_t *anker = NULL;
     int ret, i, x, y, z;
+    float t = 82.62;
+    wchar_t strbuff[100];
+
+    setlocale(LC_ALL, "");
 
     if((ret = initVarAnker(&anker)) != 0)
     {
@@ -45,5 +51,62 @@ int main()
         }
     }
 
+    i = 0;
+    add3DIntegerArray(anker, NULL, "3darray", 5, 7, 9);
+
+    for(x=0; x < 5; x++)
+        for(y=0; y < 7; y++)
+            for(z=0; z < 9; z++)
+            {
+                edit3DIntegerArray(anker, NULL, "3darray", i, x, y, z);
+                i++;
+            }
+    if((ret = addString(anker, NULL, "teststr", L"höhöhöhöh", 100)) != 0)
+    {
+        printf("Error: [%s]\n", var_errorstrs[ret]);
+        return(1);
+    }
+
+    if((ret = addBoolean(anker, NULL, "bool", 1)) != 0)
+    {
+        printf("Error: [%s]\n", var_errorstrs[ret]);
+        return(1);
+    }
+
+    if((ret = add1DBooleanArray(anker, NULL, "bool1d", 10)) != 0)
+    {
+        printf("Error: [%s]\n", var_errorstrs[ret]);
+        return(1);
+    }
+
+    for(x=0; x < 10; x++)
+    {
+        if(x % 2)
+            edit1DBooleanArray(anker, NULL, "bool1d", 0, x);
+        else
+            edit1DBooleanArray(anker, NULL, "bool1d", 1, x);
+    }
+
+
+    if((ret = add2DBooleanArray(anker, NULL, "bool2d", 5, 6)) != 0)
+    {
+        printf("Error: [%s]\n", var_errorstrs[ret]);
+        return(1);
+    }
+    for(x=0; x < 10; x++)
+        for(y=0; y < 6; y++)
+        {
+            if(x % 2)
+                edit1DBooleanArray(anker, NULL, "bool2d", 0, x, y);
+            else
+                edit1DBooleanArray(anker, NULL, "bool2d", 1, x, y);
+        }
+
+    addFloat(anker, NULL, "float", 72.62);
+    add1DFloatArray(anker, NULL, "float1d", 5);
+    for(x=0; x < 5; x++)
+    {
+        edit1DFloatArray(anker, NULL, "float1d", 72.9276, x);
+    } 
     printAllVars(anker);
 }

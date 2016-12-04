@@ -5,38 +5,7 @@
 #include "vars.h"
 #include "utils.h"
 
-int addGroup(vars_t *anker, char *name)
-{
-    vars_t *end, *new;
-
-    if(isDefined(anker, name))
-    {
-        return(GRP_ALREADY_DEFINED);
-    }
-
-    end = goToAnkerEnd(anker);
-
-    if((new = malloc(sizeof(vars_t))) == NULL)
-    {
-        return(MEMORY_ALLOC_ERROR);
-    }
-    
-    if((new->name = malloc(strlen(name)+1)) == NULL)
-    {
-        free(new);
-        return(MEMORY_ALLOC_ERROR);
-    }
-
-    strcpy(new->name, name);
-    new->type = GROUP;
-
-    end->next = new;
-    new->prev = end;
-    new->next = NULL;
-    return(0);
-}
-
-int addInteger(vars_t *anker, char *group, char *name, int val)
+int addBoolean(vars_t *anker, char *group, char *name, bool val)
 {
     vars_t *end, *new, *grp;
     int ret;
@@ -44,19 +13,19 @@ int addInteger(vars_t *anker, char *group, char *name, int val)
     if((ret = addNewVar(anker, &new, group, name)) != 0)
         return(ret);
 
-    new->type = INTEGER;
-    if((new->data = malloc(sizeof(int))) == NULL)
+    new->type = BOOL;
+    if((new->data = malloc(sizeof(bool))) == NULL)
     {
         free(new->name);
         free(new);
         return(MEMORY_ALLOC_ERROR);
     }
 
-    *((int*)new->data) = val;
+    *((bool*)new->data) = val;
     return(0);
 }
 
-int add1DIntegerArray(vars_t *anker, char *group, char *name, int length)
+int add1DBooleanArray(vars_t *anker, char *group, char *name, int length)
 {
     vars_t *end, *new, *grp;
     int ret;
@@ -64,9 +33,9 @@ int add1DIntegerArray(vars_t *anker, char *group, char *name, int length)
     if((ret = addNewVar(anker, &new, group, name)) != 0)
         return(ret);
 
-    new->type = ONEDINTEGER;
+    new->type = ONEDBOOL;
     new->x_length = length;
-    if((new->data = malloc(sizeof(int)*length)) == NULL)
+    if((new->data = malloc(sizeof(bool)*length)) == NULL)
     {
         free(new->name);
         free(new);
@@ -75,7 +44,7 @@ int add1DIntegerArray(vars_t *anker, char *group, char *name, int length)
     return(0);
 }
 
-int edit1DIntegerArray(vars_t *anker, char *group, char *name, int val, int x_index)
+int edit1DBooleanArray(vars_t *anker, char *group, char *name, bool val, int x_index)
 {
     vars_t *target, *grp;
 
@@ -103,11 +72,11 @@ int edit1DIntegerArray(vars_t *anker, char *group, char *name, int val, int x_in
         return(X_INDEX_OUT_OF_RANGE);
     }
 
-    ((int*)target->data)[x_index] = val;
+    ((bool*)target->data)[x_index] = val;
     return(0);
 }
 
-int add2DIntegerArray(vars_t *anker, char *group, char *name, int x_length, int y_length)
+int add2DBooleanArray(vars_t *anker, char *group, char *name, int x_length, int y_length)
 {
     vars_t *end, *new, *grp;
     int ret;
@@ -115,10 +84,10 @@ int add2DIntegerArray(vars_t *anker, char *group, char *name, int x_length, int 
     if((ret = addNewVar(anker, &new, group, name)) != 0)
         return(ret);
 
-    new->type = TWODINTEGER;
+    new->type = TWODBOOL;
     new->x_length = x_length;
     new->y_length = y_length;
-    if((new->data = malloc((x_length*y_length)*sizeof(int))) == NULL)
+    if((new->data = malloc((x_length*y_length)*sizeof(bool))) == NULL)
     {
         free(new->name);
         free(new);
@@ -128,7 +97,7 @@ int add2DIntegerArray(vars_t *anker, char *group, char *name, int x_length, int 
 
 }
 
-int edit2DIntegerArray(vars_t *anker, char *group, char *name, int val, int x_index, int y_index)
+int edit2DBooleanArray(vars_t *anker, char *group, char *name, bool val, int x_index, int y_index)
 {
     vars_t *target, *grp;
     int index;
@@ -159,11 +128,11 @@ int edit2DIntegerArray(vars_t *anker, char *group, char *name, int val, int x_in
 
 
     index = (x_index*target->y_length)+y_index;
-    ((int*)target->data)[index] = val;
+    ((bool*)target->data)[index] = val;
     return(0);
 }
 
-int add3DIntegerArray(vars_t *anker, char *group, char *name, int x_length, int y_length, int z_length)
+int add3DBooleanArray(vars_t *anker, char *group, char *name, int x_length, int y_length, int z_length)
 {
     vars_t *end, *new, *grp;
     int ret;
@@ -171,11 +140,11 @@ int add3DIntegerArray(vars_t *anker, char *group, char *name, int x_length, int 
     if((ret = addNewVar(anker, &new, group, name)) != 0)
         return(ret);
 
-    new->type = THREEDINTEGER;
+    new->type = THREEDBOOL;
     new->x_length = x_length;
     new->y_length = y_length;
     new->z_length = z_length;
-    if((new->data = malloc(((x_length*y_length)*z_length)*sizeof(int))) == NULL)
+    if((new->data = malloc(((x_length*y_length)*z_length)*sizeof(bool))) == NULL)
     {
         free(new->name);
         free(new);
@@ -185,7 +154,7 @@ int add3DIntegerArray(vars_t *anker, char *group, char *name, int x_length, int 
 
 }
 
-int edit3DIntegerArray(vars_t *anker, char *group, char *name, int val, int x_index, int y_index, int z_index)
+int edit3DBoolArray(vars_t *anker, char *group, char *name, bool val, int x_index, int y_index, int z_index)
 {
     vars_t *target, *grp;
     int index;
@@ -216,10 +185,8 @@ int edit3DIntegerArray(vars_t *anker, char *group, char *name, int val, int x_in
     if(z_index >= target->z_length)
         return(Z_INDEX_OUT_OF_RANGE);
 
-    // ( z * xSize * ySize ) + ( y * xSize ) + x
-
     index = (z_index*target->x_length * target->y_length);
     index += (y_index*target->x_length) + x_index;
-    ((int*)target->data)[index] = val;
+    ((bool*)target->data)[index] = val;
     return(0);
 }

@@ -1,4 +1,4 @@
-char *var_errorstrs[9] = 
+char *var_errorstrs[10] = 
 {
     "",
     "Variable already defined",
@@ -8,6 +8,7 @@ char *var_errorstrs[9] =
     "Group already defined",
     "X Index out of range",
     "Y Index out of range",
-    "Anker already initialized"
+    "Anker already initialized",
+    "Z Index out of range"
 };
 

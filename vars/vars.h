@@ -10,6 +10,7 @@
 #define GRP_ALREADY_DEFINED 5
 #define X_INDEX_OUT_OF_RANGE 6
 #define Y_INDEX_OUT_OF_RANGE 7
+#define Z_INDEX_OUT_OF_RANGE 9
 #define ANKER_ALREADY_INIT 8
 
 
@@ -39,9 +40,13 @@ enum {
     BOOL,
     ONEDBOOL,
     TWODBOOL,
-    THREEDBOOL
+    THREEDBOOL,
+    FLOAT,
+    ONEDFLOAT,
+    TWODFLOAT,
+    THREEDFLOAT
 };
 
 typedef struct variables_s vars_t;
-typedef int bool;
+typedef unsigned short int bool;
 #endif
