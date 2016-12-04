@@ -22,9 +22,10 @@ void printFloat(vars_t *var, FILE *fp);
 void printString(vars_t *var, FILE *fp);
 void print1DString(vars_t *var, FILE *fp);
 void print2DString(vars_t *var, FILE *fp);
+void print3DString(vars_t *var, FILE *fp);
 void printGroup(vars_t *var, FILE *fp);
 
-#define SIZEOF_PRINT_FUNCS 16
+#define SIZEOF_PRINT_FUNCS 17
 
 int print_function_dic_i[SIZEOF_PRINT_FUNCS] = {
         INTEGER,
@@ -42,7 +43,8 @@ int print_function_dic_i[SIZEOF_PRINT_FUNCS] = {
         TWODFLOAT,
         THREEDFLOAT,
         ONEDSTRING,
-        TWODSTRING
+        TWODSTRING,
+        THREEDSTRING
     };
 
 void (*print_function_dic_v[SIZEOF_PRINT_FUNCS])(vars_t*, FILE*) = {
@@ -61,7 +63,8 @@ void (*print_function_dic_v[SIZEOF_PRINT_FUNCS])(vars_t*, FILE*) = {
         print2DFloat,
         print3DFloat,
         print1DString,
-        print2DString
+        print2DString,
+        print3DString
     };
 
 void printAllVars(vars_t *anker)
@@ -371,6 +374,34 @@ void print2DString(vars_t *var, FILE *fp)
             index = (var->y_length*(var->length*sizeof(wchar_t)));
             index = index*(x)+((var->length*sizeof(wchar_t))*y);
             fprintf(fp, "\"%S\"", (wchar_t*)(var->data+index));
+            if(y+1 < var->y_length)
+                fprintf(fp, ", ");
+        }
+        fprintf(fp, "]");
+        if(x+1 < var->x_length)
+            fprintf(fp, ", ");
+    }
+    fprintf(fp, "]\n");
+}
+
+void print3DString(vars_t *var, FILE *fp)
+{
+    int x, y, z, index;
+
+    fprintf(fp, "[%s] = [", var->name);
+    for(x=0; x < var->x_length; x++)
+    {
+        fprintf(fp, "[");
+        for(y=0; y < var->y_length; y++)
+        {
+            fprintf(fp, "[");
+            for(z=0; z < var->z_length; z++)
+            {
+                index = ((z*var->x_length+x) * var->y_length+y) * (var->length*sizeof(wchar_t));
+                if(z+1 < var->z_length)
+                    fprintf(fp, ", ");
+            }
+            fprintf(fp, "]");
             if(y+1 < var->y_length)
                 fprintf(fp, ", ");
         }
