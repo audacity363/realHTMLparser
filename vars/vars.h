@@ -12,12 +12,14 @@
 #define Y_INDEX_OUT_OF_RANGE 7
 #define Z_INDEX_OUT_OF_RANGE 9
 #define ANKER_ALREADY_INIT 8
+#define VAR_VALUE_TO_LONG 10
 
 
 struct variables_s
 {
     char *name;
     void *data;
+    int length;
     int x_length;
     int y_length;
     int z_length;

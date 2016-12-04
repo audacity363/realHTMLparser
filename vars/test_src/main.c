@@ -67,6 +67,45 @@ int main()
         return(1);
     }
 
+    add1DStringArray(anker, NULL, "string1d", 100, 10);
+
+    for(x=0; x < 10; x++)
+    {
+        swprintf(strbuff, 100, L"hühühü %d", x);
+        edit1DStringArray(anker, NULL, "string1d", strbuff, x);
+    }
+
+    add2DStringArray(anker, NULL, "string2d", 100, 5, 7);
+
+    i = 0;
+    for(x=0; x < 5; x++)
+        for(y=0; y < 7; y++)
+        {
+            swprintf(strbuff, 100, L"hähähä %d", i);
+            if((ret = edit2DStringArray(anker, NULL, "string2d", strbuff, x, y)) != 0)
+            {
+                printf("Error: [%s]\n", var_errorstrs[ret]);
+                return(1);
+            }
+            i++;
+        }
+
+    add3DStringArray(anker, NULL, "string3d",100, 5, 6, 7);
+    for(x=0; x < 5; x++)
+        for(y=0; y < 6; y++)
+            for(z=0; z < 7; z++)
+            {
+                swprintf(strbuff, 100, L"hä %d", i);
+                if((ret = edit3DStringArray(anker, NULL, "string3d", strbuff, x, y, z)) != 0)
+                {
+                    printf("3D: Error: [%s]\n", var_errorstrs[ret]);
+                    return(1);
+                }
+                i++;
+            }
+
+
+
     if((ret = addBoolean(anker, NULL, "bool", 1)) != 0)
     {
         printf("Error: [%s]\n", var_errorstrs[ret]);
@@ -109,4 +148,8 @@ int main()
         edit1DFloatArray(anker, NULL, "float1d", 72.9276, x);
     } 
     printAllVars(anker);
+    printf("----\n");
+    removeVar(anker, "3darray");
+    printAllVars(anker);
+
 }

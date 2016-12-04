@@ -20,9 +20,11 @@ void print2DFloat(vars_t *var, FILE *fp);
 void print3DFloat(vars_t *var, FILE *fp);
 void printFloat(vars_t *var, FILE *fp);
 void printString(vars_t *var, FILE *fp);
+void print1DString(vars_t *var, FILE *fp);
+void print2DString(vars_t *var, FILE *fp);
 void printGroup(vars_t *var, FILE *fp);
 
-#define SIZEOF_PRINT_FUNCS 14
+#define SIZEOF_PRINT_FUNCS 16
 
 int print_function_dic_i[SIZEOF_PRINT_FUNCS] = {
         INTEGER,
@@ -38,7 +40,9 @@ int print_function_dic_i[SIZEOF_PRINT_FUNCS] = {
         FLOAT,
         ONEDFLOAT,
         TWODFLOAT,
-        THREEDFLOAT
+        THREEDFLOAT,
+        ONEDSTRING,
+        TWODSTRING
     };
 
 void (*print_function_dic_v[SIZEOF_PRINT_FUNCS])(vars_t*, FILE*) = {
@@ -55,7 +59,9 @@ void (*print_function_dic_v[SIZEOF_PRINT_FUNCS])(vars_t*, FILE*) = {
         printFloat,
         print1DFloat,
         print2DFloat,
-        print3DFloat
+        print3DFloat,
+        print1DString,
+        print2DString
     };
 
 void printAllVars(vars_t *anker)
@@ -336,6 +342,45 @@ void printString(vars_t *var, FILE *fp)
 {
     fprintf(fp, "[%s] = [%S]\n", var->name, (wchar_t*)var->data);
 }
+
+void print1DString(vars_t *var, FILE *fp)
+{
+    int x, index;
+
+    fprintf(fp, "[%s] = [", var->name);
+    for(x=0; x < var->x_length; x++)
+    {
+        index = ((var->length+1)*sizeof(wchar_t))*x;
+        fprintf(fp, "\"%S\"", (wchar_t*)(var->data+index));
+        if(x+1 < var->x_length)
+            fprintf(fp, ", ");
+    }
+    fprintf(fp, "]\n");
+}
+
+void print2DString(vars_t *var, FILE *fp)
+{
+    int x, y, index;
+
+    fprintf(fp, "[%s] = [", var->name);
+    for(x=0; x < var->x_length; x++)
+    {
+        fprintf(fp, "[");
+        for(y=0; y < var->y_length; y++)
+        {
+            index = (var->y_length*(var->length*sizeof(wchar_t)));
+            index = index*(x)+((var->length*sizeof(wchar_t))*y);
+            fprintf(fp, "\"%S\"", (wchar_t*)(var->data+index));
+            if(y+1 < var->y_length)
+                fprintf(fp, ", ");
+        }
+        fprintf(fp, "]");
+        if(x+1 < var->x_length)
+            fprintf(fp, ", ");
+    }
+    fprintf(fp, "]\n");
+}
+
 
 void printGroup(vars_t *var, FILE *fp)
 {
