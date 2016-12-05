@@ -138,6 +138,8 @@ int edit2DStringArray(vars_t *anker, char *group, char *name, wchar_t *val, int 
 
     if(x_index >= target->x_length) 
         return(X_INDEX_OUT_OF_RANGE);
+    if(y_index >= target->y_length) 
+        return(Y_INDEX_OUT_OF_RANGE);
 
     index = (target->y_length*(target->length*sizeof(wchar_t)));
     index = index*(x_index)+((target->length*sizeof(wchar_t))*y_index);
@@ -205,6 +207,10 @@ int edit3DStringArray(vars_t *anker, char *group, char *name, wchar_t *val, int 
 
     if(x_index >= target->x_length) 
         return(X_INDEX_OUT_OF_RANGE);
+    if(y_index >= target->y_length) 
+        return(Y>_INDEX_OUT_OF_RANGE);
+    if(z_index >= target->z_length) 
+        return(Z_INDEX_OUT_OF_RANGE);
 
 
     var_size = target->length*sizeof(wchar_t);
@@ -214,6 +220,7 @@ int edit3DStringArray(vars_t *anker, char *group, char *name, wchar_t *val, int 
 
     index = (x_index*sizeofy)+(y_index*sizeofz)+(var_size*z_index);
     printf("x: [%d]\ny: [%d]\nz: [%d]\n\n", x_index, y_index, z_index);
+    printf("Offset: [%d]\n", index);
 
     wcscpy((wchar_t*)(target->data+index), val);
     return(0);

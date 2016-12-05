@@ -386,7 +386,11 @@ void print2DString(vars_t *var, FILE *fp)
 
 void print3DString(vars_t *var, FILE *fp)
 {
-    int x, y, z, index;
+    int x, y, z, index, var_size, sizeofz, sizeofy;
+
+    var_size = var->length*sizeof(wchar_t);
+    sizeofz = var_size*(var->z_length);
+    sizeofy = sizeofz*(var->y_length);
 
     fprintf(fp, "[%s] = [", var->name);
     for(x=0; x < var->x_length; x++)
@@ -397,7 +401,8 @@ void print3DString(vars_t *var, FILE *fp)
             fprintf(fp, "[");
             for(z=0; z < var->z_length; z++)
             {
-                index = ((z*var->x_length+x) * var->y_length+y) * (var->length*sizeof(wchar_t));
+                index = (x*sizeofy)+(y*sizeofz)+(var_size*z);
+                fprintf(fp, "\"%S\"", (wchar_t*)(var->data+index));
                 if(z+1 < var->z_length)
                     fprintf(fp, ", ");
             }

@@ -90,6 +90,7 @@ int main()
             i++;
         }
 
+    i=0;
     add3DStringArray(anker, NULL, "string3d",100, 5, 6, 7);
     for(x=0; x < 5; x++)
         for(y=0; y < 6; y++)
