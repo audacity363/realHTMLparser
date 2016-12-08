@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "vars.h"
 #include "parser.h"
 #include "token_handling.h"
 

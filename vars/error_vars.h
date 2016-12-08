@@ -1,4 +1,4 @@
-char *var_errorstrs[11] = 
+char *var_errorstrs[13] = 
 {
     "",
     "Variable already defined",
@@ -10,6 +10,8 @@ char *var_errorstrs[11] =
     "Y Index out of range",
     "Anker already initialized",
     "Z Index out of range",
-    "Variable value to long"
+    "Variable value to long",
+    "Wrong variable type",
+    "Buffer too small"
 };
 

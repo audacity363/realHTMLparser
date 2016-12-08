@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "vars.h"
 #include "parser.h"
 #include "token_handling.h"
 
@@ -57,7 +58,7 @@ void printTokens(token_t *anker)
             case CHAR:
                 printf("Alphanumeric Char\n");
                 break;
-            case STRING:
+            case STR:
                 printf("String start/ende\n");
                 break;
             case EQUALS:

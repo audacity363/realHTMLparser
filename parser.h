@@ -29,7 +29,7 @@ enum {
     INDEXVAL,
     SPACE,
     CHAR,
-    STRING,
+    STR,
     EQUALS,
     GREATERTHEN,
     LESSTHEN,
@@ -41,10 +41,10 @@ enum {
 };
 
 enum {
-    VARIABLE,
-    STR,
-    INT,
-    COMPARE
+    IFVARIABLE,
+    IFSTR,
+    IFINT,
+    IFCOMPARE
 };
 
 struct token_s
@@ -70,6 +70,10 @@ struct if_parms_s
     char *val;
     int val_length;
     int type;
+    int hasindex;
+    int index1d;
+    int index2d;
+    int index3d;
     struct if_parms_s *prev;
     struct if_parms_s *next;
 };
@@ -77,3 +81,5 @@ struct if_parms_s
 typedef struct token_s token_t;
 typedef struct status_s status_t;
 typedef struct if_parms_s if_parms_t;
+
+extern vars_t *vars_anker;

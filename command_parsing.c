@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "vars.h"
 #include "parser.h"
 #include "token_handling.h"
 #include "command_parsing.h"
@@ -151,7 +152,7 @@ int lineToTokens(token_t *anker, char *begin, char *end)
                 addToken(anker, curpos[0], SPACE);
                 break;
             case '"':
-                addToken(anker, curpos[0], STRING);
+                addToken(anker, curpos[0], STR);
                 break;
             case '=':
                 addToken(anker, curpos[0], EQUALS);

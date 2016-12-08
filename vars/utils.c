@@ -53,8 +53,8 @@ vars_t *isDefined(vars_t *anker, char *name)
 
 int removeVar(vars_t *anker, char *name)
 {
-    vars_t *hptr = anker,
-           *sav, *target;
+    vars_t *sav = NULL,
+           *target = NULL;
 
     if((target = isDefined(anker, name)) == NULL)
     {
@@ -72,7 +72,8 @@ int removeVar(vars_t *anker, char *name)
 
 int addNewVar(vars_t *anker, vars_t **new, char *group, char *name)
 {
-    vars_t *end, *grp;
+    vars_t *end = NULL,
+           *grp = NULL; 
     int use_grp = false;
 
     if(group)
@@ -118,4 +119,31 @@ int addNewVar(vars_t *anker, vars_t **new, char *group, char *name)
     (*new)->prev = end;
     (*new)->next = NULL;
     return(0);
+}
+
+int getVarType(vars_t *anker, char *group, char *name)
+{
+    vars_t *target = NULL,
+           *grp = NULL;
+
+    if(group)
+    {
+        if(!(grp = isDefined(anker, group)))
+        {
+            return(-1);
+        }
+        if(!(target = isDefined(grp->next_lvl, name)))
+        {
+            return(-2);
+        }
+    }
+    else
+    {
+        if(!(target = isDefined(anker, name)))
+        {
+            return(-2);
+        }
+    }
+
+    return(target->type);
 }

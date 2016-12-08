@@ -1,5 +1,3 @@
-#ifndef REAHLHTMLVARS
-#define REALHTMLVARS
 #define true 1
 #define false 0
 
@@ -13,6 +11,8 @@
 #define Z_INDEX_OUT_OF_RANGE 9
 #define ANKER_ALREADY_INIT 8
 #define VAR_VALUE_TO_LONG 10
+#define WRONG_VAR_TYPE 11
+#define BUFFER_TO_SAMLL 12
 
 
 struct variables_s
@@ -20,9 +20,9 @@ struct variables_s
     char *name;
     void *data;
     int length;
-    int x_length;
-    int y_length;
-    int z_length;
+    size_t x_length;
+    size_t y_length;
+    size_t z_length;
     int type;
     struct variables_s *next_lvl;
     struct variables_s *prev;
@@ -51,4 +51,37 @@ enum {
 
 typedef struct variables_s vars_t;
 typedef unsigned short int bool;
-#endif
+
+
+//----------------------String function--------------------------------------------
+int addString(vars_t *anker, char *group, char *name, wchar_t *val, size_t length);
+int getString(vars_t *anker, char *group, char *name, wchar_t *val, int length);
+int create1DCharArrayFromString(vars_t *inanker, vars_t *outanker, char *group, 
+                            char *name, char *new_name);
+int create1DCharArrayFromString(vars_t *inanker, vars_t *outanker, char *group, 
+                            char *name, char *new_name);
+int add1DStringArray(vars_t *anker, char *group, char *name, int var_length, size_t x_length);
+int edit1DStringArray(vars_t *anker, char *group, char *name, wchar_t *val, int x_index);
+int getStringFrom1DArray(vars_t *anker, char *group, char *name, wchar_t *val,
+                         int length, int x_index);
+int createNewVarFrom1DStringArray(vars_t *inanker, vars_t *outanker,
+                                  char *group, char *name, char *new_name,
+                                  int x_index);
+int create1DCharArrayFrom1DStringArray(vars_t *inanker, vars_t *outanker,
+                                       char *group, char *name, char *new_name,
+                                       int x_index);
+int add2DStringArray(vars_t *anker, char *group, char *name, int var_length, 
+                     int x_length, int y_length);
+int edit2DStringArray(vars_t *anker, char *group, char *name, wchar_t *val, int x_index, int y_index);
+int getStringFrom2DArray(vars_t *anker, char *group, char *name, wchar_t *val,
+                         int length, int x_index, int y_index);
+int create1DStringArrayFrom2DStringArray(vars_t *inanker, vars_t *outanker,
+                                       char *group, char *name, char *new_name,
+                                       int x_index);
+int add3DStringArray(vars_t *anker, char *group, char *name, int var_length, 
+                     int x_length, int y_length, int z_length);
+int edit3DStringArray(vars_t *anker, char *group, char *name, wchar_t *val,
+                      int x_index, int y_index, int z_index);
+int getStringFrom3DArray(vars_t *anker, char *group, char *name, wchar_t *val,
+                         int length, int x_index, int y_index, int z_index);
+//----------------------End String function--------------------------------------------

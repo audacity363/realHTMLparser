@@ -7,7 +7,8 @@
 
 int addGroup(vars_t *anker, char *name)
 {
-    vars_t *end, *new;
+    vars_t *end = NULL,
+           *new = NULL;
 
     if(isDefined(anker, name))
     {
@@ -38,8 +39,9 @@ int addGroup(vars_t *anker, char *name)
 
 int addInteger(vars_t *anker, char *group, char *name, int val)
 {
-    vars_t *end, *new, *grp;
-    int ret;
+    vars_t *new = NULL;
+
+    int ret = 0;
 
     if((ret = addNewVar(anker, &new, group, name)) != 0)
         return(ret);
@@ -58,8 +60,8 @@ int addInteger(vars_t *anker, char *group, char *name, int val)
 
 int add1DIntegerArray(vars_t *anker, char *group, char *name, int length)
 {
-    vars_t *end, *new, *grp;
-    int ret;
+    vars_t *new = NULL;
+    int ret = 0;
 
     if((ret = addNewVar(anker, &new, group, name)) != 0)
         return(ret);
@@ -77,7 +79,8 @@ int add1DIntegerArray(vars_t *anker, char *group, char *name, int length)
 
 int edit1DIntegerArray(vars_t *anker, char *group, char *name, int val, int x_index)
 {
-    vars_t *target, *grp;
+    vars_t *target = NULL,
+           *grp = NULL;
 
     if(group)
     {
@@ -109,8 +112,8 @@ int edit1DIntegerArray(vars_t *anker, char *group, char *name, int val, int x_in
 
 int add2DIntegerArray(vars_t *anker, char *group, char *name, int x_length, int y_length)
 {
-    vars_t *end, *new, *grp;
-    int ret;
+    vars_t *new = NULL;
+    int ret = 0;
 
     if((ret = addNewVar(anker, &new, group, name)) != 0)
         return(ret);
@@ -130,8 +133,9 @@ int add2DIntegerArray(vars_t *anker, char *group, char *name, int x_length, int 
 
 int edit2DIntegerArray(vars_t *anker, char *group, char *name, int val, int x_index, int y_index)
 {
-    vars_t *target, *grp;
-    int index;
+    vars_t *target = NULL,
+           *grp = NULL;
+    size_t offset = 0;
 
     if(group)
     {
@@ -158,15 +162,15 @@ int edit2DIntegerArray(vars_t *anker, char *group, char *name, int val, int x_in
         return(Y_INDEX_OUT_OF_RANGE);
 
 
-    index = (x_index*target->y_length)+y_index;
-    ((int*)target->data)[index] = val;
+    offset = (x_index*target->y_length)+y_index;
+    ((int*)target->data)[offset] = val;
     return(0);
 }
 
 int add3DIntegerArray(vars_t *anker, char *group, char *name, int x_length, int y_length, int z_length)
 {
-    vars_t *end, *new, *grp;
-    int ret;
+    vars_t *new = NULL;
+    int ret = 0;
 
     if((ret = addNewVar(anker, &new, group, name)) != 0)
         return(ret);
@@ -187,8 +191,9 @@ int add3DIntegerArray(vars_t *anker, char *group, char *name, int x_length, int 
 
 int edit3DIntegerArray(vars_t *anker, char *group, char *name, int val, int x_index, int y_index, int z_index)
 {
-    vars_t *target, *grp;
-    int index;
+    vars_t *target = NULL,
+           *grp = NULL;
+    size_t offset = 0;
 
     if(group)
     {
@@ -218,8 +223,8 @@ int edit3DIntegerArray(vars_t *anker, char *group, char *name, int val, int x_in
 
     // ( z * xSize * ySize ) + ( y * xSize ) + x
 
-    index = (z_index*target->x_length * target->y_length);
-    index += (y_index*target->x_length) + x_index;
-    ((int*)target->data)[index] = val;
+    offset = (z_index*target->x_length * target->y_length);
+    offset += (y_index*target->x_length) + x_index;
+    ((int*)target->data)[offset] = val;
     return(0);
 }

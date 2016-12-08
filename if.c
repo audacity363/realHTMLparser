@@ -2,11 +2,18 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "vars.h"
 #include "parser.h"
 #include "token_handling.h"
 #include "command_parsing.h"
 #include "if.h"
 #include "exec_if.h"
+
+typedef struct 
+{
+    int index_type;
+    int index[3];
+} index_parms;
 
 int if_handling(token_t *anker, status_t *stat)
 {
@@ -51,7 +58,7 @@ token_t *jumpOverCMDName(token_t *anker)
     return(hptr);
 }
 
-int addParm(if_parms_t *parms, int val_len, char *val, int str, int compare)
+int addParm(if_parms_t *parms, int val_len, char *val, int str, int compare, index_parms index)
 {
     int type = -1;
     if_parms_t *new,
@@ -59,15 +66,15 @@ int addParm(if_parms_t *parms, int val_len, char *val, int str, int compare)
 
     if(str)
     {
-        type = STR;
+        type = IFSTR;
     }
     else if(compare)
     {
-        type = COMPARE;
+        type = IFCOMPARE;
     }
     else if(!str && !compare)
     {
-        type = VARIABLE;
+        type = IFVARIABLE;
     }
 
     while(hptr->next)
@@ -83,6 +90,10 @@ int addParm(if_parms_t *parms, int val_len, char *val, int str, int compare)
         return(-2);
     }    
     strcpy(new->val, val);
+    new->hasindex = index.index_type;
+    new->index1d = index.index[0];
+    new->index2d = index.index[1];
+    new->index3d = index.index[2];
     new->next = NULL;
     new->prev = hptr;
 
@@ -105,13 +116,13 @@ void printParms(if_parms_t *anker)
     {
         switch(hptr->type)
         {
-            case VARIABLE:
+            case IFVARIABLE:
                 printf("variable\n\tval: [%s]\n", hptr->val);
                 break;
-            case STR:
+            case IFSTR:
                 printf("string\n\tval: [%s]\n", hptr->val);
                 break;
-            case COMPARE:
+            case IFCOMPARE:
                 printf("compare\n\tval: [%s]\n", hptr->val);
                 break;
             default:
@@ -126,12 +137,16 @@ token_t *findNextParm(if_parms_t *parms, token_t *tokens)
 {
     token_t *hptr = tokens;
     int in_str = false,
+        in_index = 0,
         length = 1,
         type = -1,
         found_str = false,
+        index_i = 0,
         found_compare = false;
     char *buff = malloc(1);
-    
+    char index_buff[4] = {0, 0, 0, 0};
+    index_parms index = {0, {-1, -1, -1}};
+   
 
     while(hptr)
     {
@@ -142,12 +157,27 @@ token_t *findNextParm(if_parms_t *parms, token_t *tokens)
         }
         else if(hptr->type == SPACE)
             break;
-        else if(hptr->type == STRING && in_str)
+        else if(hptr->type == STR && in_str)
         {
             in_str = false;
             break;
         }
-        else if(hptr->type == STRING && !in_str)
+        else if(hptr->type == INDEXOPEN && !in_str && !in_index)
+        {
+            in_index = true;
+        }
+        else if(hptr->type == INDEXCLOSE && !in_str && in_index)
+        {
+            index.index[index.index_type++] = atoi(index_buff);    
+            memset(index_buff, 0x00, sizeof(index_buff));
+            index_i = 0;
+            in_index = false;
+        }
+        else if(hptr->type == CHAR && in_index)
+        {
+            index_buff[index_i++] = hptr->val;
+        }
+        else if(hptr->type == STR && !in_str)
         {
             in_str = true;
             found_str = true;
@@ -174,7 +204,9 @@ token_t *findNextParm(if_parms_t *parms, token_t *tokens)
 
     buff[length-1] = '\0';
 
-    addParm(parms, length, buff, found_str, found_compare);
+    printf("Index_type :[%d]\n", index.index_type);
+
+    addParm(parms, length, buff, found_str, found_compare, index);
 
     free(buff);
 
@@ -202,7 +234,7 @@ int end_if_handling(token_t *anker, status_t *stat)
     token_t head = {' ', -1, NULL, NULL},
             *parm_start,
             *last_parm;
-    if_parms_t parms = {NULL, -1, -1, NULL, NULL};
+    if_parms_t parms = {NULL, -1, -1, -1, -1, -1, -1, NULL, NULL};
 
     if(stat->in_if == 0)
     {
