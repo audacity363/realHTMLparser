@@ -27,7 +27,7 @@ int getVarnameLength(token_t *anker)
     return(length);
 }
 
-void getVarname(token_t *anker, char *buff)
+void getVarname(token_t *anker, wchar_t *buff)
 {
     token_t *hptr = anker->next;
     int length = 0;
@@ -40,11 +40,11 @@ void getVarname(token_t *anker, char *buff)
         }
         if(hptr->type == CHAR)
         {
-            buff[length++] = hptr->val;
+            memcpy(buff+(length++), &hptr->val, sizeof(wchar_t));
         }
         hptr = hptr->next;
     }
-    buff[length] = '\0';
+    memset(buff+length, 0x00, sizeof(wchar_t));
 }
 
 //Sucht den Index raus. 
@@ -99,44 +99,35 @@ int getIndex(token_t *anker, int *index_num)
     return(index_type);
 }
 
-int parseVariable(char *begin, char *end)
+int parseVariable(wchar_t *begin, wchar_t *end)
 {
-    char *curpos = begin,
-         *variablename;
+    wchar_t *curpos = begin,
+            *variablename;
     token_t anker;
     int varname_length, 
         index_type,
         index_num[3] = {-1, -1, -1},
-        ret;
+        ret,
+        i = 0;
 
     anker.next = NULL;
     anker.prev = NULL;
 
-    while(curpos != end)
+    while(curpos+1 != end)
     {
-        switch(curpos[0])
-        {
-            case '{':
-                addToken(&anker, curpos[0], VARIABLEBEGIN);
-                break;
-            case '[':
-                addToken(&anker, curpos[0], INDEXOPEN);
-                break;
-            case ']':
-                addToken(&anker, curpos[0], INDEXCLOSE);
-                break;
-            case '}':
-                addToken(&anker, curpos[0], VARIABLEEND);
-                break;
-            case ' ':
-                addToken(&anker, curpos[0], SPACE);
-                break;
-            default:
-                addToken(&anker, curpos[0], CHAR);
-                break;
-                
-        }
-        curpos++;
+        if(wcsncmp(curpos+i, L"{", 1) == 0)
+            addToken(&anker, curpos+i, VARIABLEBEGIN);
+        else if(wcsncmp(curpos+i, L"[", 1) == 0)
+            addToken(&anker, curpos+i, INDEXOPEN);
+        else if(wcsncmp(curpos+i, L"[", 1) == 0)
+            addToken(&anker, curpos+i, INDEXCLOSE);
+        else if(wcsncmp(curpos+i, L"}", 1) == 0)
+            addToken(&anker, curpos+i, VARIABLEEND);
+        else if(wcsncmp(curpos+i, L" ", 1) == 0)
+            addToken(&anker, curpos+i, SPACE);
+        else
+            addToken(&anker, curpos+i, CHAR);
+        i++;
     }
     printTokens(&anker);
     if((varname_length = getVarnameLength(&anker)) == 0) 
@@ -145,7 +136,7 @@ int parseVariable(char *begin, char *end)
         return(-1);
     }
     varname_length++;
-    if((variablename = malloc(varname_length)) == NULL)
+    if((variablename = malloc(varname_length*sizeof(wchar_t))) == NULL)
     {
         return(-2);
     }

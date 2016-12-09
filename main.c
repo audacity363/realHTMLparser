@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <wchar.h>
 #include <locale.h>
 
 #include "vars.h"
@@ -12,16 +13,16 @@ vars_t *vars_anker;
 //Gibt den Typ des Blocker zurueck. Wenn nichts gefunden false 
 //Variablenblock = VARIABLENBLOCK
 //Commandblock = COMMANDBLOCK
-int searchBlockBegin(char *str, char **pos)
+int searchBlockBegin(wchar_t *str, wchar_t **pos)
 {
-    char *begin;
+    wchar_t *begin;
 
-    if((begin = strstr(str, VARIABLEBEGIN_STR)) != NULL)
+    if((begin = wcsstr(str, VARIABLEBEGIN_STR)) != NULL)
     {
         *pos = begin;
         return(VARIABLEBLOCK);
     }
-    else if((begin = strstr(str, COMMANDBEGIN_STR)) != NULL)
+    else if((begin = wcsstr(str, COMMANDBEGIN_STR)) != NULL)
     {
         *pos = begin;
         return(COMMANDBLOCK);
@@ -29,13 +30,13 @@ int searchBlockBegin(char *str, char **pos)
     return(false);
 }
 
-int searchBlockEnd(char *str, char **pos, int type)
+int searchBlockEnd(wchar_t *str, wchar_t **pos, int type)
 {
-    char *end;
+    wchar_t *end;
 
     if(type == VARIABLEBLOCK)
     {
-        if((end = strstr(str, VARIABLEEND_STR)) != NULL)
+        if((end = wcsstr(str, VARIABLEEND_STR)) != NULL)
         {
             *pos = end;
             return(true);
@@ -44,7 +45,7 @@ int searchBlockEnd(char *str, char **pos, int type)
     }
     else if(type == COMMANDBLOCK)
     {
-        if((end = strstr(str, COMMANDEND_STR)) != NULL)
+        if((end = wcsstr(str, COMMANDEND_STR)) != NULL)
         {
             *pos = end;
             return(true);
@@ -54,21 +55,21 @@ int searchBlockEnd(char *str, char **pos, int type)
     return(false);
 }
 
-int saveLine(char *line, status_t *stat)
+int saveLine(wchar_t *line, status_t *stat)
 {
     if(stat->sizeof_sav_buff == 0)
     {
-        stat->save_buff = malloc(sizeof(char*));
-        stat->save_buff[0] = malloc(strlen(line)+1);
-        strcpy(stat->save_buff[0], line);
+        stat->save_buff = malloc(sizeof(wchar_t*));
+        stat->save_buff[0] = malloc(wcslen(line)*sizeof(wchar_t)+1);
+        wcscpy(stat->save_buff[0], line);
         stat->sizeof_sav_buff = 1;
     }
     else
     {
         stat->sizeof_sav_buff++;
-        stat->save_buff = realloc(stat->save_buff, sizeof(char*)*stat->sizeof_sav_buff);
-        stat->save_buff[stat->sizeof_sav_buff-1] = malloc(strlen(line)+1);
-        strcpy(stat->save_buff[stat->sizeof_sav_buff-1], line);
+        stat->save_buff = realloc(stat->save_buff, sizeof(wchar_t*)*stat->sizeof_sav_buff);
+        stat->save_buff[stat->sizeof_sav_buff-1] = malloc(wcslen(line)*sizeof(wchar_t)+1);
+        wcscpy(stat->save_buff[stat->sizeof_sav_buff-1], line);
     }
     return(0);
 }
@@ -86,20 +87,20 @@ void freeLineBuff(status_t *stat)
     stat->sizeof_sav_buff = 0;
 }
 
-int parseLine(char *line, status_t *status)
+int parseLine(wchar_t *line, status_t *status)
 {
-    char *inputstr = line,
+    wchar_t *inputstr = line,
          *begin,
          *end,
          *prev_end = NULL,
          *backup_line = line;
-    int len = strlen(line),
-        i,
+    size_t len = wcslen(line),
+           restlength = len;
+    int i,
         inblock = false,
-        restlength = strlen(line),
         between_len;
 
-    printf("parse: [%s]\n", inputstr);
+    printf("parse: [%S]\n", inputstr);
     while(restlength != 0) 
     { 
         if((inblock = searchBlockBegin(inputstr, &begin)) != false)
@@ -109,13 +110,13 @@ int parseLine(char *line, status_t *status)
             {
                 between_len = begin - prev_end;
                 //printf("between_len: [%d]\n", between_len);
-                printf("Kenn ich nicht [%.*s]\n", between_len, prev_end);
+                printf("Kenn ich nicht [%.*S]\n", between_len, prev_end);
             }
             //Text vor dem ersten Block ausgeben
             if(!prev_end)
             {
                 between_len = begin - inputstr;
-                printf("Kenn ich nicht [%.*s]\n", between_len, inputstr);
+                printf("Kenn ich nicht [%.*S]\n", between_len, inputstr);
             }
             if(searchBlockEnd(begin, &end, inblock) == false)
             {
@@ -139,14 +140,14 @@ int parseLine(char *line, status_t *status)
                     break;
                 }
             }
-            restlength=strlen(end+2);
+            restlength=wcslen(end+2);
             prev_end = inputstr = end+2;
         }
         //Text hinter dem letzen Block ausgeben
         else
         {
-            printf("kenn ich nicht: [%s]\n", inputstr);
-            restlength = restlength - strlen(inputstr);
+            printf("kenn ich nicht: [%S]\n", inputstr);
+            restlength = restlength - wcslen(inputstr);
             if(status->just_save)
                 saveLine(line, status);
         }
@@ -303,14 +304,14 @@ int main()
     printAllVars(vars_anker);
 #define INPUTSTRS_LENGTH 6
 
-    char *inputstrs[INPUTSTRS_LENGTH] = 
+    wchar_t *inputstrs[INPUTSTRS_LENGTH] = 
     {
-        "{% if bool1d[1] < \"Hello World\" %}",
-        "{% for bla == bla %}",
-        "{{ Test }} Hello World {{Noch ein Test}}",
-        "{% end-for %}",
-        "{{balbalbal}}",
-        "{% end-if %}"
+        L"{% if teststr in string1d %}",
+        L"{% for bla == bla %}",
+        L"{{ Test }} Hello World {{Noch ein Test}}",
+        L"{% end-for %}",
+        L"{{balbalbal}}",
+        L"{% end-if %}"
     };
 
     status.in_for = 0;

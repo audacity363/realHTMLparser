@@ -1,11 +1,13 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+#include <wchar.h>
 
 #include "vars.h"
 #include "parser.h"
 #include "token_handling.h"
 
-int addToken(token_t *anker, char token, int type)
+int addToken(token_t *anker, wchar_t *token, int type)
 {
     token_t *hptr = anker,
             *new;
@@ -25,7 +27,7 @@ int addToken(token_t *anker, char token, int type)
     new->next = NULL;
 
     new->type = type;
-    new->val = token;
+    memcpy(&new->val, token, sizeof(wchar_t));
 
     return(true);
 }

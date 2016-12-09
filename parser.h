@@ -7,10 +7,10 @@
 #define VARIABLEBLOCK 2
 #define COMMANDBLOCK 3
 
-#define COMMANDBEGIN_STR "{%"
-#define COMMANDEND_STR "%}"
-#define VARIABLEBEGIN_STR "{{"
-#define VARIABLEEND_STR "}}"
+#define COMMANDBEGIN_STR L"{%"
+#define COMMANDEND_STR L"%}"
+#define VARIABLEBEGIN_STR L"{{"
+#define VARIABLEEND_STR L"}}"
 
 #define FORBLOCK 100
 #define IFBLOCK 200
@@ -47,9 +47,19 @@ enum {
     IFCOMPARE
 };
 
+enum {
+    IFLESSTHEN,
+    IFLESSTHENEQUAL,
+    IFEQUALS,
+    IFUNEQUALS,
+    IFGREATERTHEN,
+    IFGREATERTHENEQUALS,
+    IFIN
+};
+
 struct token_s
 {
-    char val;
+    wchar_t val;
     int type;
     struct token_s *prev;
     struct token_s *next;
@@ -61,8 +71,8 @@ struct status_s
     int just_save;
     int in_for;
     int in_if;
-    int sizeof_sav_buff;
-    char **save_buff;
+    size_t sizeof_sav_buff;
+    wchar_t **save_buff;
 };
 
 struct if_parms_s
@@ -70,6 +80,7 @@ struct if_parms_s
     char *val;
     int val_length;
     int type;
+    int varlib_type;
     int hasindex;
     int index1d;
     int index2d;

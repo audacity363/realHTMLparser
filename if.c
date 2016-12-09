@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <wchar.h>
 
 #include "vars.h"
 #include "parser.h"
@@ -29,11 +30,11 @@ int if_handling(token_t *anker, status_t *stat)
     return(JUSTSAVE);
 }
 
-int parseIfHead(token_t *head, char *line)
+int parseIfHead(token_t *head, wchar_t *line)
 {
-    int line_length = strlen(line);
+    size_t line_length = wcslen(line);
 
-    return(lineToTokens(head, line, line+strlen(line)));
+    return(lineToTokens(head, line, line+wcslen(line)));
 }
 
 token_t *jumpOverCMDName(token_t *anker)
@@ -229,12 +230,12 @@ token_t *findParms(if_parms_t *parms, token_t *head)
 int end_if_handling(token_t *anker, status_t *stat)
 {
     int i;
-    char *if_head;
+    wchar_t *if_head;
 
     token_t head = {' ', -1, NULL, NULL},
             *parm_start,
             *last_parm;
-    if_parms_t parms = {NULL, -1, -1, -1, -1, -1, -1, NULL, NULL};
+    if_parms_t parms = {NULL, -1, -1, -1, -1, -1, -1, -1, NULL, NULL};
 
     if(stat->in_if == 0)
     {

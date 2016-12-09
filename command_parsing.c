@@ -12,12 +12,12 @@
 int printVars_handling(token_t*, status_t*);
 
 #define FUNCTION_DIC_LENGTH 5 
-char function_dic_c[FUNCTION_DIC_LENGTH][50] = {
-        "if",
-        "end-if",
-        "for",
-        "end-for",
-        "printVars"
+wchar_t function_dic_c[FUNCTION_DIC_LENGTH][50] = {
+        L"if",
+        L"end-if",
+        L"for",
+        L"end-for",
+        L"printVars"
     };
 
 int (*function_dic_v[FUNCTION_DIC_LENGTH])(token_t *anker, status_t *stat) = {
@@ -34,13 +34,13 @@ int printVars_handling(token_t *anker, status_t *stat)
     return(0);
 }
 
-int (*getCommandFunction(char *cmd_name))(token_t *anker, status_t *stat)
+int (*getCommandFunction(wchar_t *cmd_name))(token_t *anker, status_t *stat)
 {
     int i;
 
     for(i=0; i <= FUNCTION_DIC_LENGTH; i++)
     {
-        if(strcmp(function_dic_c[i], cmd_name) == 0)
+        if(wcscmp(function_dic_c[i], cmd_name) == 0)
             return(function_dic_v[i]);
     }
     return(NULL);
@@ -85,11 +85,12 @@ int getCommandLength(token_t *anker, int *end_cmd_offset)
     return(length);
 }
 
-int getCommandName(token_t *anker, char *cmd_name)
+int getCommandName(token_t *anker, wchar_t *cmd_name)
 {
     token_t *hptr = anker->next;
     int length = 0,
-        found_start = false;
+        found_start = false,
+        offset = 0;
 
     while(hptr)
     {
@@ -113,77 +114,63 @@ int getCommandName(token_t *anker, char *cmd_name)
         }
         else if(hptr->type == CHAR)
         {
-            cmd_name[length] = hptr->val;
+            memcpy(cmd_name+length, &hptr->val, sizeof(wchar_t));
             found_start = true;
             length++;
         }
         hptr = hptr->next;
+        offset++;
     }
 
-    cmd_name[length] = '\0'; 
+    memset(cmd_name+length, 0x00, sizeof(wchar_t));
     return(0);
 }
 
 
-int lineToTokens(token_t *anker, char *begin, char *end)
+int lineToTokens(token_t *anker, wchar_t *begin, wchar_t *end)
 {
-    char *curpos = begin;
+    wchar_t *curpos = begin;
+    int i = 0;
 
-    while(curpos != end)
+    while(curpos+i != end)
     {
-        switch(curpos[0])
-        {
-            case '{':
-                addToken(anker, curpos[0], BLOCKSTART);
-                break;
-            case '%':
-                addToken(anker, curpos[0], CMDSTARTEND);
-                break;
-            case '}':
-                addToken(anker, curpos[0], BLOCKEND);
-                break;
-            case '[':
-                addToken(anker, curpos[0], INDEXOPEN);
-                break;
-            case ']':
-                addToken(anker, curpos[0], INDEXCLOSE);
-                break;
-            case ' ':
-                addToken(anker, curpos[0], SPACE);
-                break;
-            case '"':
-                addToken(anker, curpos[0], STR);
-                break;
-            case '=':
-                addToken(anker, curpos[0], EQUALS);
-                break;
-            case '>':
-                addToken(anker, curpos[0], GREATERTHEN);
-                break;
-            case '<':
-                addToken(anker, curpos[0], LESSTHEN);
-                break;
-            case '(':
-                addToken(anker, curpos[0], CLINGTO);
-                break;
-            case ')':
-                addToken(anker, curpos[0], CLAMPS);
-                break;
-            default:
-                addToken(anker, curpos[0], CHAR);
-                break;
-        }
-        curpos++;
+        if(wcsncmp(curpos+i, L"{", 1) == 0)
+            addToken(anker, curpos+i, BLOCKSTART);
+        else if(wcsncmp(curpos+i, L"%", 1) == 0)
+            addToken(anker, curpos+i, CMDSTARTEND);
+        else if(wcsncmp(curpos+i, L"}", 1) == 0)
+            addToken(anker, curpos+i, BLOCKEND);
+        else if(wcsncmp(curpos+i, L"[", 1) == 0)
+            addToken(anker, curpos+i, INDEXOPEN);
+        else if(wcsncmp(curpos+i, L"]", 1) == 0)
+            addToken(anker, curpos+i, INDEXCLOSE);
+        else if(wcsncmp(curpos+i, L" ", 1) == 0)
+            addToken(anker, curpos+i, SPACE);
+        else if(wcsncmp(curpos+i, L"\"", 1) == 0)
+            addToken(anker, curpos+i, STR);
+        else if(wcsncmp(curpos+i, L"=", 1) == 0)
+            addToken(anker, curpos+i, EQUALS);
+        else if(wcsncmp(curpos+i, L">", 1) == 0)
+            addToken(anker, curpos+i, GREATERTHEN);
+        else if(wcsncmp(curpos+i, L"<", 1) == 0)
+            addToken(anker, curpos+i, LESSTHEN);
+        else if(wcsncmp(curpos+i, L"(", 1) == 0)
+            addToken(anker, curpos+i, CLINGTO);
+        else if(wcsncmp(curpos+i, L")", 1) == 0)
+            addToken(anker, curpos+i, CLAMPS);
+        else
+            addToken(anker, curpos+i, CHAR);
+        i++;
     }
     return(0);
 }
 
 
-int parseCommand(char *begin, char *end, status_t *stat)
+int parseCommand(wchar_t *begin, wchar_t *end, status_t *stat)
 {
     token_t anker, *offset;
-    char *curpos = begin,
-         *cmd_name;
+    wchar_t *curpos = begin,
+            *cmd_name;
 
     int cmd_name_length, end_cmd_offset, ret;
     int (*cmd_func)(token_t *anker, status_t *stat);
@@ -195,7 +182,7 @@ int parseCommand(char *begin, char *end, status_t *stat)
 
     cmd_name_length = getCommandLength(&anker, &end_cmd_offset);
 
-    if((cmd_name = malloc(cmd_name_length+1)) == NULL)
+    if((cmd_name = malloc((cmd_name_length+1)*sizeof(wchar_t))) == NULL)
     {
         fprintf(stderr, "Memalloc for cmd name failed\n");
         return(-1);
