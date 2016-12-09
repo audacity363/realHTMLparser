@@ -60,7 +60,7 @@ int saveLine(wchar_t *line, status_t *stat)
     if(stat->sizeof_sav_buff == 0)
     {
         stat->save_buff = malloc(sizeof(wchar_t*));
-        stat->save_buff[0] = malloc(wcslen(line)*sizeof(wchar_t)+1);
+        stat->save_buff[0] = malloc((wcslen(line)+1)*sizeof(wchar_t));
         wcscpy(stat->save_buff[0], line);
         stat->sizeof_sav_buff = 1;
     }
@@ -68,7 +68,7 @@ int saveLine(wchar_t *line, status_t *stat)
     {
         stat->sizeof_sav_buff++;
         stat->save_buff = realloc(stat->save_buff, sizeof(wchar_t*)*stat->sizeof_sav_buff);
-        stat->save_buff[stat->sizeof_sav_buff-1] = malloc(wcslen(line)*sizeof(wchar_t)+1);
+        stat->save_buff[stat->sizeof_sav_buff-1] = malloc((wcslen(line)+1)*sizeof(wchar_t)+1);
         wcscpy(stat->save_buff[stat->sizeof_sav_buff-1], line);
     }
     return(0);
@@ -204,6 +204,11 @@ int initVars(vars_t *anker)
         return(1);
     }
 
+    if((ret = addString(anker, NULL, "teststr1", L"höhö", 100)) != 0)
+    {
+        return(1);
+    }
+
     add1DStringArray(anker, NULL, "string1d", 100, 10);
 
     for(x=0; x < 10; x++)
@@ -306,7 +311,7 @@ int main()
 
     wchar_t *inputstrs[INPUTSTRS_LENGTH] = 
     {
-        L"{% if teststr in string1d %}",
+        L"{% if teststr1 == \"höhö\"%}",
         L"{% for bla == bla %}",
         L"{{ Test }} Hello World {{Noch ein Test}}",
         L"{% end-for %}",

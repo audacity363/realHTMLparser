@@ -205,14 +205,22 @@ int operator_table[SIZE_OF_COMPARE_TABLE][OPERATOR_COUNT] =
 int if_getVarType(if_parms_t *parm)
 {
     int ret = 0;
+    char *c_val = NULL;
 
     if(parm->type == IFSTR)
         return(STRING);
 
-    if((ret = getVarType(vars_anker, NULL, parm->val)) < 0)
+    if(!(c_val = malloc(wcslen(parm->val)+1)))
+        return(-2);
+    
+    wcstombs(c_val, parm->val, wcslen(parm->val)+1);
+
+    if((ret = getVarType(vars_anker, NULL, c_val)) < 0)
     {
+        free(c_val);
         return(-1);
     }
+    free(c_val);
 
     if(parm->hasindex == 0 && ret == STRING)
         return(STRING);
@@ -334,21 +342,21 @@ int (*getIfFunction(int types[3]))(if_parms_t*, if_parms_t*, if_parms_t*)
  * return code: > 0 Compare type
  *               -1 Unsupported
  */
-int getCompareType(char *val)
+int getCompareType(wchar_t *val)
 {
-    if(strcmp(val, "==") == 0)
+    if(wcscmp(val, L"==") == 0)
         return(IFEQUALS);
-    if(strcmp(val, "<=") == 0)
+    if(wcscmp(val, L"<=") == 0)
         return(IFLESSTHENEQUAL);
-    if(strcmp(val, ">=") == 0)
+    if(wcscmp(val, L">=") == 0)
         return(IFGREATERTHENEQUALS);
-    if(strcmp(val, "<") == 0)
+    if(wcscmp(val, L"<") == 0)
         return(IFLESSTHEN);
-    if(strcmp(val, ">") == 0)
+    if(wcscmp(val, L">") == 0)
         return(IFGREATERTHEN);
-    if(strcmp(val, "!=") == 0)
+    if(wcscmp(val, L"!=") == 0)
         return(IFUNEQUALS);
-    if(strcmp(val, "in") == 0)
+    if(wcscmp(val, L"in") == 0)
         return(IFIN);
 
     return(-1);
@@ -421,7 +429,11 @@ int exec_if(if_parms_t *parms, wchar_t **body, int body_length)
         return(-8);
     }
 
-    if_function(leftval, compare, rightval);
+    if(if_function(leftval, compare, rightval) != 0)
+    {
+        freeLineBuff(&status);
+        return(0);
+    }
 
     printf("---------If body-------\n");
     for(i=1; i < body_length; i++)
@@ -436,16 +448,113 @@ int exec_if(if_parms_t *parms, wchar_t **body, int body_length)
 //String String Equals
 int SSEQ(if_parms_t *leftval, if_parms_t *compare, if_parms_t *rightval)
 {
+    int left_length = 0, right_length = 0,
+        cmp_ret = 0;
+    char *left_name = NULL, *right_name = NULL;
+    wchar_t *left_val = NULL, *right_val = NULL;
+
+    if(leftval->type != IFSTR)
+    {
+
+        if(!(left_name = malloc(wcslen(leftval->val)+1)))
+        {
+            printf("Malloc error\n");
+            return(-1);
+        }
+        
+        wcstombs(left_name, leftval->val, wcslen(leftval->val)+1);
+
+
+        if((left_length = getStringLength(vars_anker, NULL, left_name)) < 0)
+        {
+            free(left_name);
+            return(-2);
+        }
+
+        if(!(left_val = malloc(left_length*sizeof(wchar_t))))
+        {
+            free(left_name);
+            return(-3);
+        }
+
+        if(getString(vars_anker, NULL, left_name, left_val, left_length))
+        {
+            free(left_name);
+            free(left_val);
+            return(-4);
+        }
+        free(left_name);
+    }
+    else
+    {
+        left_val = leftval->val;
+    }
+
+    if(rightval->type != IFSTR)
+    {
+
+        if(!(right_name = malloc(wcslen(rightval->val)+1)))
+        {
+            printf("Malloc error\n");
+            return(-1);
+        }
+        
+        wcstombs(right_name, rightval->val, wcslen(rightval->val)+1);
+
+
+        if((right_length = getStringLength(vars_anker, NULL, right_name)) < 0)
+        {
+            free(right_name);
+            free(left_val);
+            return(-2);
+        }
+
+        if(!(right_val = malloc(right_length*sizeof(wchar_t))))
+        {
+            free(left_name);
+            free(left_val);
+            return(-3);
+        }
+
+        if(getString(vars_anker, NULL, left_name, left_val, left_length))
+        {
+            free(right_name);
+            free(left_val);
+            return(-4);
+        }
+        free(right_name);
+    }
+    else
+    {
+        right_val = rightval->val;
+    }
+
+    if((cmp_ret = wcscmp(left_val, right_val)) <  0)
+        cmp_ret *= -1;
+
+    free(left_val);
+    free(right_val);
+    return(cmp_ret);
 }
 
 //String String Unequals
 int SSUE(if_parms_t *leftval, if_parms_t *compare, if_parms_t *rightval)
 {
+    int ret = 0;
+
+    if((ret = SSEQ(leftval, compare, rightval)) < 0)
+        return(ret);
+    else if(ret != 0)
+        return(0);
+    else
+        return(1);
 }
 
 //Float Integer Equals
 int FIEQ(if_parms_t *leftval, if_parms_t *compare, if_parms_t *rightval)
 {
+    double left_val = 0;   
+    int right_val = 0;
 }
 //Float Integer Unequals
 int FIUE(if_parms_t *leftval, if_parms_t *compare, if_parms_t *rightval)

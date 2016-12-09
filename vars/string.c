@@ -8,6 +8,40 @@
 
 //TODO: Write copy function and track complete size of variable in vars_t struct
 
+int getStringLength(vars_t *anker, char *group, char *name)
+{
+    vars_t *target = NULL,
+           *grp = NULL;
+
+    if(group)
+    {
+        if(!(grp = isDefined(anker, group)))
+        {
+            return(GRP_NOT_DEFINED);
+        }
+        if(!(target = isDefined(grp->next_lvl, name)))
+        {
+            return(VAR_NOT_DEFINED);
+        }
+    }
+    else
+    {
+        if(!(target = isDefined(anker, name)))
+        {
+            return(VAR_NOT_DEFINED);
+        }
+    }
+
+    if(target->type != STRING &&
+       target->type != ONEDSTRING &&
+       target->type != TWODSTRING &&
+       target->type != THREEDSTRING)
+        return(WRONG_VAR_TYPE);
+
+    return(target->length);
+
+}
+
 int addString(vars_t *anker, char *group, char *name, wchar_t *val, size_t length)
 {
     vars_t *new = NULL;
@@ -23,6 +57,8 @@ int addString(vars_t *anker, char *group, char *name, wchar_t *val, size_t lengt
         free(new);
         return(MEMORY_ALLOC_ERROR);
     }
+
+    new->length = length+1;
 
     wcscpy((wchar_t*)new->data, val);
     return(0);
