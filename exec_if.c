@@ -768,6 +768,342 @@ int FIGTEQ(if_parms_t *leftval, if_parms_t *compare, if_parms_t *rightval)
 //Float Float Equals
 int FFEQ(if_parms_t *leftval, if_parms_t *compare, if_parms_t *rightval)
 {
+    double left_val = 0,
+        right_val = 0,
+        ret = 0;
+    char *left_name = NULL,
+         *right_name = NULL;
+    
+    if(convertNames(leftval, rightval, &left_name, &right_name) < 0)
+    {
+        return(-1);
+    }
+    
+    if((ret = getFloat(vars_anker, NULL, left_name, &left_val)) == GRP_NOT_DEFINED ||
+        ret == VAR_NOT_DEFINED)
+    {
+        printf("error: [%s]\n", var_errorstrs[ret]);
+        return(-2);
+    }
+    if((ret = getFloat(vars_anker, NULL, right_name, &right_val)) == GRP_NOT_DEFINED ||
+        ret == VAR_NOT_DEFINED)
+    {
+        printf("error: [%s]\n", var_errorstrs[ret]);
+        return(-2);
+    }
+
+    if(left_val == right_val)
+    {
+        freeNames(&left_name, &right_name);
+        return(0);
+    }
+    freeNames(&left_name, &right_name);
+    return(1);
+
+}
+//Float Float Unequals
+int FFUE(if_parms_t *leftval, if_parms_t *compare, if_parms_t *rightval)
+{
+    int ret = 0;
+
+    if((ret = FFEQ(leftval, compare, rightval)) < 0)
+        return(ret);
+    else if(ret != 0)
+        return(0);
+    else
+        return(1);
+
+    return(1);
+}
+//Float Float Less then
+int FFLT(if_parms_t *leftval, if_parms_t *compare, if_parms_t *rightval)
+{
+    double left_val = 0,
+        right_val = 0,
+        ret = 0;
+    char *left_name = NULL,
+         *right_name = NULL;
+    
+    if(convertNames(leftval, rightval, &left_name, &right_name) < 0)
+    {
+        return(-1);
+    }
+    
+    if((ret = getFloat(vars_anker, NULL, left_name, &left_val)) == GRP_NOT_DEFINED ||
+        ret == VAR_NOT_DEFINED)
+    {
+        printf("error: [%s]\n", var_errorstrs[ret]);
+        return(-2);
+    }
+    if((ret = getFloat(vars_anker, NULL, right_name, &right_val)) == GRP_NOT_DEFINED ||
+        ret == VAR_NOT_DEFINED)
+    {
+        printf("error: [%s]\n", var_errorstrs[ret]);
+        return(-2);
+    }
+
+    if(left_val < right_val)
+    {
+        freeNames(&left_name, &right_name);
+        return(0);
+    }
+    freeNames(&left_name, &right_name);
+    return(1);
+}
+//Float Float Less then equals
+int FFLTEQ(if_parms_t *leftval, if_parms_t *compare, if_parms_t *rightval)
+{
+    double left_val = 0,
+        right_val = 0,
+        ret = 0;
+    char *left_name = NULL,
+         *right_name = NULL;
+    
+    if(convertNames(leftval, rightval, &left_name, &right_name) < 0)
+    {
+        return(-1);
+    }
+    
+    if((ret = getFloat(vars_anker, NULL, left_name, &left_val)) == GRP_NOT_DEFINED ||
+        ret == VAR_NOT_DEFINED)
+    {
+        printf("error: [%s]\n", var_errorstrs[ret]);
+        return(-2);
+    }
+    if((ret = getFloat(vars_anker, NULL, right_name, &right_val)) == GRP_NOT_DEFINED ||
+        ret == VAR_NOT_DEFINED)
+    {
+        printf("error: [%s]\n", var_errorstrs[ret]);
+        return(-2);
+    }
+
+    if(left_val <= right_val)
+    {
+        freeNames(&left_name, &right_name);
+        return(0);
+    }
+    freeNames(&left_name, &right_name);
+    return(1);
+}
+//Float Float Greater then
+int FFGT(if_parms_t *leftval, if_parms_t *compare, if_parms_t *rightval)
+{
+    double left_val = 0,
+        right_val = 0,
+        ret = 0;
+    char *left_name = NULL,
+         *right_name = NULL;
+    
+    if(convertNames(leftval, rightval, &left_name, &right_name) < 0)
+    {
+        return(-1);
+    }
+    
+    if((ret = getFloat(vars_anker, NULL, left_name, &left_val)) == GRP_NOT_DEFINED ||
+        ret == VAR_NOT_DEFINED)
+    {
+        printf("error: [%s]\n", var_errorstrs[ret]);
+        return(-2);
+    }
+    if((ret = getFloat(vars_anker, NULL, right_name, &right_val)) == GRP_NOT_DEFINED ||
+        ret == VAR_NOT_DEFINED)
+    {
+        printf("error: [%s]\n", var_errorstrs[ret]);
+        return(-2);
+    }
+
+    if(left_val > right_val)
+    {
+        freeNames(&left_name, &right_name);
+        return(0);
+    }
+    freeNames(&left_name, &right_name);
+    return(1);
+}
+//Float Float Greater then equals
+int FFGTEQ(if_parms_t *leftval, if_parms_t *compare, if_parms_t *rightval)
+{
+    double left_val = 0,
+        right_val = 0,
+        ret = 0;
+    char *left_name = NULL,
+         *right_name = NULL;
+    
+    if(convertNames(leftval, rightval, &left_name, &right_name) < 0)
+    {
+        return(-1);
+    }
+    
+    if((ret = getFloat(vars_anker, NULL, left_name, &left_val)) == GRP_NOT_DEFINED ||
+        ret == VAR_NOT_DEFINED)
+    {
+        printf("error: [%s]\n", var_errorstrs[ret]);
+        return(-2);
+    }
+    if((ret = getFloat(vars_anker, NULL, right_name, &right_val)) == GRP_NOT_DEFINED ||
+        ret == VAR_NOT_DEFINED)
+    {
+        printf("error: [%s]\n", var_errorstrs[ret]);
+        return(-2);
+    }
+
+    if(left_val >= right_val)
+    {
+        freeNames(&left_name, &right_name);
+        return(0);
+    }
+    freeNames(&left_name, &right_name);
+    return(1);
+}
+
+//Integer Integer Equals
+int IIEQ(if_parms_t *leftval, if_parms_t *compare, if_parms_t *rightval)
+{
+    int left_val = 0,
+        right_val = 0,
+        ret = 0;
+    char *left_name = NULL,
+         *right_name = NULL;
+    
+    if(convertNames(leftval, rightval, &left_name, &right_name) < 0)
+    {
+        return(-1);
+    }
+    
+    if((ret = getInteger(vars_anker, NULL, left_name, &left_val)) == GRP_NOT_DEFINED ||
+        ret == VAR_NOT_DEFINED)
+    {
+        printf("error: [%s]\n", var_errorstrs[ret]);
+        return(-2);
+    }
+    if((ret = getInteger(vars_anker, NULL, right_name, &right_val)) == GRP_NOT_DEFINED ||
+        ret == VAR_NOT_DEFINED)
+    {
+        printf("error: [%s]\n", var_errorstrs[ret]);
+        return(-2);
+    }
+
+    if(left_val == right_val)
+    {
+        freeNames(&left_name, &right_name);
+        return(0);
+    }
+    freeNames(&left_name, &right_name);
+    return(1);
+}
+//Integer Integer Unequals
+int IIUE(if_parms_t *leftval, if_parms_t *compare, if_parms_t *rightval)
+{
+    return(1);
+}
+//Integer Integer Less then
+int IILT(if_parms_t *leftval, if_parms_t *compare, if_parms_t *rightval)
+{
+    int left_val = 0,
+        right_val = 0,
+        ret = 0;
+    char *left_name = NULL,
+         *right_name = NULL;
+    
+    if(convertNames(leftval, rightval, &left_name, &right_name) < 0)
+    {
+        return(-1);
+    }
+    
+    if((ret = getInteger(vars_anker, NULL, left_name, &left_val)) == GRP_NOT_DEFINED ||
+        ret == VAR_NOT_DEFINED)
+    {
+        printf("error: [%s]\n", var_errorstrs[ret]);
+        return(-2);
+    }
+    if((ret = getInteger(vars_anker, NULL, right_name, &right_val)) == GRP_NOT_DEFINED ||
+        ret == VAR_NOT_DEFINED)
+    {
+        printf("error: [%s]\n", var_errorstrs[ret]);
+        return(-2);
+    }
+
+    if(left_val < right_val)
+    {
+        freeNames(&left_name, &right_name);
+        return(0);
+    }
+    freeNames(&left_name, &right_name);
+    return(1);
+}
+//Integer Integer Less then equals
+int IILTEQ(if_parms_t *leftval, if_parms_t *compare, if_parms_t *rightval)
+{
+    int left_val = 0,
+        right_val = 0,
+        ret = 0;
+    char *left_name = NULL,
+         *right_name = NULL;
+    
+    if(convertNames(leftval, rightval, &left_name, &right_name) < 0)
+    {
+        return(-1);
+    }
+    
+    if((ret = getInteger(vars_anker, NULL, left_name, &left_val)) == GRP_NOT_DEFINED ||
+        ret == VAR_NOT_DEFINED)
+    {
+        printf("error: [%s]\n", var_errorstrs[ret]);
+        return(-2);
+    }
+    if((ret = getInteger(vars_anker, NULL, right_name, &right_val)) == GRP_NOT_DEFINED ||
+        ret == VAR_NOT_DEFINED)
+    {
+        printf("error: [%s]\n", var_errorstrs[ret]);
+        return(-2);
+    }
+
+    if(left_val <= right_val)
+    {
+        freeNames(&left_name, &right_name);
+        return(0);
+    }
+    freeNames(&left_name, &right_name);
+    return(1);
+}
+//Integer Integer Greater then
+int IIGT(if_parms_t *leftval, if_parms_t *compare, if_parms_t *rightval)
+{
+    int left_val = 0,
+        right_val = 0,
+        ret = 0;
+    char *left_name = NULL,
+         *right_name = NULL;
+    
+    if(convertNames(leftval, rightval, &left_name, &right_name) < 0)
+    {
+        return(-1);
+    }
+    
+    if((ret = getInteger(vars_anker, NULL, left_name, &left_val)) == GRP_NOT_DEFINED ||
+        ret == VAR_NOT_DEFINED)
+    {
+        printf("error: [%s]\n", var_errorstrs[ret]);
+        return(-2);
+    }
+    if((ret = getInteger(vars_anker, NULL, right_name, &right_val)) == GRP_NOT_DEFINED ||
+        ret == VAR_NOT_DEFINED)
+    {
+        printf("error: [%s]\n", var_errorstrs[ret]);
+        return(-2);
+    }
+
+    if(left_val > right_val)
+    {
+        freeNames(&left_name, &right_name);
+        return(0);
+    }
+    freeNames(&left_name, &right_name);
+    return(1);
+}
+//Integer Integer Greater then equals
+int IIGTEQ(if_parms_t *leftval, if_parms_t *compare, if_parms_t *rightval)
+{
     int left_val = 0,
         right_val = 0,
         ret = 0;
@@ -798,63 +1134,6 @@ int FFEQ(if_parms_t *leftval, if_parms_t *compare, if_parms_t *rightval)
         return(0);
     }
     freeNames(&left_name, &right_name);
-    return(1);
-
-}
-//Float Float Unequals
-int FFUE(if_parms_t *leftval, if_parms_t *compare, if_parms_t *rightval)
-{
-    return(1);
-}
-//Float Float Less then
-int FFLT(if_parms_t *leftval, if_parms_t *compare, if_parms_t *rightval)
-{
-    return(1);
-}
-//Float Float Less then equals
-int FFLTEQ(if_parms_t *leftval, if_parms_t *compare, if_parms_t *rightval)
-{
-    return(1);
-}
-//Float Float Greater then
-int FFGT(if_parms_t *leftval, if_parms_t *compare, if_parms_t *rightval)
-{
-    return(1);
-}
-//Float Float Greater then equals
-int FFGTEQ(if_parms_t *leftval, if_parms_t *compare, if_parms_t *rightval)
-{
-    return(1);
-}
-
-//Integer Integer Equals
-int IIEQ(if_parms_t *leftval, if_parms_t *compare, if_parms_t *rightval)
-{
-    return(1);
-}
-//Integer Integer Unequals
-int IIUE(if_parms_t *leftval, if_parms_t *compare, if_parms_t *rightval)
-{
-    return(1);
-}
-//Integer Integer Less then
-int IILT(if_parms_t *leftval, if_parms_t *compare, if_parms_t *rightval)
-{
-    return(1);
-}
-//Integer Integer Less then equals
-int IILTEQ(if_parms_t *leftval, if_parms_t *compare, if_parms_t *rightval)
-{
-    return(1);
-}
-//Integer Integer Greater then
-int IIGT(if_parms_t *leftval, if_parms_t *compare, if_parms_t *rightval)
-{
-    return(1);
-}
-//Integer Integer Greater then equals
-int IIGTEQ(if_parms_t *leftval, if_parms_t *compare, if_parms_t *rightval)
-{
     return(1);
 }
 
