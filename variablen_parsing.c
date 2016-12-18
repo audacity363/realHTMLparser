@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <wchar.h>
 
 #include "vars.h"
 #include "parser.h"
@@ -57,7 +58,6 @@ int getIndex(token_t *anker, int *index_num)
 {
     int index_type = 0,
         in_brackets = false,
-        closed_found = false,
         i = 0;
 
     token_t *hptr = anker->next;
@@ -105,15 +105,12 @@ int parseVariable(wchar_t *begin, wchar_t *end)
             *variablename;
     token_t anker;
     int varname_length, 
-        index_type,
-        index_num[3] = {-1, -1, -1},
-        ret,
         i = 0;
 
     anker.next = NULL;
     anker.prev = NULL;
 
-    while(curpos+1 != end)
+    while(curpos+i <= end)
     {
         if(wcsncmp(curpos+i, L"{", 1) == 0)
             addToken(&anker, curpos+i, VARIABLEBEGIN);

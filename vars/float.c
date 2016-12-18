@@ -25,6 +25,33 @@ int addFloat(vars_t *anker, char *group, char *name, double val)
     return(0);
 }
 
+int getFloat(vars_t *anker, char *group, char *name, double *val)
+{
+    vars_t *target = NULL,
+           *grp = NULL;
+
+    if(group)
+    {
+        if(!(grp = isDefined(anker, group)))
+        {
+            return(GRP_NOT_DEFINED);
+        }
+        if(!(target = isDefined(grp->next_lvl, name)))
+        {
+            return(VAR_NOT_DEFINED);
+        }
+    }
+    else
+    {
+        if(!(target = isDefined(anker, name)))
+        {
+            return(VAR_NOT_DEFINED);
+        }
+    }
+
+    *val = *((double*)target->data);
+}
+
 int add1DFloatArray(vars_t *anker, char *group, char *name, int length)
 {
     vars_t *new = NULL;
@@ -43,6 +70,7 @@ int add1DFloatArray(vars_t *anker, char *group, char *name, int length)
     }
     return(0);
 }
+
 
 int edit1DFloatArray(vars_t *anker, char *group, char *name, double val, int x_index)
 {

@@ -33,6 +33,7 @@ int addGroup(vars_t *anker, char *name)
 
     end->next = new;
     new->prev = end;
+    new->next_lvl = NULL;
     new->next = NULL;
     return(0);
 }
@@ -56,6 +57,34 @@ int addInteger(vars_t *anker, char *group, char *name, int val)
 
     *((int*)new->data) = val;
     return(0);
+}
+
+int getInteger(vars_t *anker, char *group, char *name, int *val)
+{
+    vars_t *target = NULL,
+           *grp = NULL;
+
+    if(group)
+    {
+        if(!(grp = isDefined(anker, group)))
+        {
+            return(GRP_NOT_DEFINED);
+        }
+        if(!(target = isDefined(grp->next_lvl, name)))
+        {
+            return(VAR_NOT_DEFINED);
+        }
+    }
+    else
+    {
+        if(!(target = isDefined(anker, name)))
+        {
+            return(VAR_NOT_DEFINED);
+        }
+    }
+
+    *val = *(int*)(target->data);
+
 }
 
 int add1DIntegerArray(vars_t *anker, char *group, char *name, int length)

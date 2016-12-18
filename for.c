@@ -40,7 +40,7 @@ int end_for_handling(token_t *anker, status_t *stat)
     printf("---------for body-------\n");
     for(i=1; i < stat->sizeof_sav_buff; i++)
     {
-        printf("%s\n", stat->save_buff[i]);
+        printf("%S\n", stat->save_buff[i]);
     }
     printf("-----------------------\n");
 

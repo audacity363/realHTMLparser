@@ -98,7 +98,8 @@ int parseLine(wchar_t *line, status_t *status)
            restlength = len;
     int i,
         inblock = false,
-        between_len;
+        between_len = 0,
+        ret = 0;
 
     printf("parse: [%S]\n", inputstr);
     while(restlength != 0) 
@@ -134,11 +135,13 @@ int parseLine(wchar_t *line, status_t *status)
             }
             else if(inblock == COMMANDBLOCK)
             {
-                if(parseCommand(begin, end, status) == JUSTSAVE)
+                if((ret = parseCommand(begin, end, status)) == JUSTSAVE)
                 {
                     saveLine(backup_line, status);
                     break;
                 }
+                else if(ret == EXIT)
+                    return(EXIT);
             }
             restlength=wcslen(end+2);
             prev_end = inputstr = end+2;
@@ -166,7 +169,7 @@ int initVars(vars_t *anker)
         return(1);
     }
 
-    addInteger(anker, "hallo", "test", 677);
+    addInteger(anker, NULL, "test", 677);
     addInteger(anker, NULL, "test1", 67);
     addInteger(anker, "hallo", "test2", 32);
 
@@ -279,7 +282,7 @@ int initVars(vars_t *anker)
                 edit1DBooleanArray(anker, NULL, "bool2d", 1, x, y);
         }
 
-    addFloat(anker, NULL, "float", 72.62);
+    addFloat(anker, NULL, "float", 677.01);
     add1DFloatArray(anker, NULL, "float1d", 5);
     for(x=0; x < 5; x++)
     {
@@ -307,11 +310,13 @@ int main()
 
     vars_anker = anker;
     printAllVars(vars_anker);
-#define INPUTSTRS_LENGTH 6
+#define INPUTSTRS_LENGTH 8
 
     wchar_t *inputstrs[INPUTSTRS_LENGTH] = 
     {
-        L"{% if teststr1 == \"höhö\"%}",
+        L"{% genJSON(float, hallo) %}",
+        L"{% exit %}",
+        L"{% if float == float %}",
         L"{% for bla == bla %}",
         L"{{ Test }} Hello World {{Noch ein Test}}",
         L"{% end-for %}",
@@ -322,17 +327,19 @@ int main()
     status.in_for = 0;
     status.in_if = 0;
     status.save_buff= NULL;
+    status.just_save = 0;
     status.sizeof_sav_buff = 0;
 
     for(i=0; i < INPUTSTRS_LENGTH; i++)
     {
-        parseLine(inputstrs[i], &status);
+        if(parseLine(inputstrs[i], &status) == EXIT)
+            break;
     }
 
-    for(i=0; i < status.sizeof_sav_buff; i++)
+    /*for(i=0; i < status.sizeof_sav_buff; i++)
     {
         printf("%s\n", status.save_buff[i]);
-    }
+    }*/
 
     freeLineBuff(&status);
 }

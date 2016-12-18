@@ -53,7 +53,8 @@ typedef struct variables_s vars_t;
 typedef unsigned short int bool;
 
 
-//----------------------String function--------------------------------------------
+//----------------------String function----------------------------------------
+int getStringLength(vars_t *anker, char *group, char *name);
 int addString(vars_t *anker, char *group, char *name, wchar_t *val, size_t length);
 int getString(vars_t *anker, char *group, char *name, wchar_t *val, int length);
 int create1DCharArrayFromString(vars_t *inanker, vars_t *outanker, char *group, 
@@ -84,4 +85,19 @@ int edit3DStringArray(vars_t *anker, char *group, char *name, wchar_t *val,
                       int x_index, int y_index, int z_index);
 int getStringFrom3DArray(vars_t *anker, char *group, char *name, wchar_t *val,
                          int length, int x_index, int y_index, int z_index);
-//----------------------End String function--------------------------------------------
+//----------------------End String function------------------------------------
+
+//----------------------Integer function---------------------------------------
+int getInteger(vars_t *anker, char *group, char *name, int *val);
+//----------------------End Integer function-----------------------------------
+
+//----------------------Float function---------------------------------------
+int getFloat(vars_t *anker, char *group, char *name, double *val);
+//----------------------End Float function-----------------------------------
+
+//----------------------Utils function-----------------------------------------
+int getVarType(vars_t *anker, char *group, char *name);
+void printAllVarsJSON(vars_t *anker);
+void printAllVarsToFileJSON(vars_t *anker, FILE *fp);
+int printVarsToFileJSON(vars_t *anker, char **var_names, int length, FILE *fp);
+//----------------------End Utils function-------------------------------------

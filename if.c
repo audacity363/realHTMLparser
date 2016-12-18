@@ -32,8 +32,6 @@ int if_handling(token_t *anker, status_t *stat)
 
 int parseIfHead(token_t *head, wchar_t *line)
 {
-    size_t line_length = wcslen(line);
-
     return(lineToTokens(head, line, line+wcslen(line)));
 }
 
@@ -59,7 +57,7 @@ token_t *jumpOverCMDName(token_t *anker)
     return(hptr);
 }
 
-int addParm(if_parms_t *parms, int val_len, char *val, int str, int compare, index_parms index)
+int addParm(if_parms_t *parms, int val_len, wchar_t *val, int str, int compare, index_parms index)
 {
     int type = -1;
     if_parms_t *new,
@@ -85,12 +83,12 @@ int addParm(if_parms_t *parms, int val_len, char *val, int str, int compare, ind
         return(-1);
     new->type = type;
     new->val_length = val_len;
-    if((new->val = malloc(val_len)) == NULL)
+    if((new->val = malloc(val_len*sizeof(wchar_t))) == NULL)
     {
         free(new);
         return(-2);
     }    
-    strcpy(new->val, val);
+    wcscpy(new->val, val);
     new->hasindex = index.index_type;
     new->index1d = index.index[0];
     new->index2d = index.index[1];
@@ -118,16 +116,16 @@ void printParms(if_parms_t *anker)
         switch(hptr->type)
         {
             case IFVARIABLE:
-                printf("variable\n\tval: [%s]\n", hptr->val);
+                printf("variable\n\tval: [%S]\n", hptr->val);
                 break;
             case IFSTR:
-                printf("string\n\tval: [%s]\n", hptr->val);
+                printf("string\n\tval: [%S]\n", hptr->val);
                 break;
             case IFCOMPARE:
-                printf("compare\n\tval: [%s]\n", hptr->val);
+                printf("compare\n\tval: [%S]\n", hptr->val);
                 break;
             default:
-                printf("unkown\n\tval: [%s]\n", hptr->val);
+                printf("unkown\n\tval: [%S]\n", hptr->val);
                 
         }
         hptr = hptr->next;
@@ -140,12 +138,11 @@ token_t *findNextParm(if_parms_t *parms, token_t *tokens)
     int in_str = false,
         in_index = 0,
         length = 1,
-        type = -1,
         found_str = false,
         index_i = 0,
         found_compare = false;
-    char *buff = malloc(1);
-    char index_buff[4] = {0, 0, 0, 0};
+    wchar_t *buff = malloc(sizeof(wchar_t));
+    wchar_t index_buff[4] = {0, 0, 0, 0};
     index_parms index = {0, {-1, -1, -1}};
    
 
@@ -153,8 +150,8 @@ token_t *findNextParm(if_parms_t *parms, token_t *tokens)
     {
         if(hptr->type == SPACE && in_str)
         {
-            buff[length-1] = hptr->val;
-            buff = realloc(buff, ++length);
+            memcpy(buff+(length-1), &hptr->val, sizeof(wchar_t));
+            buff = realloc(buff, ++length*sizeof(wchar_t));
         }
         else if(hptr->type == SPACE)
             break;
@@ -169,14 +166,14 @@ token_t *findNextParm(if_parms_t *parms, token_t *tokens)
         }
         else if(hptr->type == INDEXCLOSE && !in_str && in_index)
         {
-            index.index[index.index_type++] = atoi(index_buff);    
+            index.index[index.index_type++] = wcstol(index_buff, NULL, 10);    
             memset(index_buff, 0x00, sizeof(index_buff));
             index_i = 0;
             in_index = false;
         }
         else if(hptr->type == CHAR && in_index)
         {
-            index_buff[index_i++] = hptr->val;
+            memcpy(index_buff+(index_i++), &hptr->val, sizeof(wchar_t));
         }
         else if(hptr->type == STR && !in_str)
         {
@@ -185,14 +182,14 @@ token_t *findNextParm(if_parms_t *parms, token_t *tokens)
         }
         else if(hptr->type == CHAR)
         {
-            buff[length-1] = hptr->val;
-            buff = realloc(buff, ++length);
+            memcpy(buff+(length-1), &hptr->val, sizeof(wchar_t));
+            buff = realloc(buff, ++length*sizeof(wchar_t));
         }
         else if(hptr->type == EQUALS || hptr->type == GREATERTHEN || hptr->type == LESSTHEN)
         {
             found_compare = true;
-            buff[length-1] = hptr->val;
-            buff = realloc(buff, ++length);
+            memcpy(buff+(length-1), &hptr->val, sizeof(wchar_t));
+            buff = realloc(buff, ++length*sizeof(wchar_t));
         }
         hptr = hptr->next;
     }
@@ -203,7 +200,7 @@ token_t *findNextParm(if_parms_t *parms, token_t *tokens)
     }
     hptr = hptr->next;
 
-    buff[length-1] = '\0';
+    memset(buff+(length-1), 0x00, sizeof(wchar_t));
 
     printf("Index_type :[%d]\n", index.index_type);
 
@@ -217,8 +214,6 @@ token_t *findNextParm(if_parms_t *parms, token_t *tokens)
 token_t *findParms(if_parms_t *parms, token_t *head)
 {
     token_t *hptr;
-    int in_str = false,
-        found_cmd = false;
 
     //Jump over command name
     hptr = jumpOverCMDName(head);
@@ -229,7 +224,6 @@ token_t *findParms(if_parms_t *parms, token_t *head)
 
 int end_if_handling(token_t *anker, status_t *stat)
 {
-    int i;
     wchar_t *if_head;
 
     token_t head = {' ', -1, NULL, NULL},

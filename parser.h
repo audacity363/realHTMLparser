@@ -16,6 +16,7 @@
 #define IFBLOCK 200
 
 #define JUSTSAVE 300
+#define EXIT 400
 
 enum {
     COMMANDBEGIN,
@@ -37,7 +38,8 @@ enum {
     CLAMPS,
     BLOCKSTART,
     BLOCKEND,
-    CMDSTARTEND
+    CMDSTARTEND,
+    COMMA
 };
 
 enum {
@@ -77,7 +79,7 @@ struct status_s
 
 struct if_parms_s
 {
-    char *val;
+    wchar_t *val;
     int val_length;
     int type;
     int varlib_type;
@@ -94,3 +96,6 @@ typedef struct status_s status_t;
 typedef struct if_parms_s if_parms_t;
 
 extern vars_t *vars_anker;
+
+void freeLineBuff(status_t *stat);
+int parseLine(wchar_t *line, status_t *status);

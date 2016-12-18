@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <wchar.h>
 
 #include "vars.h"
 #include "parser.h"
@@ -8,16 +9,23 @@
 #include "command_parsing.h"
 #include "if.h"
 #include "for.h"
+#include "json.h"
 
 int printVars_handling(token_t*, status_t*);
+int typeof_handling(token_t*, status_t*);
+int genJSON_handling(token_t*, status_t*);
+int exit_handling(token_t*, status_t*);
 
-#define FUNCTION_DIC_LENGTH 5 
+#define FUNCTION_DIC_LENGTH 8
 wchar_t function_dic_c[FUNCTION_DIC_LENGTH][50] = {
         L"if",
         L"end-if",
         L"for",
         L"end-for",
-        L"printVars"
+        L"printVars",
+        L"typeof",
+        L"genJSON",
+        L"exit"
     };
 
 int (*function_dic_v[FUNCTION_DIC_LENGTH])(token_t *anker, status_t *stat) = {
@@ -25,8 +33,34 @@ int (*function_dic_v[FUNCTION_DIC_LENGTH])(token_t *anker, status_t *stat) = {
         end_if_handling,
         for_handling,
         end_for_handling,
-        printVars_handling
+        printVars_handling,
+        typeof_handling,
+        genJSON_handling,
+        exit_handling
     };
+
+int exit_handling(token_t *anker, status_t *stat)
+{
+    return(EXIT);
+}
+
+int typeof_handling(token_t *anker, status_t *stat)
+{
+    if(stat->just_save)
+        return(JUSTSAVE);
+
+    printf("Typepf function\n");
+    return(0);
+}
+
+int genJSON_handling(token_t *anker, status_t *stat)
+{
+    if(stat->just_save)
+        return(JUSTSAVE);
+    printf("JSON function\n");
+    exec_json(anker, stat);
+    return(0);
+}
 
 int printVars_handling(token_t *anker, status_t *stat)
 {
@@ -158,6 +192,8 @@ int lineToTokens(token_t *anker, wchar_t *begin, wchar_t *end)
             addToken(anker, curpos+i, CLINGTO);
         else if(wcsncmp(curpos+i, L")", 1) == 0)
             addToken(anker, curpos+i, CLAMPS);
+        else if(wcsncmp(curpos+i, L",", 1) == 0)
+            addToken(anker, curpos+i, COMMA);
         else
             addToken(anker, curpos+i, CHAR);
         i++;
@@ -168,9 +204,8 @@ int lineToTokens(token_t *anker, wchar_t *begin, wchar_t *end)
 
 int parseCommand(wchar_t *begin, wchar_t *end, status_t *stat)
 {
-    token_t anker, *offset;
-    wchar_t *curpos = begin,
-            *cmd_name;
+    token_t anker, *offset = NULL;
+    wchar_t *cmd_name = NULL;
 
     int cmd_name_length, end_cmd_offset, ret;
     int (*cmd_func)(token_t *anker, status_t *stat);

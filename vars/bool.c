@@ -94,6 +94,8 @@ int add2DBooleanArray(vars_t *anker, char *group, char *name, int x_length, int 
         free(new);
         return(MEMORY_ALLOC_ERROR);
     }
+
+    memset(new->data, 0x00, (x_length*y_length)*sizeof(bool));
     return(0);
 
 }
