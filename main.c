@@ -310,18 +310,13 @@ int main()
 
     vars_anker = anker;
     printAllVars(vars_anker);
-#define INPUTSTRS_LENGTH 8
+#define INPUTSTRS_LENGTH 3
 
     wchar_t *inputstrs[INPUTSTRS_LENGTH] = 
     {
-        L"{% genJSON(float, hallo) %}",
-        L"{% exit %}",
-        L"{% if float == float %}",
-        L"{% for bla == bla %}",
-        L"{{ Test }} Hello World {{Noch ein Test}}",
-        L"{% end-for %}",
-        L"{{balbalbal}}",
-        L"{% end-if %}"
+        L"{% macro test(hello=\"Test\", world=72, test) %}",
+        L"<h1>Hello World</h1>",
+        L"{% end-macro %}",
     };
 
     status.in_for = 0;

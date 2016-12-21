@@ -1,13 +1,20 @@
+CC = xlc
 INCLUDES = -I./vars/
-CARGS = -Wall -g
+//CARGS = -Wall -g
+CARGS = -g
 
 all:
-	gcc -c $(CARGS) token_handling.c -o token_handling.o $(INCLUDES)
-	gcc -c $(CARGS) command_parsing.c -o command_parsing.o $(INCLUDES)
-	gcc -c $(CARGS) variablen_parsing.c -o variablen_parsing.o $(INCLUDES)
-	gcc -c $(CARGS) if.c -o if.o $(INCLUDES)
-	gcc -c $(CARGS) exec_if.c -o exec_if.o $(INCLUDES)
-	gcc -c $(CARGS) for.c -o for.o $(INCLUDES)
-	gcc -c $(CARGS) json.c -o json.o $(INCLUDES)
-	gcc -g main.c -o main ./*.o $(INCLUDES) -L./vars -lvars
+	$(CC) -c $(CARGS) token_handling.c -o token_handling.o $(INCLUDES)
+	$(CC) -c $(CARGS) command_parsing.c -o command_parsing.o $(INCLUDES)
+	$(CC) -c $(CARGS) variablen_parsing.c -o variablen_parsing.o $(INCLUDES)
+	$(CC) -c $(CARGS) if.c -o if.o $(INCLUDES)
+	$(CC) -c $(CARGS) exec_if.c -o exec_if.o $(INCLUDES)
+	$(CC) -c $(CARGS) for.c -o for.o $(INCLUDES)
+	$(CC) -c $(CARGS) json.c -o json.o $(INCLUDES)
+	$(CC) -c $(CARGS) macro.c -o macro.o $(INCLUDES)
+	$(CC) -g main.c -o main ./*.o $(INCLUDES) -L./vars -lvars
+
+clean:
+	@rm -f ./*.o
+	@rm -f main
 

@@ -34,7 +34,7 @@ int exec_json(token_t *anker, status_t *stat)
                 for(i=0; i < var_count; i++)
                     free(varnames[i]);
                 free(varnames);
-                return(-2)
+                return(-2);
             }
 
             wcstombs(varnames[var_count], name_buff, wcslen(name_buff)+1);

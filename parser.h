@@ -73,6 +73,7 @@ struct status_s
     int just_save;
     int in_for;
     int in_if;
+    int in_macro;
     size_t sizeof_sav_buff;
     wchar_t **save_buff;
 };
@@ -90,6 +91,25 @@ struct if_parms_s
     struct if_parms_s *prev;
     struct if_parms_s *next;
 };
+
+struct macro_definition {
+    char *name;
+    char **value;
+    int aguments_number;
+    char **aguments_name;
+    void **default_value;
+    int *argument_type;
+    struct macro_definition *next;
+};
+
+typedef struct {
+    char *cur_name;
+    wchar_t **macro_buff;
+    int aguments_number;
+    char **aguments_name;
+    void **default_value;
+    struct macro_definition *anker;
+} macros;
 
 typedef struct token_s token_t;
 typedef struct status_s status_t;

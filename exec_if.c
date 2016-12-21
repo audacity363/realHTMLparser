@@ -769,8 +769,8 @@ int FIGTEQ(if_parms_t *leftval, if_parms_t *compare, if_parms_t *rightval)
 int FFEQ(if_parms_t *leftval, if_parms_t *compare, if_parms_t *rightval)
 {
     double left_val = 0,
-        right_val = 0,
-        ret = 0;
+        right_val = 0;
+    int ret = 0;
     char *left_name = NULL,
          *right_name = NULL;
     
@@ -819,8 +819,8 @@ int FFUE(if_parms_t *leftval, if_parms_t *compare, if_parms_t *rightval)
 int FFLT(if_parms_t *leftval, if_parms_t *compare, if_parms_t *rightval)
 {
     double left_val = 0,
-        right_val = 0,
-        ret = 0;
+        right_val = 0;
+    int ret = 0;
     char *left_name = NULL,
          *right_name = NULL;
     
@@ -854,8 +854,8 @@ int FFLT(if_parms_t *leftval, if_parms_t *compare, if_parms_t *rightval)
 int FFLTEQ(if_parms_t *leftval, if_parms_t *compare, if_parms_t *rightval)
 {
     double left_val = 0,
-        right_val = 0,
-        ret = 0;
+        right_val = 0;
+    int ret = 0;
     char *left_name = NULL,
          *right_name = NULL;
     
@@ -889,8 +889,8 @@ int FFLTEQ(if_parms_t *leftval, if_parms_t *compare, if_parms_t *rightval)
 int FFGT(if_parms_t *leftval, if_parms_t *compare, if_parms_t *rightval)
 {
     double left_val = 0,
-        right_val = 0,
-        ret = 0;
+        right_val = 0;
+    int ret = 0;
     char *left_name = NULL,
          *right_name = NULL;
     
@@ -924,8 +924,8 @@ int FFGT(if_parms_t *leftval, if_parms_t *compare, if_parms_t *rightval)
 int FFGTEQ(if_parms_t *leftval, if_parms_t *compare, if_parms_t *rightval)
 {
     double left_val = 0,
-        right_val = 0,
-        ret = 0;
+        right_val = 0;
+    int ret = 0;
     char *left_name = NULL,
          *right_name = NULL;
     
@@ -960,8 +960,8 @@ int FFGTEQ(if_parms_t *leftval, if_parms_t *compare, if_parms_t *rightval)
 int IIEQ(if_parms_t *leftval, if_parms_t *compare, if_parms_t *rightval)
 {
     int left_val = 0,
-        right_val = 0,
-        ret = 0;
+        right_val = 0;
+    int ret = 0;
     char *left_name = NULL,
          *right_name = NULL;
     
@@ -1000,8 +1000,8 @@ int IIUE(if_parms_t *leftval, if_parms_t *compare, if_parms_t *rightval)
 int IILT(if_parms_t *leftval, if_parms_t *compare, if_parms_t *rightval)
 {
     int left_val = 0,
-        right_val = 0,
-        ret = 0;
+        right_val = 0;
+    int ret = 0;
     char *left_name = NULL,
          *right_name = NULL;
     
@@ -1035,8 +1035,8 @@ int IILT(if_parms_t *leftval, if_parms_t *compare, if_parms_t *rightval)
 int IILTEQ(if_parms_t *leftval, if_parms_t *compare, if_parms_t *rightval)
 {
     int left_val = 0,
-        right_val = 0,
-        ret = 0;
+        right_val = 0;
+    int ret = 0;
     char *left_name = NULL,
          *right_name = NULL;
     
@@ -1070,8 +1070,8 @@ int IILTEQ(if_parms_t *leftval, if_parms_t *compare, if_parms_t *rightval)
 int IIGT(if_parms_t *leftval, if_parms_t *compare, if_parms_t *rightval)
 {
     int left_val = 0,
-        right_val = 0,
-        ret = 0;
+        right_val = 0;
+    int ret = 0;
     char *left_name = NULL,
          *right_name = NULL;
     
@@ -1105,8 +1105,8 @@ int IIGT(if_parms_t *leftval, if_parms_t *compare, if_parms_t *rightval)
 int IIGTEQ(if_parms_t *leftval, if_parms_t *compare, if_parms_t *rightval)
 {
     int left_val = 0,
-        right_val = 0,
-        ret = 0;
+        right_val = 0;
+    int ret = 0;
     char *left_name = NULL,
          *right_name = NULL;
     

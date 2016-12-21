@@ -10,13 +10,14 @@
 #include "if.h"
 #include "for.h"
 #include "json.h"
+#include "macro.h"
 
 int printVars_handling(token_t*, status_t*);
 int typeof_handling(token_t*, status_t*);
 int genJSON_handling(token_t*, status_t*);
 int exit_handling(token_t*, status_t*);
 
-#define FUNCTION_DIC_LENGTH 8
+#define FUNCTION_DIC_LENGTH 10
 wchar_t function_dic_c[FUNCTION_DIC_LENGTH][50] = {
         L"if",
         L"end-if",
@@ -25,7 +26,9 @@ wchar_t function_dic_c[FUNCTION_DIC_LENGTH][50] = {
         L"printVars",
         L"typeof",
         L"genJSON",
-        L"exit"
+        L"exit",
+        L"macro",
+        L"end-macro"
     };
 
 int (*function_dic_v[FUNCTION_DIC_LENGTH])(token_t *anker, status_t *stat) = {
@@ -36,7 +39,9 @@ int (*function_dic_v[FUNCTION_DIC_LENGTH])(token_t *anker, status_t *stat) = {
         printVars_handling,
         typeof_handling,
         genJSON_handling,
-        exit_handling
+        exit_handling,
+        macro_handling,
+        end_macro_handling
     };
 
 int exit_handling(token_t *anker, status_t *stat)
@@ -49,7 +54,94 @@ int typeof_handling(token_t *anker, status_t *stat)
     if(stat->just_save)
         return(JUSTSAVE);
 
-    printf("Typepf function\n");
+    int ret = 0, i = 0;
+    char c_name_buff[500];
+    wchar_t wc_name_buff[500];
+    token_t *hptr = anker;
+    
+    while(hptr) 
+    {
+        if(hptr->type == CLINGTO)
+        {
+            hptr = hptr->next;
+            continue;
+        }
+        if(hptr->type == CLAMPS)
+            break;
+        if(hptr->type == CHAR)
+            memcpy(wc_name_buff+(i++), &hptr->val, sizeof(wchar_t));
+
+        hptr = hptr->next;
+    }
+    memset(wc_name_buff+i, 0x00, sizeof(wchar_t));
+    
+    //TODO: Add Error Handling
+    wcstombs(c_name_buff, wc_name_buff, wcslen(wc_name_buff)+1);
+
+    if((ret = getVarType(vars_anker, NULL, c_name_buff)) == -1)
+    {
+        fprintf(stderr, "Group not found\n");
+        return(EXIT);
+    }
+    else if(ret == -2)
+    {
+        fprintf(stderr, "Var not found\n");
+        return(EXIT);
+    }
+    switch(ret)
+    {
+        case GROUP:
+            printf("Group Leader\n");
+            break;
+        case INTEGER:
+            printf("integer\n");
+            break;
+        case ONEDINTEGER:
+            printf("one dimension integer array\n");
+            break;
+        case TWODINTEGER:
+            printf("two dimension integer array\n");
+            break;
+        case THREEDINTEGER:
+            printf("three dimension integer array\n");
+            break;
+        case STRING:
+            printf("string\n");
+            break;
+        case ONEDSTRING:
+            printf("one dimension string array\n");
+            break;
+        case TWODSTRING:
+            printf("two dimension string array\n");
+            break;
+        case THREEDSTRING:
+            printf("three dimension string array\n");
+            break;
+        case BOOL:
+            printf("boolean\n");
+            break;
+        case ONEDBOOL:
+            printf("one dimension boolean array\n");
+            break;
+        case TWODBOOL:
+            printf("two dimension boolean array\n");
+            break;
+        case THREEDBOOL:
+            printf("three dimension boolean array\n");
+            break;
+        case FLOAT:
+            printf("float\n");
+            break;
+        case ONEDFLOAT:
+            printf("one dimension float array\n");
+            break;
+        case TWODFLOAT:
+            printf("two dimension float array\n");
+            break;
+        case THREEDFLOAT:
+            printf("three dimension float array\n");
+            break;
+    }
     return(0);
 }
 
@@ -64,7 +156,9 @@ int genJSON_handling(token_t *anker, status_t *stat)
 
 int printVars_handling(token_t *anker, status_t *stat)
 {
-    printf("Ich gebe alle Variablen aus\n");
+    printf("<pre>");
+    printAllVarsToFile(vars_anker, stdout);
+    printf("</pre>\n");
     return(0);
 }
 
