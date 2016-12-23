@@ -92,30 +92,30 @@ struct if_parms_s
     struct if_parms_s *next;
 };
 
-struct macro_definition {
-    char *name;
-    char **value;
-    int aguments_number;
-    char **aguments_name;
-    void **default_value;
-    int *argument_type;
-    struct macro_definition *next;
-};
+typedef struct { 
+    int parm_number;
+    char **name;
+    void **val;
+    int *type;
+    } macro_parms;
 
-typedef struct {
-    char *cur_name;
-    wchar_t **macro_buff;
-    int aguments_number;
-    char **aguments_name;
-    void **default_value;
-    struct macro_definition *anker;
-} macros;
+
+struct macro_definition_s {
+    char *name;
+    wchar_t **body;
+    int sizeof_body;
+    macro_parms *parms;
+    struct macro_definition_s *next;
+};
 
 typedef struct token_s token_t;
 typedef struct status_s status_t;
 typedef struct if_parms_s if_parms_t;
+typedef struct macro_definition_s macro_definition_t;
+
 
 extern vars_t *vars_anker;
+extern macro_definition_t *macro_defs;
 
 void freeLineBuff(status_t *stat);
 int parseLine(wchar_t *line, status_t *status);

@@ -7,8 +7,10 @@
 #include "vars.h"
 #include "parser.h"
 #include "token_handling.h"
+#include "macro.h"
 
 vars_t *vars_anker;
+macro_definition_t *macro_defs;
 
 //Gibt den Typ des Blocker zurueck. Wenn nichts gefunden false 
 //Variablenblock = VARIABLENBLOCK
@@ -157,6 +159,8 @@ int parseLine(wchar_t *line, status_t *status)
     }
 
 }
+
+
 
 int initVars(vars_t *anker)
 {
@@ -309,12 +313,15 @@ int main()
         return(-1);
 
     vars_anker = anker;
+
+    initMacroAnker(&macro_defs);
+
     printAllVars(vars_anker);
 #define INPUTSTRS_LENGTH 3
 
     wchar_t *inputstrs[INPUTSTRS_LENGTH] = 
     {
-        L"{% macro test(hello=\"Test\", world=72, test) %}",
+        L"{% macro blablabla_mrFreeman(hello=\"Test\", world, test=false) %}",
         L"<h1>Hello World</h1>",
         L"{% end-macro %}",
     };
@@ -335,6 +342,9 @@ int main()
     {
         printf("%s\n", status.save_buff[i]);
     }*/
+
+
+    listAllMacros(macro_defs);
 
     freeLineBuff(&status);
 }
