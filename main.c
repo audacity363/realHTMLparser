@@ -317,13 +317,15 @@ int main()
     initMacroAnker(&macro_defs);
 
     printAllVars(vars_anker);
-#define INPUTSTRS_LENGTH 3
+#define INPUTSTRS_LENGTH 5
 
     wchar_t *inputstrs[INPUTSTRS_LENGTH] = 
     {
-        L"{% macro blablabla_mrFreeman(hello=\"Test\", world, test=false) %}",
+        L"{% macro testmacro(hello=\"Test\", world, test=false) %}",
         L"<h1>Hello World</h1>",
         L"{% end-macro %}",
+        L"<h1>Hello World</h1>",
+        L"{% testmacro(test1, \"bla 1\") %}"
     };
 
     status.in_for = 0;

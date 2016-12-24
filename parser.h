@@ -105,6 +105,7 @@ struct macro_definition_s {
     wchar_t **body;
     int sizeof_body;
     macro_parms *parms;
+    struct macro_definition_s *prev;
     struct macro_definition_s *next;
 };
 

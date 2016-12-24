@@ -101,4 +101,5 @@ void printAllVarsJSON(vars_t *anker);
 void printAllVarsToFileJSON(vars_t *anker, FILE *fp);
 void printAllVarsToFile(vars_t *anker, FILE *fp);
 int printVarsToFileJSON(vars_t *anker, char **var_names, int length, FILE *fp);
+bool isDefinedBool(vars_t *anker, char *name);
 //----------------------End Utils function-------------------------------------

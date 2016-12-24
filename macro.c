@@ -363,20 +363,11 @@ int end_macro_handling(token_t *anker, status_t *stat)
 
     saveMacro(c_name, cur_macro, stat);
 
-   
-    printf("----Macro body----\n");
-    
-    for(i=1; i < stat->sizeof_sav_buff; i++)
-        printf("%S\n", stat->save_buff[i]);
-
-    printf("------------------\n");
-
     return(0);
 }
 
 /*
  * Saves a new macro to the macro_defs stack.
- * TODO: Write a function thats frees all parm arrays, the body and the list
  */
 int saveMacro(char *name, macro_parms *parms, status_t *body)
 {
@@ -416,7 +407,7 @@ int saveMacro(char *name, macro_parms *parms, status_t *body)
     for(i=1; i < body->sizeof_sav_buff; i++)
         new->body[i-1] = body->save_buff[i];
 
-    new->sizeof_body = body->sizeof_sav_buff;
+    new->sizeof_body = body->sizeof_sav_buff-1;
 
     new->parms = parms;
 
@@ -490,4 +481,33 @@ void freeMacros(macro_definition_t *anker)
         free(hptr->next);
     }
     free(anker);
+}
+
+macro_definition_t *findMacro(wchar_t *name)
+{
+
+    char *c_name = NULL;
+
+    if((c_name = malloc(wcslen(name)+1)) == NULL)
+    {
+        fprintf(stderr, "[%s.%d]: malloc error\n",__FILE__, __LINE__);
+        return(NULL);
+    }
+
+    wcstombs(c_name, name, wcslen(name)+1);
+
+    macro_definition_t *hptr = macro_defs->next;
+
+    while(hptr)
+    {
+        if(strcmp(hptr->name, c_name) == 0)
+        {
+            free(c_name);
+            return(hptr);
+        }
+        hptr = hptr->next;
+    }
+
+    free(c_name);
+    return(NULL);
 }

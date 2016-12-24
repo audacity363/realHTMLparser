@@ -12,6 +12,7 @@ all:
 	$(CC) -c $(CARGS) for.c -o for.o $(INCLUDES)
 	$(CC) -c $(CARGS) json.c -o json.o $(INCLUDES)
 	$(CC) -c $(CARGS) macro.c -o macro.o $(INCLUDES)
+	$(CC) -c $(CARGS) exec_macro.c -o exec_macro.o $(INCLUDES)
 	$(CC) -g main.c -o main ./*.o $(INCLUDES) -L./vars -lvars
 
 clean:

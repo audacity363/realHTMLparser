@@ -1,4 +1,4 @@
-CC = xlc
+CC = gcc
 all:
 	$(CC) -g -c utils.c -o utils.o
 	$(CC) -g -c integer.c -o integer.o

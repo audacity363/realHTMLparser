@@ -51,6 +51,21 @@ vars_t *isDefined(vars_t *anker, char *name)
     return(false);
 }
 
+bool isDefinedBool(vars_t *anker, char *name)
+{
+    vars_t *hptr = anker;
+
+    while(hptr)
+    {
+        if(strcmp(hptr->name, name) == 0)
+        {
+            return(true);
+        }
+        hptr  = hptr->next;
+    }
+    return(false);
+}
+
 int removeVar(vars_t *anker, char *name)
 {
     vars_t *sav = NULL,

@@ -304,6 +304,8 @@ int parseCommand(wchar_t *begin, wchar_t *end, status_t *stat)
     int cmd_name_length, end_cmd_offset, ret;
     int (*cmd_func)(token_t *anker, status_t *stat);
 
+    macro_definition_t *macro = NULL;
+
     anker.next = NULL;
     anker.prev = NULL;
 
@@ -319,18 +321,23 @@ int parseCommand(wchar_t *begin, wchar_t *end, status_t *stat)
 
     getCommandName(&anker, cmd_name);
 
-    if((cmd_func = getCommandFunction(cmd_name)) == NULL)
-    {
-        free(cmd_name);
-        fprintf(stderr, "Unkown function\n");
-        return(-2);
-    }
-
     if((offset = jumpToOffset(&anker, end_cmd_offset)) == NULL)
     {
         free(cmd_name);
         fprintf(stderr, "Offset to high\n");
         return(-3);
+    }
+
+    if((cmd_func = getCommandFunction(cmd_name)) == NULL)
+    {
+        if((macro = findMacro(cmd_name)) == NULL)
+        {
+            fprintf(stderr, "Unkown function or macro\n");
+            return(-2);
+        }
+        free(cmd_name);
+        ret = exec_macro(offset, macro);
+        return(ret);
     }
 
     ret = cmd_func(offset, stat);
