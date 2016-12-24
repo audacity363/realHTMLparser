@@ -321,11 +321,11 @@ int main()
 
     wchar_t *inputstrs[INPUTSTRS_LENGTH] = 
     {
-        L"{% macro testmacro(hello=\"Test\", world, test=false) %}",
+        L"{% macro testmacro(hello=\"Test\", world, test) %}",
         L"<h1>Hello World</h1>",
         L"{% end-macro %}",
         L"<h1>Hello World</h1>",
-        L"{% testmacro(test1, \"bla 1\") %}"
+        L"{% testmacro(test1, \"bla 1\", 28.81) %}"
     };
 
     status.in_for = 0;

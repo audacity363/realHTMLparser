@@ -102,4 +102,7 @@ void printAllVarsToFileJSON(vars_t *anker, FILE *fp);
 void printAllVarsToFile(vars_t *anker, FILE *fp);
 int printVarsToFileJSON(vars_t *anker, char **var_names, int length, FILE *fp);
 bool isDefinedBool(vars_t *anker, char *name);
+int addVariableBasedOnType(vars_t *anker, int type, char *name, void *val);
+int copyVariable(vars_t *anker, vars_t *target, char *name);
+int copyVariableNewName(vars_t *anker, vars_t *target, char *name, char *new_name);
 //----------------------End Utils function-------------------------------------

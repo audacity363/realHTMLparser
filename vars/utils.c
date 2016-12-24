@@ -162,3 +162,71 @@ int getVarType(vars_t *anker, char *group, char *name)
 
     return(target->type);
 }
+
+/*
+ * Creates a new variable of the type given in type. Just normal vars are
+ * supported. No arrays
+ */
+int addVariableBasedOnType(vars_t *anker, int type, char *name, void *val)
+{
+    int ret = 0;
+
+    switch(type)
+    {
+        case STRING:
+            ret = addString(anker, NULL, name, (wchar_t*)val, wcslen((wchar_t*)val));
+            break;
+        case INTEGER:
+            ret = addInteger(anker, NULL, name, *((int*)val));
+            break;
+        case FLOAT:
+            ret = addFloat(anker, NULL, name, *((double*)val));
+            break;
+        case BOOL:
+            ret = addBoolean(anker, NULL, name, *((bool*)val));
+            break;
+    }
+    return(ret);
+}
+
+int copyVariable(vars_t *anker, vars_t *target, char *name)
+{
+    return(copyVariableNewName(anker, target, name, name));
+}
+
+int copyVariableNewName(vars_t *anker, vars_t *target, char *name, char *new_name)
+{
+    int ret = 0;
+    vars_t *hptr;
+
+    hptr = anker;
+    while(hptr)
+    {
+        if(strcmp(hptr->name, name) == 0)
+            break;
+        hptr = hptr->next;
+    }
+
+    if(hptr == NULL)
+        return(VAR_NOT_DEFINED);
+
+    //TODO: Add missing variable types
+    switch(hptr->type)
+    {
+        case INTEGER:
+            ret = addInteger(target, NULL, new_name, *((int*)hptr->data));
+            break;
+        case FLOAT:
+            ret = addFloat(target, NULL, new_name, *((double*)hptr->data));
+            break;
+        case BOOL:
+            ret = addBoolean(target, NULL, new_name, *((bool*)hptr->data));
+            break;
+    }
+    return(ret);
+}
+
+int copyGrouGroupp(vars_t *anker, vars_t *target, char *name)
+{
+    //TODO: implement
+}

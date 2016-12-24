@@ -12,13 +12,43 @@ int getArguments(token_t *start, macro_parms *parms);
 
 int exec_macro(token_t *anker, macro_definition_t *macro)
 {
-    int i = 0;
+    int i = 0, ret = 0;
+    vars_t *macro_vars;
 
     macro_parms parms = {0, NULL, NULL, NULL};
 
     printf("exec Macro:\n");
 
     getArguments(anker, &parms);
+
+    if(parms.parm_number > macro->parms->parm_number)
+    {
+        //To much arguments
+        fprintf(stderr, "to much prameters\n");
+        return(EXIT);
+    }
+    if(parms.parm_number < macro->parms->parm_number)
+    {
+        for(i = parms.parm_number; i < macro->parms->parm_number; i++)
+        {
+            //Check if the rest if the arguments are optional
+            if(macro->parms->type[i] == -1)
+            {
+                //Found an argument with no default value
+                fprintf(stderr, "Parameters does not match\n");
+                return(EXIT);
+            }
+        }
+    }
+
+    //Everything is ok. Every default value gets overwritten when any other 
+    //value is given. Even the type gets overwritten
+
+    if((ret = initVarAnker(&macro_vars)) != 0)
+        return(ret);
+
+    addVariables(macro->parms, &parms, macro_vars);
+    printAllVars(macro_vars);
 
     /*for(; i < macro->sizeof_body; i++)
         printf("%S\n", macro->body[i]);
@@ -27,6 +57,9 @@ int exec_macro(token_t *anker, macro_definition_t *macro)
 }
 
 
+/*
+ * TODO: Add parsing for index type (x,y,z) and append macro_parms with these
+ */
 int getArguments(token_t *start, macro_parms *parms)
 {
     token_t *hptr = NULL;
@@ -153,4 +186,28 @@ int saveParm(wchar_t *arg, macro_parms *parms)
     index++;
     parms->val = realloc(parms->val, index*sizeof(void*));
     parms->type = realloc(parms->type, index*sizeof(int));
+}
+
+//creates the variables for the macro block.
+int addVariables(macro_parms *defaults, macro_parms *given, vars_t *vars)
+{
+    int i = 0, ret = 0;
+
+    //first add all given vars
+    for(; i < given->parm_number; i++)
+    {
+        if(given->type[i] != -1)
+        {
+            addVariableBasedOnType(vars, given->type[i], defaults->name[i], given->val[i]);
+        }
+        else
+        {
+            if((ret = copyVariableNewName(vars_anker, vars, (char*)given->val[i],
+                                   defaults->name[i])) != 0)
+           {
+               fprintf(stderr, "Varerror: [%d]\n", ret);
+               return(ret);
+           }
+        }
+    }
 }
