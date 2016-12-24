@@ -347,4 +347,5 @@ int main()
     listAllMacros(macro_defs);
 
     freeLineBuff(&status);
+    freeMacros(macro_defs);
 }

@@ -30,6 +30,7 @@ void printMacroParms(macro_parms *macro)
 {
     int i = 0;
 
+
     for(; i < macro->parm_number; i++)
     {
         printf("name: [%s]\n", macro->name[i]);
@@ -82,7 +83,7 @@ void listAllMacros(macro_definition_t *macros)
 int save_arg(macro_parms *macro, wchar_t *name, int found_val, wchar_t *val)
 {
     int index = macro->parm_number, int_buff = 0;
-    wchar_t *non_valid;
+    wchar_t *non_valid = NULL;
     double d_buff = 0;
     char *c_name = NULL;
 
@@ -94,7 +95,7 @@ int save_arg(macro_parms *macro, wchar_t *name, int found_val, wchar_t *val)
 
     wcstombs(c_name, name, wcslen(name)+1);
 
-    if((macro->name[index] = malloc(strlen(c_name))) == NULL)
+    if((macro->name[index] = malloc(strlen(c_name)+1)) == NULL)
     {
         fprintf(stderr, "[%s.%d]: malloc error\n", __FILE__, __LINE__);
         return(-2);
@@ -108,11 +109,12 @@ int save_arg(macro_parms *macro, wchar_t *name, int found_val, wchar_t *val)
         {
             macro->type[index] = STRING;
             //Copy value without quotation marks
-            if((macro->val[index] = malloc((wcslen(val)-1)*sizeof(wchar_t))) == NULL)
+            if((macro->val[index] = malloc(wcslen(val)*sizeof(wchar_t))) == NULL)
             {
                 fprintf(stderr, "[%s.%d]: malloc error\n",__FILE__, __LINE__);
                 return(-1);
             }
+            memset(macro->val[index], 0x00, wcslen(val)*sizeof(wchar_t));
             wcsncpy((wchar_t*)macro->val[index], val+1, wcslen(val)-2);
         }
         //Look for a float
@@ -174,8 +176,11 @@ int save_arg(macro_parms *macro, wchar_t *name, int found_val, wchar_t *val)
 
     macro->parm_number++;
     macro->name = realloc(macro->name, sizeof(char*)*(macro->parm_number+1));
+    //macro->name[macro->parm_number] = NULL;
     macro->val = realloc(macro->val, sizeof(void*)*(macro->parm_number+1));
+    //macro->val[macro->parm_number] = NULL;
     macro->type = realloc(macro->type, sizeof(int*)*(macro->parm_number+1));
+    //macro->type[macro->parm_number] = -1;
 
     return(0);
 }
@@ -192,7 +197,14 @@ int end_macro_handling(token_t *anker, status_t *stat)
     int args_number = 0;
     void **args_value = NULL;
 
-    macro_parms *cur_macro = malloc(sizeof(macro_parms));
+    macro_parms *cur_macro = NULL;
+    
+    cur_macro = malloc(sizeof(macro_parms));
+
+    cur_macro->parm_number = 0;
+    cur_macro->name = NULL;
+    cur_macro->val = NULL;
+    cur_macro->type = NULL;
 
     token_t head = {' ', -1, NULL, NULL},
             *hptr = NULL;
@@ -213,18 +225,21 @@ int end_macro_handling(token_t *anker, status_t *stat)
         fprintf(stderr, "[%s.%d]: malloc error\n",__FILE__, __LINE__);
         return(EXIT);
     }
+    cur_macro->name[0] = NULL;
 
     if((cur_macro->val = malloc(sizeof(void*))) == NULL)
     {
         fprintf(stderr, "[%s.%d]: malloc error\n",__FILE__, __LINE__);
         return(EXIT);
     }
+    cur_macro->val[0] = NULL;
 
     if((cur_macro->type = malloc(sizeof(int*))) == NULL)
     {
         fprintf(stderr, "[%s.%d]: malloc error\n",__FILE__, __LINE__);
         return(EXIT);
     }
+    cur_macro->type[0] = -1;
 
 
     lineToTokens(&head, stat->save_buff[0], stat->save_buff[0]+wcslen(stat->save_buff[0]));
@@ -361,7 +376,7 @@ int end_macro_handling(token_t *anker, status_t *stat)
 
 /*
  * Saves a new macro to the macro_defs stack.
- * TODO: Write a function thats frees all parm array, the body and the list
+ * TODO: Write a function thats frees all parm arrays, the body and the list
  */
 int saveMacro(char *name, macro_parms *parms, status_t *body)
 {
@@ -379,15 +394,33 @@ int saveMacro(char *name, macro_parms *parms, status_t *body)
         return(-1);
     }
 
+
+    //initialise all pointers to NULL for valgrind. It sould be working without
+    //them but then valgrind show an "Conditional jump or move depends on uninitialised value(s)"
+    //warning
+    new->parms = NULL;
+    new->sizeof_body = 0;
+    new->prev = NULL;
+    new->body = NULL;
+    new->next = NULL;
+    new->name = NULL;
+
     new->name = malloc(strlen(name)+1);
     strcpy(new->name, name);
+
     new->body = malloc(sizeof(wchar_t*)*body->sizeof_sav_buff);
-    for(; i < body->sizeof_sav_buff; i++)
+    //initialise all pointers to NULL for valgrind. Reason: See last comment
+    for(i=0; i < body->sizeof_sav_buff; i++)
+        new->body[i] = NULL;
+
+    for(i=1; i < body->sizeof_sav_buff; i++)
         new->body[i-1] = body->save_buff[i];
 
     new->sizeof_body = body->sizeof_sav_buff;
 
     new->parms = parms;
+
+    new->prev = hptr;
 
     body->save_buff = NULL;
     body->sizeof_sav_buff = 0;
@@ -411,6 +444,50 @@ int initMacroAnker(macro_definition_t **anker)
     (*anker)->sizeof_body = -1;
     (*anker)->parms = NULL;
     (*anker)->next = NULL;
+    (*anker)->prev = NULL;
 
     return(0);
+}
+
+/*
+ * Deletes all macros and frees the memory
+ *
+ */
+void freeMacros(macro_definition_t *anker)
+{
+    macro_definition_t *hptr = NULL, *last = NULL;
+    int i = 0;
+
+    hptr = anker->next;
+
+    //Go to end of macro list
+    while(hptr->next)
+        hptr = hptr->next;
+
+
+    while(hptr->prev)
+    {
+        for(i=0; i < hptr->parms->parm_number; i++)
+        {
+            free(hptr->parms->name[i]);
+            free(hptr->parms->val[i]);
+        }
+
+        free(hptr->parms->name);
+        free(hptr->parms->val);
+        free(hptr->parms->type);
+        free(hptr->parms);
+
+        for(i=0; i < hptr->sizeof_body; i++)
+        {
+            free(hptr->body[i]);
+        }
+        free(hptr->body);
+        free(hptr->name);
+
+        hptr = hptr->prev;
+
+        free(hptr->next);
+    }
+    free(anker);
 }

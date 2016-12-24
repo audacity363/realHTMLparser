@@ -1,4 +1,4 @@
-CC = xlc
+CC = gcc
 INCLUDES = -I./vars/
 //CARGS = -Wall -g
 CARGS = -g
