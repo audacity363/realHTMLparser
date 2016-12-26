@@ -13,6 +13,7 @@
 #define VAR_VALUE_TO_LONG 10
 #define WRONG_VAR_TYPE 11
 #define BUFFER_TO_SAMLL 12
+#define INDEX_IS_NOT_SUPPORTED 13
 
 
 struct variables_s
@@ -52,6 +53,7 @@ enum {
 typedef struct variables_s vars_t;
 typedef unsigned short int bool;
 
+int addGroup(vars_t *anker, char *name, int x_length, int y_length, int z_length);
 
 //----------------------String function----------------------------------------
 int getStringLength(vars_t *anker, char *group, char *name);
@@ -89,6 +91,9 @@ int getStringFrom3DArray(vars_t *anker, char *group, char *name, wchar_t *val,
 
 //----------------------Integer function---------------------------------------
 int getInteger(vars_t *anker, char *group, char *name, int *val);
+int editFull1DIntegerArray(vars_t *anker, char *group, char *name, void *val);
+int editFull2DIntegerArray(vars_t *anker, char *group, char *name, void *val);
+int editFull3DIntegerArray(vars_t *anker, char *group, char *name, void *val);
 //----------------------End Integer function-----------------------------------
 
 //----------------------Float function---------------------------------------
@@ -103,6 +108,6 @@ void printAllVarsToFile(vars_t *anker, FILE *fp);
 int printVarsToFileJSON(vars_t *anker, char **var_names, int length, FILE *fp);
 bool isDefinedBool(vars_t *anker, char *name);
 int addVariableBasedOnType(vars_t *anker, int type, char *name, void *val);
-int copyVariable(vars_t *anker, vars_t *target, char *name);
-int copyVariableNewName(vars_t *anker, vars_t *target, char *name, char *new_name);
+int copyVariable(vars_t *anker, vars_t *target, char *group, char *name);
+int copyVariableNewName(vars_t *anker, vars_t *target, char *group, char *name, char *new_grp, char *new_name);
 //----------------------End Utils function-------------------------------------

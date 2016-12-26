@@ -4,6 +4,7 @@ INCLUDES = -I./vars/
 CARGS = -g
 
 all:
+	make vars_lib
 	$(CC) -c $(CARGS) token_handling.c -o token_handling.o $(INCLUDES)
 	$(CC) -c $(CARGS) command_parsing.c -o command_parsing.o $(INCLUDES)
 	$(CC) -c $(CARGS) variablen_parsing.c -o variablen_parsing.o $(INCLUDES)
@@ -14,6 +15,13 @@ all:
 	$(CC) -c $(CARGS) macro.c -o macro.o $(INCLUDES)
 	$(CC) -c $(CARGS) exec_macro.c -o exec_macro.o $(INCLUDES)
 	$(CC) -g main.c -o main ./*.o $(INCLUDES) -L./vars -lvars
+
+vars_lib:
+	cd ./vars/ && make
+
+#list all TODO tags in comments
+todo:
+	grep -rn --exclude="*.swp" TODO: ./ | grep -v Makefile
 
 clean:
 	@rm -f ./*.o

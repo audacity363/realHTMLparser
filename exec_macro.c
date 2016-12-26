@@ -8,6 +8,8 @@
 #include "command_parsing.h"
 #include "macro.h"
 
+#define DEBUG
+
 int getArguments(token_t *start, macro_parms *parms);
 
 int exec_macro(token_t *anker, macro_definition_t *macro)
@@ -16,8 +18,6 @@ int exec_macro(token_t *anker, macro_definition_t *macro)
     vars_t *macro_vars;
 
     macro_parms parms = {0, NULL, NULL, NULL};
-
-    printf("exec Macro:\n");
 
     getArguments(anker, &parms);
 
@@ -48,7 +48,10 @@ int exec_macro(token_t *anker, macro_definition_t *macro)
         return(ret);
 
     addVariables(macro->parms, &parms, macro_vars);
+
+#if 1
     printAllVars(macro_vars);
+#endif
 
     /*for(; i < macro->sizeof_body; i++)
         printf("%S\n", macro->body[i]);
@@ -63,9 +66,11 @@ int exec_macro(token_t *anker, macro_definition_t *macro)
 int getArguments(token_t *start, macro_parms *parms)
 {
     token_t *hptr = NULL;
-    wchar_t name[500];
-    int type = 0, index = 0;
-    bool in_var = false;
+    wchar_t name[500], index_buff[5];
+    int type = 0, index = 0, i_index = 0;
+    bool in_var = false, in_index = false;
+    int index_type = 0,
+        a_index[3] = {0, 0, 0};
 
     if(memcmp(&start->val, L"(", sizeof(wchar_t)) != 0)
     {
@@ -82,10 +87,13 @@ int getArguments(token_t *start, macro_parms *parms)
     {
         if(hptr->type == CLAMPS)
         {
-            memset(name+(index++), 0x00, sizeof(wchar_t));
-            printf("parm: [%S]\n", name);
-            saveParm(name, parms);
             //save parm
+            memset(name+(index++), 0x00, sizeof(wchar_t));
+#ifdef DEBUG
+            printf("parm: [%S]\n", name);
+#endif
+            saveParm(name, parms, index_type, a_index);
+            index_type = i_index = 0;
             break;
         }
         else if(hptr->type == SPACE && in_var == true)
@@ -97,9 +105,35 @@ int getArguments(token_t *start, macro_parms *parms)
             in_var = !in_var;
             memcpy(name+(index++), &hptr->val, sizeof(wchar_t));
         }
-        else if(hptr->type == CHAR)
+        else if(hptr->type == CHAR && in_index == false)
         {
             memcpy(name+(index++), &hptr->val, sizeof(wchar_t));
+        }
+        else if(hptr->type == CHAR && in_index == true)
+        {
+            memcpy(index_buff+(i_index++), &hptr->val, sizeof(wchar_t));
+        }
+        else if(hptr->type == INDEXCLOSE)
+        {
+
+            memset(index_buff+(i_index++), 0x00, sizeof(wchar_t));
+#ifdef DEBUG
+            printf("found INDEX: [%S]\n", index_buff);
+#endif
+            if(++index_type >=4)
+            {
+                //four dimensions are not supported
+                return(EXIT);
+            }
+            a_index[index_type] = wcstol(index_buff, NULL, 10);
+            i_index = 0;
+            in_index = false;
+
+        }
+        else if(hptr->type == INDEXOPEN)
+        {
+            in_index = true;
+            i_index = 0;
         }
         else if(hptr->type == COMMA)
         {
@@ -110,8 +144,10 @@ int getArguments(token_t *start, macro_parms *parms)
             }
             //save parm
             memset(name+(index++), 0x00, sizeof(wchar_t));
+#ifdef DEBUG
             printf("parm: [%S]\n", name);
-            saveParm(name, parms);
+#endif
+            saveParm(name, parms, index_type, a_index);
             index=0;
         }
         
@@ -124,11 +160,12 @@ int getArguments(token_t *start, macro_parms *parms)
  * TODO: free the parms after using them
  * TODO: add group handling
  */
-int saveParm(wchar_t *arg, macro_parms *parms)
+int saveParm(wchar_t *arg, macro_parms *parms, int index_type, int index_array[3])
 {
     int index = parms->parm_number;
     double d_buff = 0;
-    char *c_name = NULL;
+    char *c_name = NULL, *index_pos = NULL;
+
 
     //Look for a String
     if(memcmp(arg, L"\"", sizeof(wchar_t)) == 0)
@@ -165,6 +202,14 @@ int saveParm(wchar_t *arg, macro_parms *parms)
     {
         c_name = malloc(wcslen(arg)+1);
         wcstombs(c_name, arg, wcslen(arg)+1);
+        if((index_pos = strchr(c_name, '[')) != NULL)
+        {
+            //Found an index bracked.
+            index_pos[0]='\0';
+#ifdef DEBUG
+            printf("Index: (%s)\n", index_pos+1);
+#endif
+        }
         if(isDefinedBool(vars_anker, c_name) == false)
         {
             //Var ist not defined. It is an integer
@@ -177,18 +222,24 @@ int saveParm(wchar_t *arg, macro_parms *parms)
             strcpy((char*)parms->val[index], c_name);
             //-1 means here that it is a variable
             parms->type[index] = -1;
+            parms->index_type = index_type;
+            memcpy(parms->index, index_array, sizeof(index));
             free(c_name);
         }
     }
 
     index = (++parms->parm_number);
-    //just so i have to write less
+    //just so I have to write less
     index++;
     parms->val = realloc(parms->val, index*sizeof(void*));
     parms->type = realloc(parms->type, index*sizeof(int));
 }
 
 //creates the variables for the macro block.
+//defaults == the default Parameters with the values wich was given at the 
+//            macro declaration
+//given    == the given arguments on the macro call
+//vars     == the new anker for the variables
 int addVariables(macro_parms *defaults, macro_parms *given, vars_t *vars)
 {
     int i = 0, ret = 0;
@@ -196,18 +247,29 @@ int addVariables(macro_parms *defaults, macro_parms *given, vars_t *vars)
     //first add all given vars
     for(; i < given->parm_number; i++)
     {
+        //It is a static value. Create a variable with this the default name 
+        //and teh given value
         if(given->type[i] != -1)
         {
-            addVariableBasedOnType(vars, given->type[i], defaults->name[i], given->val[i]);
+            addVariableBasedOnType(vars, given->type[i], defaults->name[i], 
+                                    given->val[i]);
         }
-        else
+        //No index as been found copy hole variable to the new target with the
+        //new name
+        else if(given->type[i] == -1 && given->index_type == 0)
         {
-            if((ret = copyVariableNewName(vars_anker, vars, (char*)given->val[i],
-                                   defaults->name[i])) != 0)
+            if((ret = copyVariableNewName(vars_anker, vars, NULL,
+                        (char*)given->val[i], NULL, defaults->name[i])) != 0)
            {
                fprintf(stderr, "Varerror: [%d]\n", ret);
                return(ret);
            }
         }
+        else if(given->type[i] == -1 && given->index_type != 0)
+        {
+            printf("It is an existing var. The user wants just an index\n");
+        }
     }
 }
+
+#undef DEBUG

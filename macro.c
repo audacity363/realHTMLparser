@@ -285,7 +285,9 @@ int end_macro_handling(token_t *anker, status_t *stat)
 
     memset(macro_name+i, 0x00, sizeof(wchar_t));
 
+#ifdef DEBUG
     printf("macro_name: [%S]\n", macro_name);
+#endif
 
 
     //Get macro arguments with default values
@@ -304,8 +306,10 @@ int end_macro_handling(token_t *anker, status_t *stat)
         {
             //memset(arg_name+name_index, 0x00, sizeof(wchar_t));
             memset(arg_val+val_index, 0x00, sizeof(wchar_t));
+#ifdef DEBUG
             printf("Arg_name: [%S]\n", arg_name);
             printf("\t[%S]\n", arg_val);
+#endif
 
             save_arg(cur_macro, arg_name, in_val, arg_val);
 
@@ -327,9 +331,10 @@ int end_macro_handling(token_t *anker, status_t *stat)
         {
             memset(arg_val+val_index, 0x00, sizeof(wchar_t));
 
+#ifdef DEBUG
             printf("Arg_name: [%S]\n", arg_name);
             printf("\t[%S]\n", arg_val);
-
+#endif
             save_arg(cur_macro, arg_name, in_val, arg_val);
 
             memset(arg_val, 0x00, sizeof(arg_val));
@@ -355,8 +360,10 @@ int end_macro_handling(token_t *anker, status_t *stat)
         }
         hptr = hptr->next;
     }
-    
+
+#ifdef DEBUG
     printMacroParms(cur_macro);
+#endif
 
     c_name = malloc(wcslen(macro_name)+1);
     wcstombs(c_name, macro_name, wcslen(macro_name)+1);

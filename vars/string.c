@@ -7,6 +7,8 @@
 #include "utils.h"
 
 //TODO: Write copy function and track complete size of variable in vars_t struct
+//TODO: Write a function which replaces the variablen search code
+//TODO: change group type to an char pointer array so that you can read multiple groups
 
 int getStringLength(vars_t *anker, char *group, char *name)
 {

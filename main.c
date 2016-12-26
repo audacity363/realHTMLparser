@@ -168,9 +168,17 @@ int initVars(vars_t *anker)
     float t = 82.62;
     wchar_t strbuff[100];
 
-    if((ret = addGroup(anker, "hallo")) != 0)
+    if((ret = addGroup(anker, "hallo", 0,0,0)) != 0)
     {
         return(1);
+    }
+
+    addGroup(anker, "grparray", 10,0,0);
+    add1DIntegerArray(anker, "grparray", "array", 10);
+    for(i=0; i < 10; i++)
+    {
+
+        edit1DIntegerArray(anker, "grparray", "array", i, i);
     }
 
     addInteger(anker, NULL, "test", 677);
@@ -184,14 +192,14 @@ int initVars(vars_t *anker)
         edit1DIntegerArray(anker, "hallo", "array", i, i);
     }
 
-    add2DIntegerArray(anker, NULL, "2darray", 5, 7);
+    add2DIntegerArray(anker, "hallo", "2darray", 5, 7);
 
     z = 0;
     for(i=0; i < 5; i++)
     {
         for(x=0; x < 7; x++)
         {
-            edit2DIntegerArray(anker, NULL, "2darray", z, i, x);
+            edit2DIntegerArray(anker, "hallo", "2darray", z, i, x);
             z++;
         }
     }
@@ -325,7 +333,7 @@ int main()
         L"<h1>Hello World</h1>",
         L"{% end-macro %}",
         L"<h1>Hello World</h1>",
-        L"{% testmacro(test1, \"bla 1\", 28.81) %}"
+        L"{% testmacro(grparray[1], \"bla 1\", 28.81) %}"
     };
 
     status.in_for = 0;
@@ -345,9 +353,9 @@ int main()
         printf("%s\n", status.save_buff[i]);
     }*/
 
-
+#ifdef DEBUG
     listAllMacros(macro_defs);
-
+#endif
     freeLineBuff(&status);
     freeMacros(macro_defs);
 }

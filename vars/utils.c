@@ -189,44 +189,145 @@ int addVariableBasedOnType(vars_t *anker, int type, char *name, void *val)
     return(ret);
 }
 
-int copyVariable(vars_t *anker, vars_t *target, char *name)
+int copyVariable(vars_t *anker, vars_t *target, char *group, char *name)
 {
-    return(copyVariableNewName(anker, target, name, name));
+    return(copyVariableNewName(anker, target, name, NULL, name, NULL));
 }
 
-int copyVariableNewName(vars_t *anker, vars_t *target, char *name, char *new_name)
+int copyVariableNewName(vars_t *anker, vars_t *target_ank, char *group, char *name, char *new_grp, char *new_name)
 {
     int ret = 0;
-    vars_t *hptr;
+    vars_t *target = NULL,
+           *grp = NULL;
 
-    hptr = anker;
-    while(hptr)
+    if(group)
     {
-        if(strcmp(hptr->name, name) == 0)
-            break;
-        hptr = hptr->next;
+        if(!(grp = isDefined(anker, group)))
+        {
+            return(GRP_NOT_DEFINED);
+        }
+        if(!(target = isDefined(grp->next_lvl, name)))
+        {
+            return(VAR_NOT_DEFINED);
+        }
+    }
+    else
+    {
+        if(!(target = isDefined(anker, name)))
+        {
+            return(VAR_NOT_DEFINED);
+        }
     }
 
-    if(hptr == NULL)
-        return(VAR_NOT_DEFINED);
-
     //TODO: Add missing variable types
-    switch(hptr->type)
+    switch(target->type)
     {
+        case GROUP:
+            ret = copyGroupNewName(anker, target_ank, name, new_name, 0,0,0);
+            break;
         case INTEGER:
-            ret = addInteger(target, NULL, new_name, *((int*)hptr->data));
+            ret = addInteger(target_ank, new_grp, new_name,
+                    *((int*)target->data));
             break;
         case FLOAT:
-            ret = addFloat(target, NULL, new_name, *((double*)hptr->data));
+            ret = addFloat(target_ank, new_grp, new_name,
+                    *((double*)target->data));
             break;
         case BOOL:
-            ret = addBoolean(target, NULL, new_name, *((bool*)hptr->data));
+            ret = addBoolean(target_ank, new_grp, new_name,
+                    *((bool*)target->data));
+            break;
+        case ONEDINTEGER:
+            ret = add1DIntegerArray(target_ank, new_grp, new_name, 
+                    target->x_length);
+            if(ret != 0)
+                return(ret);
+            editFull1DIntegerArray(target_ank, new_grp, new_name,
+                    target->data);
+            break;
+        case TWODINTEGER:
+            ret = add2DIntegerArray(target_ank, new_grp, new_name,
+                    target->x_length, target->y_length);
+            if(ret != 0)
+                return(ret);
+            editFull2DIntegerArray(target_ank, new_grp, new_name,
+                    target->data);
+            break;
+        case THREEDINTEGER:
+            ret = add3DIntegerArray(target_ank, new_grp, new_name,
+                    target->x_length, target->y_length, target->z_length);
+            if(ret != 0)
+                return(ret);
+            editFull3DIntegerArray(target_ank, new_grp, new_name,
+                    target->data);
             break;
     }
     return(ret);
 }
 
-int copyGrouGroupp(vars_t *anker, vars_t *target, char *name)
+int copyGroupNewName(vars_t *anker, vars_t *target, char *name, char *new_name)
 {
-    //TODO: implement
+    vars_t *grp = NULL, *hptr = NULL;
+
+    addGroup(target, new_name, 0,0,0);
+
+    grp = isDefined(anker, name);
+
+    hptr = grp->next_lvl;
+
+    while(hptr)
+    {
+        copyVariableNewName(anker, target, name, hptr->name, new_name, hptr->name);
+        hptr = hptr->next;
+    }
+}
+
+/*
+ * Copys a variable or a complete group but uses just the given index.
+ * When a group is given then every variable under this group gets copied with the given index
+ * TODO: There are a lot of arguments. Should I use a struct only for this purpose??
+ */
+int copyVariableNewNameWithIndex(vars_t *anker, vars_t *target_ank,
+        char *group, char *name, char *new_grp, char *new_name,
+        int index_type, int index_array[3])
+{
+   int var_type = 0; 
+
+   if((var_type = getVarType(anker, group, name)) < 0)
+   {
+        return(var_type);
+   }
+
+   //First check if the variable type is not a simple type
+   if((var_type == STRING  || 
+       var_type == BOOL    ||
+       var_type == FLOAT   ||
+       var_type == INTEGER ||))
+   {
+        return(INDEX_IS_NOT_SUPPORTED);
+   }
+
+   //Check if the var type is compatible with the index type
+   else if(index_type == 2 && (var_type == ONEDINTEGER ||
+                               var_type == ONEDSTRING  ||
+                               var_type == ONEDFLOAT   ||
+                               var_type == ONEDBOOL    ||
+                               var_type == TWODINTEGER ||
+                               var_type == TWODSTRING  ||
+                               var_type == TWODFLOAT   ||
+                               var_type == TWODBOOL))
+    {
+        return(INDEX_IS_NOT_SUPPORTED);
+    }
+    else if(index_type == 1 && (var_type == ONEDINTEGER ||
+                                var_type == ONEDSTRING  ||
+                                var_type == ONEDFLOAT   ||
+                                var_type == ONEDBOOL)) 
+    {
+        return(INDEX_IS_NOT_SUPPORTED);
+    }
+
+    //Call the corresponding for the index type and variable type combo
+    //TODO: Write the rest of the functions and append the list here
+    if()
 }

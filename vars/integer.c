@@ -5,7 +5,10 @@
 #include "vars.h"
 #include "utils.h"
 
-int addGroup(vars_t *anker, char *name)
+//TODO: Write a function which replaces the variablen search code
+//TODO: change group type to an char pointer array so that you can read multiple groups
+
+int addGroup(vars_t *anker, char *name, int x_length, int y_length, int z_length)
 {
     vars_t *end = NULL,
            *new = NULL;
@@ -30,6 +33,19 @@ int addGroup(vars_t *anker, char *name)
 
     strcpy(new->name, name);
     new->type = GROUP;
+
+    if(x_length > 0)
+        new->x_length = x_length;
+    else
+        new->x_length = 0;
+    if(y_length > 0)
+        new->y_length = y_length;
+    else
+        new->y_length = 0;
+    if(z_length > 0)
+        new->z_length = z_length;
+    else
+        new->z_length = 0;
 
     end->next = new;
     new->prev = end;
@@ -139,6 +155,35 @@ int edit1DIntegerArray(vars_t *anker, char *group, char *name, int val, int x_in
     return(0);
 }
 
+int editFull1DIntegerArray(vars_t *anker, char *group, char *name, void *val)
+{
+    vars_t *target = NULL,
+           *grp = NULL;
+
+    if(group)
+    {
+        if(!(grp = isDefined(anker, group)))
+        {
+            return(GRP_NOT_DEFINED);
+        }
+        if(!(target = isDefined(grp->next_lvl, name)))
+        {
+            return(VAR_NOT_DEFINED);
+        }
+    }
+    else
+    {
+        if(!(target = isDefined(anker, name)))
+        {
+            return(VAR_NOT_DEFINED);
+        }
+    }
+
+    memcpy(target->data, val, sizeof(int)*target->x_length);
+
+    return(0);
+}
+
 int add2DIntegerArray(vars_t *anker, char *group, char *name, int x_length, int y_length)
 {
     vars_t *new = NULL;
@@ -193,6 +238,35 @@ int edit2DIntegerArray(vars_t *anker, char *group, char *name, int val, int x_in
 
     offset = (x_index*target->y_length)+y_index;
     ((int*)target->data)[offset] = val;
+    return(0);
+}
+
+int editFull2DIntegerArray(vars_t *anker, char *group, char *name, void *val)
+{
+    vars_t *target = NULL,
+           *grp = NULL;
+    size_t offset = 0;
+
+    if(group)
+    {
+        if(!(grp = isDefined(anker, group)))
+        {
+            return(GRP_NOT_DEFINED);
+        }
+        if(!(target = isDefined(grp->next_lvl, name)))
+        {
+            return(VAR_NOT_DEFINED);
+        }
+    }
+    else
+    {
+        if(!(target = isDefined(anker, name)))
+        {
+            return(VAR_NOT_DEFINED);
+        }
+    }
+
+    memcpy(target->data, val, (target->x_length*target->y_length)*sizeof(int));
     return(0);
 }
 
@@ -255,5 +329,36 @@ int edit3DIntegerArray(vars_t *anker, char *group, char *name, int val, int x_in
     offset = (z_index*target->x_length * target->y_length);
     offset += (y_index*target->x_length) + x_index;
     ((int*)target->data)[offset] = val;
+    return(0);
+}
+
+int editFull3DIntegerArray(vars_t *anker, char *group, char *name, void *val)
+{
+    vars_t *target = NULL,
+           *grp = NULL;
+    size_t offset = 0;
+
+    if(group)
+    {
+        if(!(grp = isDefined(anker, group)))
+        {
+            return(GRP_NOT_DEFINED);
+        }
+        if(!(target = isDefined(grp->next_lvl, name)))
+        {
+            return(VAR_NOT_DEFINED);
+        }
+    }
+    else
+    {
+        if(!(target = isDefined(anker, name)))
+        {
+            return(VAR_NOT_DEFINED);
+        }
+    }
+
+    memcpy(target->data, val, ((target->x_length*target->y_length)
+                *target->z_length)*sizeof(int));
+
     return(0);
 }
