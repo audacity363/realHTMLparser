@@ -298,17 +298,25 @@ int copyVariableNewNameWithIndex(vars_t *anker, vars_t *target_ank,
         return(var_type);
    }
 
+    //Go recursive through the group and copy the variables
+    if(var_type == GROUP)
+    {
+        copyGroupNewNameWithIndex(anker, target_ank,
+        name, new_name, index_type, index_array);
+        return(0);
+    }
+
    //First check if the variable type is not a simple type
    if((var_type == STRING  || 
        var_type == BOOL    ||
        var_type == FLOAT   ||
-       var_type == INTEGER ||))
+       var_type == INTEGER))
    {
         return(INDEX_IS_NOT_SUPPORTED);
    }
 
    //Check if the var type is compatible with the index type
-   else if(index_type == 2 && (var_type == ONEDINTEGER ||
+   else if(index_type == 3 && (var_type == ONEDINTEGER ||
                                var_type == ONEDSTRING  ||
                                var_type == ONEDFLOAT   ||
                                var_type == ONEDBOOL    ||
@@ -319,7 +327,7 @@ int copyVariableNewNameWithIndex(vars_t *anker, vars_t *target_ank,
     {
         return(INDEX_IS_NOT_SUPPORTED);
     }
-    else if(index_type == 1 && (var_type == ONEDINTEGER ||
+    else if(index_type == 2 && (var_type == ONEDINTEGER ||
                                 var_type == ONEDSTRING  ||
                                 var_type == ONEDFLOAT   ||
                                 var_type == ONEDBOOL)) 
@@ -329,5 +337,35 @@ int copyVariableNewNameWithIndex(vars_t *anker, vars_t *target_ank,
 
     //Call the corresponding for the index type and variable type combo
     //TODO: Write the rest of the functions and append the list here
-    if()
+    if(index_type == 1 && var_type == ONEDINTEGER)
+        return(createNewVarFrom1DIntegerArray(anker, target_ank,
+                                  group, name, new_grp,
+                                  new_name, index_array[0]));
+
+}
+
+int copyGroupNewNameWithIndex(vars_t *anker, vars_t *target_ank,
+        char *name, char *new_name,
+        int index_type, int index_array[3])
+{
+    vars_t *grp = NULL, *hptr = NULL;
+    int ret = 0;
+
+    if(!(grp = isDefined(anker, name)))
+    {
+        return(GRP_NOT_DEFINED);
+    }
+
+    addGroup(target_ank, new_name, 0,0,0);
+
+    hptr = grp->next_lvl;
+    while(hptr)
+    {
+
+        if((ret = copyVariableNewNameWithIndex(anker, target_ank,
+        name, hptr->name, new_name, hptr->name,
+        index_type, index_array)) != 0)
+            return(0);
+        hptr = hptr->next;
+    }
 }

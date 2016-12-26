@@ -97,8 +97,8 @@ typedef struct {
     char **name;
     void **val;
     int *type;
-    int index[3];
-    int index_type;
+    int index[100][3];
+    int index_type[100];
     } macro_parms;
 
 

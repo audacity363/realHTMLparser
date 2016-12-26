@@ -120,12 +120,12 @@ int getArguments(token_t *start, macro_parms *parms)
 #ifdef DEBUG
             printf("found INDEX: [%S]\n", index_buff);
 #endif
-            if(++index_type >=4)
+            if(index_type+1 >=4)
             {
                 //four dimensions are not supported
                 return(EXIT);
             }
-            a_index[index_type] = wcstol(index_buff, NULL, 10);
+            a_index[index_type++] = wcstol(index_buff, NULL, 10);
             i_index = 0;
             in_index = false;
 
@@ -159,6 +159,7 @@ int getArguments(token_t *start, macro_parms *parms)
 /*
  * TODO: free the parms after using them
  * TODO: add group handling
+ * TODO: dynamic memory allocation for index and index_type
  */
 int saveParm(wchar_t *arg, macro_parms *parms, int index_type, int index_array[3])
 {
@@ -222,8 +223,11 @@ int saveParm(wchar_t *arg, macro_parms *parms, int index_type, int index_array[3
             strcpy((char*)parms->val[index], c_name);
             //-1 means here that it is a variable
             parms->type[index] = -1;
-            parms->index_type = index_type;
-            memcpy(parms->index, index_array, sizeof(index));
+            parms->index_type[index] = index_type;
+            memcpy(parms->index[index], index_array, sizeof(index_array));
+            /*parms->index[index][0] = index_array[0];
+            parms->index[index][1] = index_array[1];
+            parms->index[index][2] = index_array[2];*/
             free(c_name);
         }
     }
@@ -267,7 +271,9 @@ int addVariables(macro_parms *defaults, macro_parms *given, vars_t *vars)
         }
         else if(given->type[i] == -1 && given->index_type != 0)
         {
-            printf("It is an existing var. The user wants just an index\n");
+            copyVariableNewNameWithIndex(vars_anker, vars,
+                NULL, (char*)given->val[i], NULL, defaults->name[i],
+                given->index_type[i], given->index[i]);
         }
     }
 }

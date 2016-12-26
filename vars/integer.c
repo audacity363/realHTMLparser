@@ -122,6 +122,41 @@ int add1DIntegerArray(vars_t *anker, char *group, char *name, int length)
     return(0);
 }
 
+int getIntegerFrom1DArray(vars_t *anker, char *group, char *name,
+                          int *i_target, int x_index)
+{
+    vars_t *target = NULL,
+           *grp = NULL;
+
+    if(group)
+    {
+        if(!(grp = isDefined(anker, group)))
+        {
+            return(GRP_NOT_DEFINED);
+        }
+        if(!(target = isDefined(grp->next_lvl, name)))
+        {
+            return(VAR_NOT_DEFINED);
+        }
+    }
+    else
+    {
+        if(!(target = isDefined(anker, name)))
+        {
+            return(VAR_NOT_DEFINED);
+        }
+    }
+
+    if(x_index >= target->x_length)
+    {
+        return(X_INDEX_OUT_OF_RANGE);
+    }
+
+    *i_target = ((int*)target->data)[x_index];
+    return(0);
+
+}
+
 int edit1DIntegerArray(vars_t *anker, char *group, char *name, int val, int x_index)
 {
     vars_t *target = NULL,
@@ -181,6 +216,49 @@ int editFull1DIntegerArray(vars_t *anker, char *group, char *name, void *val)
 
     memcpy(target->data, val, sizeof(int)*target->x_length);
 
+    return(0);
+}
+
+int createNewVarFrom1DIntegerArray(vars_t *inanker, vars_t *outanker,
+                                  char *group, char *name, char *out_grp,
+                                  char *new_name, int x_index)
+{
+    vars_t *target = NULL, *grp = NULL;
+    int ret = 0, i_target = 0;
+
+    if(group)
+    {
+        if(!(grp = isDefined(inanker, group)))
+        {
+            return(GRP_NOT_DEFINED);
+        }
+        if(!(target = isDefined(grp->next_lvl, name)))
+        {
+            return(VAR_NOT_DEFINED);
+        }
+    }
+    else
+    {
+        if(!(target = isDefined(inanker, name)))
+        {
+            return(VAR_NOT_DEFINED);
+        }
+    }
+
+    if(target->type != ONEDINTEGER)
+        return(WRONG_VAR_TYPE);
+
+    if((ret = getIntegerFrom1DArray(inanker, group, name, &i_target,
+                    x_index)) != 0)
+    {
+        return(ret);
+    }
+
+    if((ret = addInteger(outanker, out_grp, new_name, i_target)) != 0)
+    {
+        return(0);
+    }
+    
     return(0);
 }
 

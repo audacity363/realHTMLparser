@@ -91,6 +91,11 @@ int getStringFrom3DArray(vars_t *anker, char *group, char *name, wchar_t *val,
 
 //----------------------Integer function---------------------------------------
 int getInteger(vars_t *anker, char *group, char *name, int *val);
+int getIntegerFrom1DArray(vars_t *inanker, char *group, char *name,
+                          int *i_target, int x_index);
+int createNewVarFrom1DIntegerArray(vars_t *inanker, vars_t *outanker,
+                                  char *group, char *name, char *out_grp,
+                                  char *new_name, int x_index);
 int editFull1DIntegerArray(vars_t *anker, char *group, char *name, void *val);
 int editFull2DIntegerArray(vars_t *anker, char *group, char *name, void *val);
 int editFull3DIntegerArray(vars_t *anker, char *group, char *name, void *val);
@@ -110,4 +115,8 @@ bool isDefinedBool(vars_t *anker, char *name);
 int addVariableBasedOnType(vars_t *anker, int type, char *name, void *val);
 int copyVariable(vars_t *anker, vars_t *target, char *group, char *name);
 int copyVariableNewName(vars_t *anker, vars_t *target, char *group, char *name, char *new_grp, char *new_name);
+
+int copyGroupNewNameWithIndex(vars_t *anker, vars_t *target_ank,
+        char *name, char *new_name,
+        int index_type, int index_array[3]);
 //----------------------End Utils function-------------------------------------
