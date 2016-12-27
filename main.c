@@ -224,12 +224,12 @@ int initVars(vars_t *anker)
         return(1);
     }
 
-    add1DStringArray(anker, NULL, "string1d", 100, 10);
+    add1DStringArray(anker, "grparray", "string1d", 100, 10);
 
     for(x=0; x < 10; x++)
     {
         swprintf(strbuff, 100, L"hühühü %d", x);
-        edit1DStringArray(anker, NULL, "string1d", strbuff, x);
+        edit1DStringArray(anker, "grparray", "string1d", strbuff, x);
     }
 
     add2DStringArray(anker, NULL, "string2d", 100, 5, 7);
@@ -267,7 +267,7 @@ int initVars(vars_t *anker)
         return(1);
     }
 
-    if((ret = add1DBooleanArray(anker, NULL, "bool1d", 10)) != 0)
+    if((ret = add1DBooleanArray(anker, "grparray", "bool1d", 10)) != 0)
     {
         return(1);
     }
@@ -275,9 +275,9 @@ int initVars(vars_t *anker)
     for(x=0; x < 10; x++)
     {
         if(x % 2)
-            edit1DBooleanArray(anker, NULL, "bool1d", 0, x);
+            edit1DBooleanArray(anker, "grparray", "bool1d", 0, x);
         else
-            edit1DBooleanArray(anker, NULL, "bool1d", 1, x);
+            edit1DBooleanArray(anker, "grparray", "bool1d", 1, x);
     }
 
 
@@ -295,10 +295,10 @@ int initVars(vars_t *anker)
         }
 
     addFloat(anker, NULL, "float", 677.01);
-    add1DFloatArray(anker, NULL, "float1d", 5);
+    add1DFloatArray(anker, "grparray", "float1d", 5);
     for(x=0; x < 5; x++)
     {
-        edit1DFloatArray(anker, NULL, "float1d", 72.9276, x);
+        edit1DFloatArray(anker, "grparray", "float1d", 72.9276, x);
     }
 
     return(0);
@@ -333,7 +333,7 @@ int main()
         L"<h1>Hello World</h1>",
         L"{% end-macro %}",
         L"<h1>Hello World</h1>",
-        L"{% testmacro(grparray[1], \"bla 1\", 28.81) %}"
+        L"{% testmacro(grparray[2], \"bla 1\", 28.81) %}"
     };
 
     status.in_for = 0;

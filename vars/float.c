@@ -71,6 +71,41 @@ int add1DFloatArray(vars_t *anker, char *group, char *name, int length)
     return(0);
 }
 
+int getFloatFrom1DArray(vars_t *anker, char *group, char *name,
+                          double *d_target, int x_index)
+{
+    vars_t *target = NULL,
+           *grp = NULL;
+
+    if(group)
+    {
+        if(!(grp = isDefined(anker, group)))
+        {
+            return(GRP_NOT_DEFINED);
+        }
+        if(!(target = isDefined(grp->next_lvl, name)))
+        {
+            return(VAR_NOT_DEFINED);
+        }
+    }
+    else
+    {
+        if(!(target = isDefined(anker, name)))
+        {
+            return(VAR_NOT_DEFINED);
+        }
+    }
+
+    if(x_index >= target->x_length)
+    {
+        return(X_INDEX_OUT_OF_RANGE);
+    }
+
+    *d_target = ((double*)target->data)[x_index];
+    return(0);
+
+}
+
 
 int edit1DFloatArray(vars_t *anker, char *group, char *name, double val, int x_index)
 {
@@ -102,6 +137,50 @@ int edit1DFloatArray(vars_t *anker, char *group, char *name, double val, int x_i
     }
 
     ((double*)target->data)[x_index] = val;
+    return(0);
+}
+
+int createNewVarFrom1DFloatArray(vars_t *inanker, vars_t *outanker,
+                                  char *group, char *name, char *out_grp,
+                                  char *new_name, int x_index)
+{
+    vars_t *target = NULL, *grp = NULL;
+    int ret = 0;
+    double d_target = 0;
+
+    if(group)
+    {
+        if(!(grp = isDefined(inanker, group)))
+        {
+            return(GRP_NOT_DEFINED);
+        }
+        if(!(target = isDefined(grp->next_lvl, name)))
+        {
+            return(VAR_NOT_DEFINED);
+        }
+    }
+    else
+    {
+        if(!(target = isDefined(inanker, name)))
+        {
+            return(VAR_NOT_DEFINED);
+        }
+    }
+
+    if(target->type != ONEDFLOAT)
+        return(WRONG_VAR_TYPE);
+
+    if((ret = getFloatFrom1DArray(inanker, group, name, &d_target,
+                    x_index)) != 0)
+    {
+        return(ret);
+    }
+
+    if((ret = addFloat(outanker, out_grp, new_name, d_target)) != 0)
+    {
+        return(0);
+    }
+    
     return(0);
 }
 

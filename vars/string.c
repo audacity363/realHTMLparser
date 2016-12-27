@@ -252,8 +252,8 @@ int getStringFrom1DArray(vars_t *anker, char *group, char *name, wchar_t *val,
 }
 
 int createNewVarFrom1DStringArray(vars_t *inanker, vars_t *outanker,
-                                  char *group, char *name, char *new_name,
-                                  int x_index)
+                                  char *group, char *name, char *new_grp,
+                                  char *new_name, int x_index)
 {
     vars_t *target = NULL, *grp = NULL;
     int ret = 0;
@@ -291,7 +291,7 @@ int createNewVarFrom1DStringArray(vars_t *inanker, vars_t *outanker,
         return(ret);
     }
 
-    if((ret = addString(outanker, NULL, new_name, wc_target, wcslen(wc_target))) != 0)
+    if((ret = addString(outanker, new_grp, new_name, wc_target, wcslen(wc_target))) != 0)
     {
         free(wc_target);
         return(0);

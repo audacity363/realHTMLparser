@@ -68,7 +68,7 @@ int edit1DStringArray(vars_t *anker, char *group, char *name, wchar_t *val, int 
 int getStringFrom1DArray(vars_t *anker, char *group, char *name, wchar_t *val,
                          int length, int x_index);
 int createNewVarFrom1DStringArray(vars_t *inanker, vars_t *outanker,
-                                  char *group, char *name, char *new_name,
+                                  char *group, char *name, char *new_grp, char *new_name,
                                   int x_index);
 int create1DCharArrayFrom1DStringArray(vars_t *inanker, vars_t *outanker,
                                        char *group, char *name, char *new_name,
@@ -104,6 +104,12 @@ int editFull3DIntegerArray(vars_t *anker, char *group, char *name, void *val);
 //----------------------Float function---------------------------------------
 int getFloat(vars_t *anker, char *group, char *name, double *val);
 //----------------------End Float function-----------------------------------
+//
+//----------------------Boolean function-------------------------------------
+int createNewVarFrom1DBooleanArray(vars_t *inanker, vars_t *outanker,
+                                  char *group, char *name, char *out_grp,
+                                  char *new_name, int x_index);
+//----------------------End Boolean function----------------------------------
 
 //----------------------Utils function-----------------------------------------
 int getVarType(vars_t *anker, char *group, char *name);

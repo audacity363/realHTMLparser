@@ -341,7 +341,18 @@ int copyVariableNewNameWithIndex(vars_t *anker, vars_t *target_ank,
         return(createNewVarFrom1DIntegerArray(anker, target_ank,
                                   group, name, new_grp,
                                   new_name, index_array[0]));
-
+    else if(index_type == 1 && var_type == ONEDSTRING)
+        return(createNewVarFrom1DStringArray(anker, target_ank,
+                                  group, name, new_grp,
+                                  new_name, index_array[0]));
+    else if(index_type == 1 && var_type == ONEDBOOL)
+        return(createNewVarFrom1DBooleanArray(anker, target_ank,
+                                  group, name, new_grp,
+                                  new_name, index_array[0]));
+    else if(index_type == 1 && var_type == ONEDFLOAT)
+        return(createNewVarFrom1DFloatArray(anker, target_ank,
+                                  group, name, new_grp,
+                                  new_name, index_array[0]));
 }
 
 int copyGroupNewNameWithIndex(vars_t *anker, vars_t *target_ank,
