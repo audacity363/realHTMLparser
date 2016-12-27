@@ -352,7 +352,32 @@ int copyVariableNewName(vars_t *anker, vars_t *target_ank, char *group, char *na
             editFull3DBooleanArray(target_ank, new_grp, new_name,
                     target->data);
             break;
-
+        case STRING:
+            ret = addString(target_ank, new_grp, new_name, target->data,
+                    target->length-1);
+            if(ret != 0)
+                return(ret);
+        case ONEDSTRING:
+            ret = add1DStringArray(target_ank, new_grp, new_name,
+                    target->length-1, target->x_length);
+            if(ret != 0)
+                return(ret);
+            editFull1DStringArray(target_ank, new_grp, new_name, target->data);
+            break;
+        case TWODSTRING:
+            ret = add2DStringArray(target_ank, new_grp, new_name,
+                    target->length-1, target->x_length, target->y_length);
+            if(ret != 0)
+                return(ret);
+            editFull2DStringArray(target_ank, new_grp, new_name, target->data);
+            break;
+        case THREEDSTRING:
+            ret = add3DStringArray(target_ank, new_grp, new_name,
+                    target->length-1, target->x_length, target->y_length, target->z_length);
+            if(ret != 0)
+                return(ret);
+            editFull3DStringArray(target_ank, new_grp, new_name, target->data);
+            break;
     }
     return(ret);
 }
