@@ -174,6 +174,7 @@ int initVars(vars_t *anker)
     }
 
     addGroup(anker, "grparray", 10,0,0);
+    addGroup(anker, "grptest", 0,0,0);
     add1DIntegerArray(anker, "grparray", "array", 10);
     for(i=0; i < 10; i++)
     {
@@ -192,26 +193,28 @@ int initVars(vars_t *anker)
         edit1DIntegerArray(anker, "hallo", "array", i, i);
     }
 
-    add2DIntegerArray(anker, "hallo", "2darray", 5, 7);
+    add2DIntegerArray(anker, "grparray", "2darray", 5, 7);
 
     z = 0;
     for(i=0; i < 5; i++)
     {
         for(x=0; x < 7; x++)
         {
-            edit2DIntegerArray(anker, "hallo", "2darray", z, i, x);
+            edit2DIntegerArray(anker, "grparray", "2darray", z, i, x);
             z++;
         }
     }
 
     i = 0;
-    add3DIntegerArray(anker, NULL, "3darray", 5, 7, 9);
+    add3DIntegerArray(anker, "grparray", "3darray", 5, 7, 9);
+    add3DIntegerArray(anker, "grptest", "3darray", 5, 7, 9);
 
     for(x=0; x < 5; x++)
         for(y=0; y < 7; y++)
             for(z=0; z < 9; z++)
             {
-                edit3DIntegerArray(anker, NULL, "3darray", i, x, y, z);
+                edit3DIntegerArray(anker, "grparray", "3darray", i, x, y, z);
+                edit3DIntegerArray(anker, "grptest", "3darray", i, x, y, z);
                 i++;
             }
     if((ret = addString(anker, NULL, "teststr", L"höhöhöhöh", 100)) != 0)
@@ -285,13 +288,20 @@ int initVars(vars_t *anker)
     {
         return(1);
     }
+    add2DBooleanArray(anker, "grparray", "bool2d", 5, 6);
     for(x=0; x < 10; x++)
         for(y=0; y < 6; y++)
         {
             if(x % 2)
+            {
+                edit1DBooleanArray(anker, "grparray", "bool2d", 0, x, y);
                 edit1DBooleanArray(anker, NULL, "bool2d", 0, x, y);
+            }
             else
+            {
+                edit1DBooleanArray(anker, "grparray", "bool2d", 1, x, y);
                 edit1DBooleanArray(anker, NULL, "bool2d", 1, x, y);
+            }
         }
 
     addFloat(anker, NULL, "float", 677.01);
@@ -333,7 +343,7 @@ int main()
         L"<h1>Hello World</h1>",
         L"{% end-macro %}",
         L"<h1>Hello World</h1>",
-        L"{% testmacro(grparray[2], \"bla 1\", 28.81) %}"
+        L"{% testmacro(grparray, \"bla 1\", 28.81) %}"
     };
 
     status.in_for = 0;

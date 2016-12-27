@@ -51,6 +51,49 @@ vars_t *isDefined(vars_t *anker, char *name)
     return(false);
 }
 
+//Same as isDefined but with the option to search with groups
+vars_t *isDefinedGrp(vars_t *anker, char *group, char *name)
+{
+    vars_t *grp = NULL, *target = NULL;
+    if(group)
+    {
+        if(!(grp = isDefined(anker, group)))
+        {
+            return(NULL);
+        }
+        if(!(target = isDefined(grp->next_lvl, name)))
+        {
+            return(NULL);
+        }
+    }
+    else
+    {
+        if(!(target = isDefined(anker, name)))
+        {
+            return(NULL);
+        }
+    }
+    return(target);
+}
+
+int getArrayLength(vars_t *anker, char *group, char *name, int *x_length,
+                   int *y_length, int *z_length)
+{
+    vars_t *hptr = NULL;
+
+    if(!(hptr = isDefinedGrp(anker, group, name)))
+        return(VAR_NOT_DEFINED);
+
+    if(x_length != NULL)
+        *x_length = hptr->x_length;
+    if(y_length != NULL)
+        *y_length = hptr->y_length;
+    if(z_length != NULL)
+        *z_length = hptr->z_length;
+
+    return(0);
+}
+
 bool isDefinedBool(vars_t *anker, char *name)
 {
     vars_t *hptr = anker;
@@ -341,18 +384,51 @@ int copyVariableNewNameWithIndex(vars_t *anker, vars_t *target_ank,
         return(createNewVarFrom1DIntegerArray(anker, target_ank,
                                   group, name, new_grp,
                                   new_name, index_array[0]));
+    else if(index_type == 1 && var_type == TWODINTEGER)
+        return(createNew1DArrayFrom2DIntegerArray(anker, target_ank,
+                                  group, name, new_grp,
+                                  new_name, index_array[0]));
+    else if(index_type == 1 && var_type == THREEDINTEGER)
+       return( createNew2DArrayFrom3DIntegerArray(anker, target_ank,
+                                  group, name, new_grp,
+                                  new_name, index_array[0]));
+
     else if(index_type == 1 && var_type == ONEDSTRING)
         return(createNewVarFrom1DStringArray(anker, target_ank,
                                   group, name, new_grp,
                                   new_name, index_array[0]));
+
     else if(index_type == 1 && var_type == ONEDBOOL)
         return(createNewVarFrom1DBooleanArray(anker, target_ank,
                                   group, name, new_grp,
                                   new_name, index_array[0]));
+    else if(index_type == 1 && var_type == TWODBOOL)
+        return(createNew1DArrayFrom2DBooleanArray(anker, target_ank,
+                                  group, name, new_grp,
+                                  new_name, index_array[0]));
+    else if(index_type == 1 && var_type == THREEDBOOL)
+       return(createNew2DArrayFrom3DBooleanArray(anker, target_ank,
+                                  group, name, new_grp,
+                                  new_name, index_array[0]));
+
     else if(index_type == 1 && var_type == ONEDFLOAT)
         return(createNewVarFrom1DFloatArray(anker, target_ank,
                                   group, name, new_grp,
                                   new_name, index_array[0]));
+    else if(index_type == 1 && var_type == TWODFLOAT)
+        return(createNew1DArrayFrom2DFloatArray(anker, target_ank,
+                                  group, name, new_grp,
+                                  new_name, index_array[0]));
+    else if(index_type == 1 && var_type == THREEDFLOAT)
+       return(createNew2DArrayFrom3DFloatArray(anker, target_ank,
+                                  group, name, new_grp,
+                                  new_name, index_array[0]));
+
+
+    else if(index_type == 2 && var_type == THREEDINTEGER)
+        return(createNew1DArrayFrom3DIntegerArray(anker, target_ank,
+                                  group, name, new_grp,
+                                  new_name, index_array[0],index_array[1]));
 }
 
 int copyGroupNewNameWithIndex(vars_t *anker, vars_t *target_ank,
