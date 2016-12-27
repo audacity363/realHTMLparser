@@ -260,7 +260,7 @@ int addVariables(macro_parms *defaults, macro_parms *given, vars_t *vars)
         }
         //No index as been found copy hole variable to the new target with the
         //new name
-        else if(given->type[i] == -1 && given->index_type == 0)
+        else if(given->type[i] == -1 && given->index_type[i] == 0)
         {
             if((ret = copyVariableNewName(vars_anker, vars, NULL,
                         (char*)given->val[i], NULL, defaults->name[i])) != 0)
@@ -269,7 +269,7 @@ int addVariables(macro_parms *defaults, macro_parms *given, vars_t *vars)
                return(ret);
            }
         }
-        else if(given->type[i] == -1 && given->index_type != 0)
+        else if(given->type[i] == -1 && given->index_type[i] != 0)
         {
             copyVariableNewNameWithIndex(vars_anker, vars,
                 NULL, (char*)given->val[i], NULL, defaults->name[i],

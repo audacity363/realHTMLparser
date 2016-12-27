@@ -272,14 +272,6 @@ int copyVariableNewName(vars_t *anker, vars_t *target_ank, char *group, char *na
             ret = addInteger(target_ank, new_grp, new_name,
                     *((int*)target->data));
             break;
-        case FLOAT:
-            ret = addFloat(target_ank, new_grp, new_name,
-                    *((double*)target->data));
-            break;
-        case BOOL:
-            ret = addBoolean(target_ank, new_grp, new_name,
-                    *((bool*)target->data));
-            break;
         case ONEDINTEGER:
             ret = add1DIntegerArray(target_ank, new_grp, new_name, 
                     target->x_length);
@@ -304,6 +296,63 @@ int copyVariableNewName(vars_t *anker, vars_t *target_ank, char *group, char *na
             editFull3DIntegerArray(target_ank, new_grp, new_name,
                     target->data);
             break;
+        case FLOAT:
+            ret = addFloat(target_ank, new_grp, new_name,
+                    *((double*)target->data));
+            break;
+        case ONEDFLOAT:
+            ret = add1DFloatArray(target_ank, new_grp, new_name, 
+                    target->x_length);
+            if(ret != 0)
+                return(ret);
+            editFull1DFloatArray(target_ank, new_grp, new_name,
+                    target->data);
+            break;
+        case TWODFLOAT:
+            ret = add2DFloatArray(target_ank, new_grp, new_name,
+                    target->x_length, target->y_length);
+            if(ret != 0)
+                return(ret);
+            editFull2DFloatArray(target_ank, new_grp, new_name,
+                    target->data);
+            break;
+        case THREEDFLOAT:
+            ret = add3DFloatArray(target_ank, new_grp, new_name,
+                    target->x_length, target->y_length, target->z_length);
+            if(ret != 0)
+                return(ret);
+            editFull3DFloatArray(target_ank, new_grp, new_name,
+                    target->data);
+            break;
+        case BOOL:
+            ret = addBoolean(target_ank, new_grp, new_name,
+                    *((bool*)target->data));
+            break;
+        case ONEDBOOL:
+            ret = add1DBooleanArray(target_ank, new_grp, new_name, 
+                    target->x_length);
+            if(ret != 0)
+                return(ret);
+            editFull1DBooleanArray(target_ank, new_grp, new_name,
+                    target->data);
+            break;
+        case TWODBOOL:
+            ret = add2DBooleanArray(target_ank, new_grp, new_name,
+                    target->x_length, target->y_length);
+            if(ret != 0)
+                return(ret);
+            editFull2DBooleanArray(target_ank, new_grp, new_name,
+                    target->data);
+            break;
+        case THREEDBOOL:
+            ret = add3DBooleanArray(target_ank, new_grp, new_name,
+                    target->x_length, target->y_length, target->z_length);
+            if(ret != 0)
+                return(ret);
+            editFull3DBooleanArray(target_ank, new_grp, new_name,
+                    target->data);
+            break;
+
     }
     return(ret);
 }
@@ -427,6 +476,14 @@ int copyVariableNewNameWithIndex(vars_t *anker, vars_t *target_ank,
 
     else if(index_type == 2 && var_type == THREEDINTEGER)
         return(createNew1DArrayFrom3DIntegerArray(anker, target_ank,
+                                  group, name, new_grp,
+                                  new_name, index_array[0],index_array[1]));
+    else if(index_type == 2 && var_type == THREEDBOOL)
+        return(createNew1DArrayFrom3DBooleanArray(anker, target_ank,
+                                  group, name, new_grp,
+                                  new_name, index_array[0],index_array[1]));
+    else if(index_type == 2 && var_type == THREEDFLOAT)
+        return(createNew1DArrayFrom3DFloatArray(anker, target_ank,
                                   group, name, new_grp,
                                   new_name, index_array[0],index_array[1]));
 }

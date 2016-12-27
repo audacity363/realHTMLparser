@@ -157,6 +157,35 @@ int createNewVarFrom1DBooleanArray(vars_t *inanker, vars_t *outanker,
     return(0);
 }
 
+int editFull1DBooleanArray(vars_t *anker, char *group, char *name, void *val)
+{
+    vars_t *target = NULL,
+           *grp = NULL;
+
+    if(group)
+    {
+        if(!(grp = isDefined(anker, group)))
+        {
+            return(GRP_NOT_DEFINED);
+        }
+        if(!(target = isDefined(grp->next_lvl, name)))
+        {
+            return(VAR_NOT_DEFINED);
+        }
+    }
+    else
+    {
+        if(!(target = isDefined(anker, name)))
+        {
+            return(VAR_NOT_DEFINED);
+        }
+    }
+
+    memcpy(target->data, val, sizeof(bool)*target->x_length);
+
+    return(0);
+}
+
 int add2DBooleanArray(vars_t *anker, char *group, char *name, int x_length, int y_length)
 {
     vars_t *new = NULL;
@@ -285,6 +314,36 @@ int createNew1DArrayFrom2DBooleanArray(vars_t *inanker, vars_t *outanker,
     }
     return(0);
 }
+
+int editFull2DBooleanArray(vars_t *anker, char *group, char *name, void *val)
+{
+    vars_t *target = NULL,
+           *grp = NULL;
+    size_t offset = 0;
+
+    if(group)
+    {
+        if(!(grp = isDefined(anker, group)))
+        {
+            return(GRP_NOT_DEFINED);
+        }
+        if(!(target = isDefined(grp->next_lvl, name)))
+        {
+            return(VAR_NOT_DEFINED);
+        }
+    }
+    else
+    {
+        if(!(target = isDefined(anker, name)))
+        {
+            return(VAR_NOT_DEFINED);
+        }
+    }
+
+    memcpy(target->data, val, (target->x_length*target->y_length)*sizeof(bool));
+    return(0);
+}
+
 
 int add3DBooleanArray(vars_t *anker, char *group, char *name, int x_length, int y_length, int z_length)
 {
@@ -443,5 +502,36 @@ int createNew1DArrayFrom3DBooleanArray(vars_t *inanker, vars_t *outanker,
         if((ret = edit1DBooleanArray(outanker, out_grp, new_name, b_target, i)) != 0)
             return(ret);
     }
+    return(0);
+}
+
+int editFull3DBooleanArray(vars_t *anker, char *group, char *name, void *val)
+{
+    vars_t *target = NULL,
+           *grp = NULL;
+    size_t offset = 0;
+
+    if(group)
+    {
+        if(!(grp = isDefined(anker, group)))
+        {
+            return(GRP_NOT_DEFINED);
+        }
+        if(!(target = isDefined(grp->next_lvl, name)))
+        {
+            return(VAR_NOT_DEFINED);
+        }
+    }
+    else
+    {
+        if(!(target = isDefined(anker, name)))
+        {
+            return(VAR_NOT_DEFINED);
+        }
+    }
+
+    memcpy(target->data, val, ((target->x_length*target->y_length)
+                *target->z_length)*sizeof(bool));
+
     return(0);
 }
