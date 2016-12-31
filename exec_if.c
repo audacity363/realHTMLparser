@@ -491,7 +491,7 @@ int SSEQ(if_parms_t *leftval, if_parms_t *compare, if_parms_t *rightval)
         wcstombs(left_name, leftval->val, wcslen(leftval->val)+1);
 
 
-        if((left_length = getStringLength(vars_anker, NULL, left_name)) < 0)
+        if(getStringLength(vars_anker, NULL, left_name, &left_length) < 0)
         {
             free(left_name);
             return(-2);
@@ -528,7 +528,7 @@ int SSEQ(if_parms_t *leftval, if_parms_t *compare, if_parms_t *rightval)
         wcstombs(right_name, rightval->val, wcslen(rightval->val)+1);
 
 
-        if((right_length = getStringLength(vars_anker, NULL, right_name)) < 0)
+        if(getStringLength(vars_anker, NULL, right_name, &right_length) < 0)
         {
             free(right_name);
             free(left_val);

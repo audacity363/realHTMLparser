@@ -56,7 +56,7 @@ typedef unsigned short int bool;
 int addGroup(vars_t *anker, char *name, int x_length, int y_length, int z_length);
 
 //----------------------String function----------------------------------------
-int getStringLength(vars_t *anker, char *group, char *name);
+int getStringLength(vars_t *anker, char *group, char *name, int *length);
 int addString(vars_t *anker, char *group, char *name, wchar_t *val, size_t length);
 int getString(vars_t *anker, char *group, char *name, wchar_t *val, int length);
 int create1DCharArrayFromString(vars_t *inanker, vars_t *outanker, char *group, 
@@ -78,15 +78,22 @@ int add2DStringArray(vars_t *anker, char *group, char *name, int var_length,
 int edit2DStringArray(vars_t *anker, char *group, char *name, wchar_t *val, int x_index, int y_index);
 int getStringFrom2DArray(vars_t *anker, char *group, char *name, wchar_t *val,
                          int length, int x_index, int y_index);
-int create1DStringArrayFrom2DStringArray(vars_t *inanker, vars_t *outanker,
-                                       char *group, char *name, char *new_name,
-                                       int x_index);
+
+int createNew1DArrayFrom2DStringArray(vars_t *inanker, vars_t *outanker,
+                                       char *group, char *name, char *new_grp,
+                                       char *new_name, int x_index);
 int add3DStringArray(vars_t *anker, char *group, char *name, int var_length, 
                      int x_length, int y_length, int z_length);
 int edit3DStringArray(vars_t *anker, char *group, char *name, wchar_t *val,
                       int x_index, int y_index, int z_index);
 int getStringFrom3DArray(vars_t *anker, char *group, char *name, wchar_t *val,
                          int length, int x_index, int y_index, int z_index);
+int createNew2DArrayFrom3DStringArray(vars_t *inanker, vars_t *outanker,
+                                       char *group, char *name, char *new_grp,
+                                       char *new_name, int x_index);
+int createNew1DArrayFrom3DStringArray(vars_t *inanker, vars_t *outanker,
+                                       char *group, char *name, char *new_grp,
+                                       char *new_name, int x_index, int y_index);
 //----------------------End String function------------------------------------
 
 //----------------------Integer function---------------------------------------

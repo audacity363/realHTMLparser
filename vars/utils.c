@@ -498,6 +498,14 @@ int copyVariableNewNameWithIndex(vars_t *anker, vars_t *target_ank,
                                   group, name, new_grp,
                                   new_name, index_array[0]));
 
+    else if(index_type == 1 && var_type == ONEDSTRING)
+        return(createNewVarFrom1DStringArray(anker, target_ank,
+                                  group, name, new_grp,
+                                  new_name, index_array[0]));
+    else if(index_type == 1 && var_type == TWODSTRING)
+        return(createNew1DArrayFrom2DStringArray(anker, target_ank,
+                                  group, name, new_grp,
+                                  new_name, index_array[0]));
 
     else if(index_type == 2 && var_type == THREEDINTEGER)
         return(createNew1DArrayFrom3DIntegerArray(anker, target_ank,
@@ -509,6 +517,10 @@ int copyVariableNewNameWithIndex(vars_t *anker, vars_t *target_ank,
                                   new_name, index_array[0],index_array[1]));
     else if(index_type == 2 && var_type == THREEDFLOAT)
         return(createNew1DArrayFrom3DFloatArray(anker, target_ank,
+                                  group, name, new_grp,
+                                  new_name, index_array[0],index_array[1]));
+    else if(index_type == 2 && var_type == THREEDSTRING)
+        return(createNew1DArrayFrom3DStringArray(anker, target_ank,
                                   group, name, new_grp,
                                   new_name, index_array[0],index_array[1]));
 }

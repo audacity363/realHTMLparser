@@ -10,7 +10,7 @@
 //TODO: Write a function which replaces the variablen search code
 //TODO: change group type to an char pointer array so that you can read multiple groups
 
-int getStringLength(vars_t *anker, char *group, char *name)
+int getStringLength(vars_t *anker, char *group, char *name, int *length)
 {
     vars_t *target = NULL,
            *grp = NULL;
@@ -40,7 +40,8 @@ int getStringLength(vars_t *anker, char *group, char *name)
        target->type != THREEDSTRING)
         return(WRONG_VAR_TYPE);
 
-    return(target->length);
+    *length = target->length;
+    return(0);
 
 }
 
@@ -509,43 +510,52 @@ int getStringFrom2DArray(vars_t *anker, char *group, char *name, wchar_t *val,
     return(0);
 }
 
-int create1DStringArrayFrom2DStringArray(vars_t *inanker, vars_t *outanker,
-                                       char *group, char *name, char *new_name,
-                                       int x_index)
+int createNew1DArrayFrom2DStringArray(vars_t *inanker, vars_t *outanker,
+                                       char *group, char *name, char *new_grp,
+                                       char *new_name, int x_index)
 {
-    vars_t *target = NULL,
-           *grp = NULL;
-    int y = 0;
-    size_t offset = 0;
+    int i = 0, y_length = 0, str_length = 0;
+    wchar_t *str_buff = NULL;
 
-    if(group)
+    if(getStringLength(inanker, group, name, &str_length) != 0)
     {
-        if(!(grp = isDefined(inanker, group)))
-        {
-            return(GRP_NOT_DEFINED);
-        }
-        if(!(target = isDefined(grp->next_lvl, name)))
-        {
-            return(VAR_NOT_DEFINED);
-        }
-    }
-    else
-    {
-        if(!(target = isDefined(inanker, name)))
-        {
-            return(VAR_NOT_DEFINED);
-        }
+        return(-1);
     }
 
-    if(target->type != TWODSTRING)
-        return(WRONG_VAR_TYPE);
-
-    for(y=0; y < target->y_length; y++)
+    if(getArrayLength(inanker, group, name, NULL, &y_length, NULL) != 0)
     {
-        offset = (target->y_length*(target->length*sizeof(wchar_t)));
-        offset = offset*(x_index)+((target->length*sizeof(wchar_t))*(y));
-
+        return(-2);
     }
+
+    if((str_buff = malloc(str_length*sizeof(wchar_t))) == NULL)
+    {
+        fprintf(stderr, "Malloc error [%s] [%d]\n", __FILE__, __LINE__);
+        return(-3);
+    }
+
+    if(add1DStringArray(outanker, new_grp, new_name, str_length-1, y_length) != 0)
+    {
+        free(str_buff);
+        return(-4);
+    }
+
+    for(i=0; i < y_length; i++)
+    {
+        if(getStringFrom2DArray(inanker, group, name, str_buff, str_length,
+            x_index, i) != 0)
+        {
+            free(str_buff);
+            return(-5);
+        }
+
+        if(edit1DStringArray(outanker, new_grp, new_name, str_buff, i) != 0)
+        {
+            free(str_buff);
+            return(-6);
+        }
+    }
+    
+    free(str_buff);
     return(0);
 }
 
@@ -737,5 +747,107 @@ int editFull3DStringArray(vars_t *anker, char *group, char *name, void *val)
 
     memcpy(target->data, val, (((target->length+1)*sizeof(wchar_t))*(target->y_length))*(target->x_length));
 
+    return(0);
+}
+
+int createNew2DArrayFrom3DStringArray(vars_t *inanker, vars_t *outanker,
+                                       char *group, char *name, char *new_grp,
+                                       char *new_name, int x_index)
+{
+    int i = 0, x = 0, y_length = 0, z_length = 0, str_length = 0;
+    wchar_t *str_buff = NULL;
+
+    if(getStringLength(inanker, group, name, &str_length) != 0)
+    {
+        return(-1);
+    }
+
+    if(getArrayLength(inanker, group, name, NULL, &y_length, &z_length) != 0)
+    {
+        return(-2);
+    }
+
+    if((str_buff = malloc(str_length*sizeof(wchar_t))) == NULL)
+    {
+        fprintf(stderr, "Malloc error [%s] [%d]\n", __FILE__, __LINE__);
+        return(-3);
+    }
+
+    if(add2DStringArray(outanker, new_grp, new_name, str_length-1, y_length,
+                        z_length) != 0)
+    {
+        free(str_buff);
+        return(-4);
+    }
+
+    for(i=0; i < y_length; i++)
+    {
+        for(x=0; i < z_length; x++)
+        {
+            if(getStringFrom3DArray(inanker, group, name, str_buff, str_length,
+                x_index, i, x) != 0)
+            {
+                free(str_buff);
+                return(-5);
+            }
+
+            if(edit2DStringArray(outanker, new_grp, new_name, str_buff, i, x) != 0)
+            {
+                free(str_buff);
+                return(-6);
+            }
+        }
+    }
+    
+    free(str_buff);
+    return(0);
+}
+
+int createNew1DArrayFrom3DStringArray(vars_t *inanker, vars_t *outanker,
+                                       char *group, char *name, char *new_grp,
+                                       char *new_name, int x_index, int y_index)
+{
+    int x = 0, z_length = 0, i = 0, str_length = 0;
+    wchar_t *str_buff = NULL;
+
+    if(getStringLength(inanker, group, name, &str_length) != 0)
+    {
+        return(-1);
+    }
+
+    if(getArrayLength(inanker, group, name, NULL, NULL, &z_length) != 0)
+    {
+        return(-2);
+    }
+
+    if((str_buff = malloc(str_length*sizeof(wchar_t))) == NULL)
+    {
+        fprintf(stderr, "Malloc error [%s] [%d]\n", __FILE__, __LINE__);
+        return(-3);
+    }
+
+    if(add1DStringArray(outanker, new_grp, new_name, str_length-1, z_length) != 0)
+    {
+        free(str_buff);
+        return(-4);
+    }
+
+    for(x=0; i < z_length; x++)
+    {
+        if(getStringFrom3DArray(inanker, group, name, str_buff, str_length,
+            x_index, y_index, x) != 0)
+        {
+            free(str_buff);
+            return(-5);
+        }
+
+        if(edit1DStringArray(outanker, new_grp, new_name, str_buff, x) != 0)
+        {
+            free(str_buff);
+            return(-6);
+        }
+    }
+    
+    free(str_buff);
     return(0);
 }
