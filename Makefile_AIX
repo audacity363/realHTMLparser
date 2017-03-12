@@ -1,0 +1,17 @@
+CC = xlc
+
+OBJ = function_dummys.o \
+	  token.o \
+	  parser.o
+
+INCLUDE = -I./include
+
+lib: $(OBJ)
+	$(CC) -g -o main ./src/main.c $(INCLUDE) ./bin/*.o
+
+$(OBJ):
+	$(CC) -g -c ./src/$*.c $(INCLUDE) -o ./bin/$*.o
+
+clean: 
+	rm -rf ./bin/*.o
+	rm -rf ./main
