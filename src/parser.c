@@ -6,6 +6,7 @@
 #include "parser.h"
 #include "dummy_functions.h"
 #include "token.h"
+#include "variable.h"
 
 char *commands[] = 
 {
@@ -123,8 +124,11 @@ int checkBlock(ParserStatus *stat)
             saveFromTree(stat);
         }
         else
+        {
             //printfromTree(stat->token_tree.next);
             printf("[here goes the content of the variable]");
+            handle_variable(stat);
+        }
         stat->found_block = 0;
         return(0);
     }

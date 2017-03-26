@@ -1,3 +1,7 @@
+#ifndef RH4N_PARSER
+#define RH4N_PARSER
+#include "var_management.h"
+
 #define SAVE 1
 #define END_SAVE 2
 #define EXIT 3
@@ -14,6 +18,9 @@
 #define CHECK_UNICODE_CHAR(x) x < 0x21 || x > 0x7E
 #define PRINT_SYNTAX_ERROR(x) fprintf(stderr, "SyntaxError: invalid Syntax in line [%d] column [%d]\n", \
                                         x->line_no+1, x->col_no);
+
+#define PRINT_SYNTAX_ERROR_VAR_ATTR(x) fprintf(stderr, "SyntaxError: invalid Syntax in line [%d] column [%d]\n", \
+                                        x.line+1, x.start_col);
 
 #ifdef DEBUG_FLAG
 #define D(x) if(1) x;
@@ -87,3 +94,4 @@ int parseChr(ParserStatus *, wchar_t);
 int checkBlock(ParserStatus*);
 char *getFirstCommand(Token_Object**);
 void getCharfromBuffer(SaveObject *sav, wchar_t *chr);
+#endif

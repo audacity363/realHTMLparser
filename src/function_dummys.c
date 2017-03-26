@@ -69,17 +69,8 @@ int end_for_handling(ParserStatus *status)
     status->mode = 0;
     status->cur_token = &status->token_tree;
     status->found_block = 0;
-    fprintf(stderr, "Level: [%d]\n", for_level);
-    /*int size = 0;
-    if(for_level == 0)
-    {
-        size = for_level+2;
-    }
-    else
-    {
-        size = for_level+2;
-    }
-    fprintf(stderr, "Allocate mem for %d int vals\n", size);*/
+    D(fprintf(stderr, "Level: [%d]\n", for_level));
+    
     status->sav.cursor = realloc(status->sav.cursor, (for_level+2)*sizeof(int));
     status->sav.cursor[for_level+1] = 0;
 
@@ -99,7 +90,7 @@ int end_for_handling(ParserStatus *status)
     status->in_status[FOR_INDEX] = 0;
     status->sav.level++;
 
-    //Can't use a pointer to the cursor array index because the this function 
+    //Can't use a pointer to the cursor array index because this function 
     //gets called recursive. So the realloc for the cursor array could move the
     //memory to a nother location and the pointer would be invalid
 
@@ -107,9 +98,6 @@ int end_for_handling(ParserStatus *status)
         status->sav.cursor[for_level] < for_length;
         status->sav.cursor[for_level]++)
     {
-        /*printf("%d/%d [%C]\n", status->sav.cursor, for_length,
-            for_body[status->sav.cursor]);*/
-
         D(printf("Sending: [%C] on [%d/%d]\n", 
             (iswprint(for_body[status->sav.cursor[for_level]]) != 0 
             ? for_body[status->sav.cursor[for_level]] : L'.'),

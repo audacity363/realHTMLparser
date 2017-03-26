@@ -2,15 +2,25 @@ CC = xlc
 
 OBJ = function_dummys.o \
 	  token.o \
-	  parser.o
+	  parser.o \
 
-INCLUDE = -I./include
+VARIABLE = variable.o \
+		   variable_attributes.o \
+		   exec_attributes.o
 
-lib: $(OBJ)
-	$(CC) -g -o main ./src/main.c $(INCLUDE) ./bin/*.o
+INCLUDE = -I./include \
+		  -I./libs/variable_management/include/
 
-$(OBJ):
+LIBS = 
+
+lib: $(OBJ) 
+	$(CC) -g -o main ./src/main.c $(INCLUDE) ./bin/*.o $(LIBS)
+
+$(OBJ): $(VARIABLE)
 	$(CC) -g -c ./src/$*.c $(INCLUDE) -o ./bin/$*.o
+
+$(VARIABLE):
+	$(CC) -g -c ./src/variable/$*.c $(INCLUDE) -o ./bin/$*.o
 
 clean: 
 	rm -rf ./bin/*.o

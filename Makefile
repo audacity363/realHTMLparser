@@ -1,27 +1,43 @@
 CC = gcc
 
-OBJ = function_dummys.o parser.o token.o
+OBJ = function_dummys.o \
+	  token.o \
+	  parser.o \
 
-C_FLAGS=
+VARIABLE = variable.o \
+		   variable_attributes.o \
+		   exec_attributes.o
 
-INCLUDE = ./include/
+VARS = utils.o
 
-lib: $(OBJ)
-	$(CC) -g $(C_FLAGS) -o main ./src/main.c -I$(INCLUDE) ./bin/*.o
+VARS_STRING = 1dstring.o
 
-debug_lib: C_FLAGS=-DDEBUG_FLAG
-debug_lib: clean lib
+INCLUDE = -I./include \
+		  -I./libs/variable_management/include/
 
-%.o: ./src/%.c
-	$(CC) -g3 -c $(C_FLAGS) $< -I$(INCLUDE) -o ./bin/$@
+LIBS = 
 
-check_mem:
-	valgrind \
-	--leak-check=full \
-	--show-leak-kinds=all \
-	--track-origins=yes \
-	./main 1> valgrind.log 2>&1
+lib: $(OBJ) 
+	$(CC) -g -o main ./src/main.c $(INCLUDE) ./bin/*.o $(LIBS)
 
-clean:
-	rm -rf main
+$(OBJ): $(VARIABLE)
+	$(CC) -g -c ./src/$*.c $(INCLUDE) -o ./bin/$*.o
+
+$(VARIABLE):
+	$(CC) -g -c ./src/variable/$*.c $(INCLUDE) -o ./bin/$*.o
+
+vars: $(VARS)
+	@echo "Done..."
+
+$(VARS): $(VARS_STRING)
+	$(CC) -g -c ./libs/variable_management/src/$*.c $(INCLUDE) \
+		-o ./libs/variable_management/bin/$*.o -Wa,-adhlns=/tmp/$*.lst
+
+$(VARS_STRING):
+	$(CC) -g -c ./libs/variable_management/src/string/$*.c $(INCLUDE) \
+		-o ./libs/variable_management/bin/$*.o
+
+
+clean: 
 	rm -rf ./bin/*.o
+	rm -rf ./main

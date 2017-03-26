@@ -4,6 +4,7 @@
 #include <wchar.h>
 
 #include "parser.h"
+#include "variable.h"
 #include "dummy_functions.h"
 
 void cleanBuffers(ParserStatus *status);
@@ -44,7 +45,7 @@ int main()
     status.sav.sav_buff[0] = NULL;
     status.sav.cursor = malloc(sizeof(int));
     status.sav.cursor[0] = 0;
-    
+
     while(1)
     {
         getCharfromFile(fp, &cur_chr);
@@ -98,10 +99,16 @@ int saveChr(SaveObject *sav, wchar_t cur_chr)
     {
         for(; sav->real_level != sav->level; sav->real_level--)
         {
+            D(printf("Free level [%d]\n", sav->real_level));
             free(sav->sav_buff[sav->real_level]);
         }
         sav->sav_buff = realloc(sav->sav_buff, (sav->real_level+2)*sizeof(wchar_t*));
         sav->length = realloc(sav->length, (sav->real_level+2)*sizeof(int));
+
+        //Clean the buffer on the current level
+        free(sav->sav_buff[sav->real_level]);
+        sav->sav_buff[sav->real_level] = NULL;
+        sav->length[sav->real_level] = -1;
     }
     else if(sav->real_level < sav->level)
     {
