@@ -4,7 +4,7 @@ INCLUDE = -I./include/
 
 OBJ = utils.o print.o
 
-STRINGS = string.o 1dstring.o 2dstring.o
+STRINGS = string.o 1dstring.o 2dstring.o 3dstring.o
 
 lib: $(OBJ) $(STRINGS)
 	ar -vcru libvar_management.a \

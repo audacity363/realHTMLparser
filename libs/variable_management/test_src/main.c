@@ -20,6 +20,8 @@ int main()
 
     new2DString(anker, NULL, "test2", 20, 2, 3);
 
+    new3DString(anker, NULL, "test3", 20, 2, 3, 4);
+
     printf("0: [%S]\n", get1DStringX(anker, NULL, "test", 0));
     printf("1: [%S]\n", get1DStringX(anker, NULL, "test", 1));
 

@@ -88,5 +88,6 @@ extern int rh4n_errno;
 #include "strings.h"
 #include "1dstring.h"
 #include "2dstring.h"
+#include "3dstring.h"
 #include "print.h"
 #endif

@@ -8,13 +8,15 @@
 int print_function_types[] = {
     STRING,
     ONEDSTRING,
-    TWODSTRING
+    TWODSTRING,
+    THREEDSTRING
     };
 
 int (*print_functions[])(VariableObject*, FILE*, int) = {
     printString,
     print1DString,
-    print2DString
+    print2DString,
+    print3DString
     };
 
 int printAllVars(VariableObject *anker, FILE *output)
