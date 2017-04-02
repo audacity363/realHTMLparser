@@ -22,6 +22,14 @@ int main()
 
     new3DString(anker, NULL, "test3", 20, 2, 3, 4);
 
+    newInteger(anker, NULL, "test4");
+    setInteger(anker, NULL, "test4", 73527);
+
+    new1DInteger(anker, NULL, "test5", 3);
+    set1DIntegerX(anker, NULL, "test5", 2, 1);
+    set1DIntegerX(anker, NULL, "test5", 0, 6);
+    set1DIntegerX(anker, NULL, "test5", 1, 9);
+
     printf("0: [%S]\n", get1DStringX(anker, NULL, "test", 0));
     printf("1: [%S]\n", get1DStringX(anker, NULL, "test", 1));
 

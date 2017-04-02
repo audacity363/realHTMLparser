@@ -9,14 +9,18 @@ int print_function_types[] = {
     STRING,
     ONEDSTRING,
     TWODSTRING,
-    THREEDSTRING
+    THREEDSTRING,
+    INTEGER,
+    ONEDINTEGER
     };
 
 int (*print_functions[])(VariableObject*, FILE*, int) = {
     printString,
     print1DString,
     print2DString,
-    print3DString
+    print3DString,
+    printInteger,
+    print1DInteger
     };
 
 int printAllVars(VariableObject *anker, FILE *output)

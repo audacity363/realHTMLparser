@@ -15,6 +15,7 @@
 #define Y_INDEX_OUT_OF_RANGE     7
 #define Z_INDEX_OUT_OF_RANGE     8
 #define STRING_TO_LONG           9
+#define WRONG_VAR_TYPE           10
 
 #define RH4N_FLG_COPY  0x00000001 //The data entry is just a pointer to a other variable. Don't free it
 
@@ -89,5 +90,7 @@ extern int rh4n_errno;
 #include "1dstring.h"
 #include "2dstring.h"
 #include "3dstring.h"
+#include "integer.h"
+#include "1dinteger.h"
 #include "print.h"
 #endif
