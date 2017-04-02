@@ -6,7 +6,7 @@ OBJ = utils.o print.o
 
 STRINGS = string.o 1dstring.o 2dstring.o 3dstring.o
 
-INTEGER = integer.o 1dinteger.o
+INTEGER = integer.o 1dinteger.o 2dinteger.o 3dinteger.o
 
 lib: $(OBJ) $(STRINGS) $(INTEGER)
 	ar -vcru libvar_management.a \

@@ -11,7 +11,9 @@ int print_function_types[] = {
     TWODSTRING,
     THREEDSTRING,
     INTEGER,
-    ONEDINTEGER
+    ONEDINTEGER,
+    TWODINTEGER,
+    THREEDINTEGER
     };
 
 int (*print_functions[])(VariableObject*, FILE*, int) = {
@@ -20,7 +22,9 @@ int (*print_functions[])(VariableObject*, FILE*, int) = {
     print2DString,
     print3DString,
     printInteger,
-    print1DInteger
+    print1DInteger,
+    print2DInteger,
+    print3DInteger
     };
 
 int printAllVars(VariableObject *anker, FILE *output)

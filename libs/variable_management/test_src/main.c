@@ -30,6 +30,19 @@ int main()
     set1DIntegerX(anker, NULL, "test5", 0, 6);
     set1DIntegerX(anker, NULL, "test5", 1, 9);
 
+    new2DInteger(anker, NULL, "test6", 3, 2);
+    set2DIntegerXY(anker, NULL, "test6", 0, 0, 1);
+    set2DIntegerXY(anker, NULL, "test6", 1, 0, 2);
+    set2DIntegerXY(anker, NULL, "test6", 2, 0, 3);
+
+    new3DInteger(anker, NULL, "test7", 2, 3, 4);
+    set3DIntegerXYZ(anker, NULL, "test7", 0, 0, 0, 1);
+    set3DIntegerXYZ(anker, NULL, "test7", 0, 2, 2, 2);
+    set3DIntegerXYZ(anker, NULL, "test7", 0, 1, 3, 3);
+    set3DIntegerXYZ(anker, NULL, "test7", 1, 0, 0, 4);
+    set3DIntegerXYZ(anker, NULL, "test7", 1, 2, 3, 5);
+    set3DIntegerXYZ(anker, NULL, "test7", 1, 1, 3, 6);
+
     printf("0: [%S]\n", get1DStringX(anker, NULL, "test", 0));
     printf("1: [%S]\n", get1DStringX(anker, NULL, "test", 1));
 

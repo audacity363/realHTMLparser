@@ -86,11 +86,16 @@ typedef unsigned short int bool;
 extern int rh4n_errno;
 
 #include "utils.h"
+
 #include "strings.h"
 #include "1dstring.h"
 #include "2dstring.h"
 #include "3dstring.h"
+
 #include "integer.h"
 #include "1dinteger.h"
+#include "2dinteger.h"
+#include "3dinteger.h"
+
 #include "print.h"
 #endif
