@@ -13,7 +13,11 @@ int print_function_types[] = {
     INTEGER,
     ONEDINTEGER,
     TWODINTEGER,
-    THREEDINTEGER
+    THREEDINTEGER,
+    BOOL,
+    ONEDBOOL,
+    TWODBOOL,
+    THREEDBOOL
     };
 
 int (*print_functions[])(VariableObject*, FILE*, int) = {
@@ -24,7 +28,11 @@ int (*print_functions[])(VariableObject*, FILE*, int) = {
     printInteger,
     print1DInteger,
     print2DInteger,
-    print3DInteger
+    print3DInteger,
+    printBoolean,
+    print1DBoolean,
+    print2DBoolean,
+    print3DBoolean
     };
 
 int printAllVars(VariableObject *anker, FILE *output)

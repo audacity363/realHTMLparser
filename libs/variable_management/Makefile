@@ -8,11 +8,14 @@ STRINGS = string.o 1dstring.o 2dstring.o 3dstring.o
 
 INTEGER = integer.o 1dinteger.o 2dinteger.o 3dinteger.o
 
-lib: $(OBJ) $(STRINGS) $(INTEGER)
+BOOLEAN = bool.o 1dbool.o 2dbool.o 3dbool.o
+
+lib: $(OBJ) $(STRINGS) $(INTEGER) $(BOOLEAN)
 	ar -vcru libvar_management.a \
 		./bin/*.o \
 		./bin/string/*.o \
-		./bin/integer/*.o
+		./bin/integer/*.o \
+		./bin/bool/*.o 
 	@echo "Done..."
 
 %.o: ./src/%.c
@@ -23,6 +26,9 @@ lib: $(OBJ) $(STRINGS) $(INTEGER)
 
 %.o: ./src/integer/%.c
 	$(CC) -g -c $< $(INCLUDE) -o ./bin/integer/$@
+
+%.o: ./src/bool/%.c
+	$(CC) -g -c $< $(INCLUDE) -o ./bin/bool/$@
 
 test:
 	$(CC) -g ./test_src/main.c $(INCLUDE) -L./ -lvar_management -o ./test_src/main
@@ -40,4 +46,5 @@ clean:
 	rm -rf ./bin/*.o
 	rm -rf ./bin/string/*.o
 	rm -ef ./bin/integer/*.o
+	rm -ef ./bin/bool/*.o
 	rm -rf ./libvar_management.a

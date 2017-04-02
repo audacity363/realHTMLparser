@@ -97,5 +97,10 @@ extern int rh4n_errno;
 #include "2dinteger.h"
 #include "3dinteger.h"
 
+#include "bool.h"
+#include "1dbool.h"
+#include "2dbool.h"
+#include "3dbool.h"
+
 #include "print.h"
 #endif

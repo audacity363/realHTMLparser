@@ -36,17 +36,23 @@ int main()
     set2DIntegerXY(anker, NULL, "test6", 2, 0, 3);
 
     new3DInteger(anker, NULL, "test7", 2, 3, 4);
-    set3DIntegerXYZ(anker, NULL, "test7", 0, 0, 0, 1);
-    set3DIntegerXYZ(anker, NULL, "test7", 0, 2, 2, 2);
-    set3DIntegerXYZ(anker, NULL, "test7", 0, 1, 3, 3);
-    set3DIntegerXYZ(anker, NULL, "test7", 1, 0, 0, 4);
-    set3DIntegerXYZ(anker, NULL, "test7", 1, 2, 3, 5);
-    set3DIntegerXYZ(anker, NULL, "test7", 1, 1, 3, 6);
+    set3DIntegerXYZ(anker, NULL, "test7", 1, 0, 0, 1);
+
+    newBoolean(anker, NULL, "test8");
+    new1DBoolean(anker, NULL, "test9", 3);
+    set1DBooleanX(anker, NULL, "test9", 0, true);
+
+    new2DBoolean(anker, NULL, "test10", 1, 2);
+    set2DBooleanXY(anker, NULL, "test10", 0, 1, true);
+
+    new3DBoolean(anker, NULL, "test11", 2, 3, 4);
+    set3DBooleanXYZ(anker, NULL, "test11", 1, 0, 0, true);
+
 
     printf("0: [%S]\n", get1DStringX(anker, NULL, "test", 0));
     printf("1: [%S]\n", get1DStringX(anker, NULL, "test", 1));
 
     printAllVars(anker, stdout);
-    printAllVarsJson(anker, stdout);
+    //printAllVarsJson(anker, stdout);
     return(0);
 }
