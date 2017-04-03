@@ -17,7 +17,11 @@ int print_function_types[] = {
     BOOL,
     ONEDBOOL,
     TWODBOOL,
-    THREEDBOOL
+    THREEDBOOL,
+    FLOAT,
+    ONEDFLOAT,
+    TWODFLOAT,
+    THREEDFLOAT
     };
 
 int (*print_functions[])(VariableObject*, FILE*, int) = {
@@ -32,7 +36,11 @@ int (*print_functions[])(VariableObject*, FILE*, int) = {
     printBoolean,
     print1DBoolean,
     print2DBoolean,
-    print3DBoolean
+    print3DBoolean,
+    printFloat,
+    print1DFloat,
+    print2DFloat,
+    print3DFloat
     };
 
 int printAllVars(VariableObject *anker, FILE *output)

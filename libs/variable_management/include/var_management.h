@@ -102,5 +102,10 @@ extern int rh4n_errno;
 #include "2dbool.h"
 #include "3dbool.h"
 
+#include "float.h"
+#include "1dfloat.h"
+#include "2dfloat.h"
+#include "3dfloat.h"
+
 #include "print.h"
 #endif
