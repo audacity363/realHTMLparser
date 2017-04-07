@@ -43,8 +43,8 @@ int set3DIntegerXYZ(VariableObject *anker, char *group, char *name, int x, int y
     }
 
     int offset = OFFSET_3DInteger(target->array_length[0], 
-        target->array_length[1], x, y, z);
-    ((int*)target->data)[offset] = val;
+        target->array_length[1], target->array_length[2], x, y, z);
+    *((int*)target->data+offset) = val;
     return(0);
 }
 
@@ -55,8 +55,8 @@ int get3DIntegerXYZ(VariableObject *anker, char *group, char *name, int x, int y
     if((target = getVariable(anker, group, name)) == NULL)
         return(0);
 
-    return(((int*)target->data)[OFFSET_3DInteger(target->array_length[0],
-        target->array_length[1], x, y, z)]);
+    return((*(int*)target->data+OFFSET_3DInteger(target->array_length[0],
+        target->array_length[1], target->array_length[2], x, y, z)));
 }
 
 int print3DInteger(VariableObject *target, FILE *output, int mode)
@@ -78,8 +78,8 @@ int print3DInteger(VariableObject *target, FILE *output, int mode)
             for(z=0; z < target->array_length[2]; z++)
             {
                 offset = OFFSET_3DInteger(target->array_length[0], 
-                    target->array_length[1], i, x, z);
-                fprintf(output, "%d", ((int*)target->data)[offset]);
+                    target->array_length[1], target->array_length[2], i, x, z);
+                fprintf(output, "%d", *((int*)target->data+offset));
                 if(z+1 < target->array_length[2])
                     fprintf(output, ", ");
             }

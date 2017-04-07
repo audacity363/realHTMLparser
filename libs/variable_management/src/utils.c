@@ -107,7 +107,7 @@ bool isDefinedVariable(VariableObject *anker, char *group, char *name)
     while(hptr)
     {
         if(NAME_COMPARE(name, hptr) && hptr->type != GROUP)
-            return(false);
+            return(true);
         hptr = hptr->next;
     }
     

@@ -35,7 +35,7 @@ int main()
     set2DIntegerXY(anker, NULL, "test6", 1, 0, 2);
     set2DIntegerXY(anker, NULL, "test6", 2, 0, 3);
 
-    new3DInteger(anker, NULL, "test7", 2, 3, 4);
+    new3DInteger(anker, NULL, "test7", 2, 003, 4);
     set3DIntegerXYZ(anker, NULL, "test7", 1, 0, 0, 1);
 
     newBoolean(anker, NULL, "test8");

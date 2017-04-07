@@ -104,3 +104,49 @@ int printAllVarsJson(VariableObject *anker, FILE *output)
         hptr = hptr->next;
     }
 }
+
+void printVarPtr(VariableObject *target, FILE *output)
+{
+    int i = 0;
+
+    int (*print_function)(VariableObject *, FILE*, int) = NULL;
+
+    for(i=0; i < (sizeof(print_function_types)/sizeof(int)); i++)
+    {
+        if(print_function_types[i] == target->type)
+            print_function = print_functions[i];
+    }
+    
+    if(print_function)
+    {
+        print_function(target, output, PRINT_MODE_FORMAT);
+        fprintf(output, "\n");
+    }
+}
+
+int printVar(VariableObject *anker, char *group, char *name, FILE *output)
+{
+    int i = 0;
+
+    int (*print_function)(VariableObject *, FILE*, int) = NULL;
+
+    VariableObject *target = NULL;
+
+    if((target = getVariable(anker, group, name)) == NULL)
+    {
+        return(-1);
+    }
+
+    for(i=0; i < (sizeof(print_function_types)/sizeof(int)); i++)
+    {
+        if(print_function_types[i] == target->type)
+            print_function = print_functions[i];
+    }
+    
+    if(print_function)
+    {
+        print_function(target, output, PRINT_MODE_FORMAT);
+        fprintf(output, "\n");
+    }
+    return(0);
+}

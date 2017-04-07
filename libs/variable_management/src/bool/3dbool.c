@@ -40,7 +40,7 @@ int set3DBooleanXYZ(VariableObject *anker, char *group, char *name, int x, int y
     }
     
     ((bool*)target->data)[OFFSET_3DBoolean(target->array_length[0],
-        target->array_length[1], x, y, z)] = val;
+        target->array_length[1], target->array_length[2], x, y, z)] = val;
     return(0);
 }
 
@@ -52,7 +52,7 @@ bool get3DBooleanXYZ(VariableObject *anker, char *group, char *name, int x, int 
         return(0);
 
     return(((bool*)target->data)[OFFSET_3DBoolean(target->array_length[0],
-        target->array_length[1], x, y, z)]);
+        target->array_length[1], target->array_length[2], x, y, z)]);
 }
 
 int print3DBoolean(VariableObject *target, FILE *output, int mode)
@@ -73,8 +73,8 @@ int print3DBoolean(VariableObject *target, FILE *output, int mode)
             fprintf(output, "[");
             for(z=0; z < target->array_length[2]; z++)
             {
-                offset = OFFSET_3DBoolean(target->array_length[1], 
-                    target->array_length[2], i, x, z);
+                offset = OFFSET_3DBoolean(target->array_length[0], 
+                    target->array_length[1], target->array_length[2], i, x, z);
                 fprintf(output, "%s", 
                     (((bool*)target->data)[offset] == true) ? "true" : "false" );
                 if(z+1 < target->array_length[2])
