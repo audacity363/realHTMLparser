@@ -10,15 +10,15 @@ int handle_variable(ParserStatus *status)
 {
     VariableParseData var_data = 
     {
-        -1, NULL, -1, -1, NULL
+        {NULL, -1, NULL, 0, {0, 0, 0}, 0, 0, NULL, NULL, NULL}, -1, NULL
     };
 
-    printf("\n----Variable----\n");
     //printTokens(status->token_tree.next);
     getVariableAttributes(status->token_tree.next, &var_data);
 
-    //execAttributes(&var_data);
-    printf("----------------\n");
+    execAttributes(&var_data);
+
+    printVarPtr(&var_data.target, PRINT_MODE_RAW, stdout);
 
     freeVariableData(&var_data);
 

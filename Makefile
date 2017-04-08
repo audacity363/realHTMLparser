@@ -3,10 +3,12 @@ CC = gcc
 OBJ = function_dummys.o \
 	  token.o \
 	  parser.o \
+	  parser_utils.o
 
 VARIABLE = variable.o \
 		   variable_attributes.o \
-		   exec_attributes.o
+		   exec_attributes.o \
+		   functions.o
 
 VARS = utils.o
 
@@ -15,7 +17,7 @@ VARS_STRING = 1dstring.o
 INCLUDE = -I./include \
 		  -I./libs/variable_management/include/
 
-LIBS = 
+LIBS = -L./libs/variable_management/ -lvar_management
 
 lib: $(OBJ) 
 	$(CC) -g -o main ./src/main.c $(INCLUDE) ./bin/*.o $(LIBS)

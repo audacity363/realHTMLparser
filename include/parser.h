@@ -22,6 +22,17 @@
 #define PRINT_SYNTAX_ERROR_VAR_ATTR(x) fprintf(stderr, "SyntaxError: invalid Syntax in line [%d] column [%d]\n", \
                                         x.line+1, x.start_col);
 
+#define PRINT_UNKWON_VAR_ATTR(x) fprintf(stderr, "NameError: Unkown variable in line [%d] column [%d]\n", \
+                                        x.line+1, x.start_col);
+
+#define PRINT_UNKWON_GRP_ATTR(x) fprintf(stderr, "NameError: Unkown group in line [%d] column [%d]\n", \
+                                        x.line+1, x.start_col);
+
+#define PRINT_UNSUPPORTED_INDEX_ATTR(x) fprintf(stderr, "IndexError: Unsupported index in line [%d] column [%d]\n", \
+                                        x.line+1, x.start_col);
+
+#define UNSUPPOERTED_TYPE -1
+
 #ifdef DEBUG_FLAG
 #define D(x) if(1) x;
 #else
@@ -94,4 +105,6 @@ int parseChr(ParserStatus *, wchar_t);
 int checkBlock(ParserStatus*);
 char *getFirstCommand(Token_Object**);
 void getCharfromBuffer(SaveObject *sav, wchar_t *chr);
+
+extern VariableObject *var_anker;
 #endif

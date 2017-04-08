@@ -126,7 +126,7 @@ int checkBlock(ParserStatus *stat)
         else
         {
             //printfromTree(stat->token_tree.next);
-            printf("[here goes the content of the variable]");
+            //printf("[here goes the content of the variable]");
             handle_variable(stat);
         }
         stat->found_block = 0;

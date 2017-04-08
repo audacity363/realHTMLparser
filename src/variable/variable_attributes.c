@@ -82,11 +82,16 @@ int getVariableAttributes(Token_Object *start, VariableParseData *var_data)
         }
         hptr=hptr->next;
     }
+    if(var_data->number_of_attributes == -1)
+    {
+        saveAttribute(var_data, buffer, buffer_length, line, start_col);
+        free(buffer);
+    }
     int i=0;
 
     rateAttributes(var_data);
 
-    printAttributes(var_data);
+    //printAttributes(var_data);
 
     return(0);
 }
@@ -95,8 +100,6 @@ void freeVariableData(VariableParseData *data)
 {
     int i = 0, x = 0;
 
-    if(data->length_of_data != -1)
-        free(data->data);
 
     if(data->number_of_attributes != -1)
     {
@@ -121,7 +124,7 @@ void printAttributes(VariableParseData *data)
     printf("----Attributes----\n");
     for(i=0; i < data->number_of_attributes; i++)
     {
-        printf("[%s]\n", data->attributes[i].attribute);;
+        printf("[%s]\n", data->attributes[i].attribute);
         if(data->attributes[i].index_type != -1)
         {
             for(x=0; x < data->attributes[i].index_type; x++)

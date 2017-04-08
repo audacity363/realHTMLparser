@@ -9,6 +9,8 @@
 
 void cleanBuffers(ParserStatus *status);
 
+VariableObject *var_anker = NULL;
+
 int main()
 {
     wchar_t cur_chr, *sav_buffer = NULL;
@@ -45,6 +47,27 @@ int main()
     status.sav.sav_buff[0] = NULL;
     status.sav.cursor = malloc(sizeof(int));
     status.sav.cursor[0] = 0;
+
+    initAnker(&var_anker);
+
+    addNewGroup(var_anker, "newgrp");
+    newString(var_anker, "newgrp", "test", 50);
+    setString(var_anker, "newgrp", "test", L"Hello World");
+
+    new3DInteger(var_anker, NULL, "test1", 3, 4, 6);
+    set3DIntegerXYZ(var_anker, NULL, "test1", 1, 1, 1, 4);
+
+    new3DString(var_anker, NULL, "test2", 20, 3, 4, 6);
+    set3DStringXYZ(var_anker, NULL, "test2", 1, 1, 5, L"HEllo World");
+    set3DStringXYZ(var_anker, NULL, "test2", 1, 1, 0, L"HEllo World111111111");
+
+    newInteger(var_anker, NULL, "test3");
+    setInteger(var_anker, NULL, "test3", 1);
+
+    new1DInteger(var_anker, NULL, "test4", 5);
+    set1DIntegerX(var_anker, NULL, "test4", 2, 1);
+
+    printAllVars(var_anker, stdout);
 
     while(1)
     {
