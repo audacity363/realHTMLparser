@@ -106,5 +106,9 @@ int checkBlock(ParserStatus*);
 char *getFirstCommand(Token_Object**);
 void getCharfromBuffer(SaveObject *sav, wchar_t *chr);
 
+//---------Handler functions---------
+int gen_json(ParserStatus *stat);
+
+
 extern VariableObject *var_anker;
 #endif

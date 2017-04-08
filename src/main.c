@@ -67,6 +67,11 @@ int main()
     new1DInteger(var_anker, NULL, "test4", 5);
     set1DIntegerX(var_anker, NULL, "test4", 2, 1);
 
+    addNewGroup(var_anker, "testgrp");
+    new1DInteger(var_anker, "testgrp", "test1", 5);
+    set1DIntegerX(var_anker, "testgrp", "test1", 2, 6);
+
+
     printAllVars(var_anker, stdout);
 
     while(1)

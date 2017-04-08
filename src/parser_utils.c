@@ -15,3 +15,4 @@ int isdigit_str(char *str)
     }
     return(1);
 }
+

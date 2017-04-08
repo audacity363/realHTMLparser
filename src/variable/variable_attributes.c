@@ -82,7 +82,7 @@ int getVariableAttributes(Token_Object *start, VariableParseData *var_data)
         }
         hptr=hptr->next;
     }
-    if(var_data->number_of_attributes == -1)
+    if(buffer != NULL)
     {
         saveAttribute(var_data, buffer, buffer_length, line, start_col);
         free(buffer);
@@ -114,12 +114,28 @@ void freeVariableData(VariableParseData *data)
             }
         }
         free(data->attributes);
+        data->attributes = NULL;
+        data->number_of_attributes = -1;
     }
+
+    if(!ISSET_FLAG(data->target.flags, RH4N_FLG_COPY))
+    {
+        free(data->target.data);
+    }
+
+    data->target.data = NULL;
+    free(data->target.name);
+    data->target.name = NULL;
+    memset(data->target.array_length, 0x00, sizeof(data->target.array_length)); 
+    data->target.length = 0;
+    data->target.type = -1;
+    data->target.next_lvl = NULL;
 }
 
 void printAttributes(VariableParseData *data)
 {
     int i,x;
+
 
     printf("----Attributes----\n");
     for(i=0; i < data->number_of_attributes; i++)

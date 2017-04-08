@@ -14,13 +14,15 @@ char *commands[] =
     "end-for",
     "if", 
     "end-if",
+    "genJSON"
 };
 
 int (*function_dic[])(ParserStatus *) = {
     for_handling,
     end_for_handling,
     if_handling,
-    end_if_handling
+    end_if_handling,
+    gen_json
 };
 
 
@@ -178,7 +180,8 @@ char *getFirstCommand(Token_Object **tree)
     for(;hptr->type == SPACE && hptr->type != COMMANDBLOCK; hptr = hptr->next);
 
     //read the name of the cmd
-    for(;hptr->type != SPACE && hptr->type != COMMANDBLOCK;i++, hptr = hptr->next)
+    for(;hptr->type != SPACE && hptr->type != COMMANDBLOCK &&
+         hptr->val != '(' ;i++, hptr = hptr->next)
     {
         if(CHECK_UNICODE_CHAR(hptr->val))
         {

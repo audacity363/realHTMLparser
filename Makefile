@@ -3,7 +3,8 @@ CC = gcc
 OBJ = function_dummys.o \
 	  token.o \
 	  parser.o \
-	  parser_utils.o
+	  parser_utils.o \
+	  genjson.o
 
 VARIABLE = variable.o \
 		   variable_attributes.o \
