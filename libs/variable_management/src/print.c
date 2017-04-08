@@ -5,6 +5,8 @@
 
 #include "var_management.h"
 
+int printGroup(VariableObject *target, FILE *output, int format);
+
 int print_function_types[] = {
     STRING,
     ONEDSTRING,
@@ -21,7 +23,8 @@ int print_function_types[] = {
     FLOAT,
     ONEDFLOAT,
     TWODFLOAT,
-    THREEDFLOAT
+    THREEDFLOAT,
+    GROUP
     };
 
 int (*print_functions[])(VariableObject*, FILE*, int) = {
@@ -40,8 +43,50 @@ int (*print_functions[])(VariableObject*, FILE*, int) = {
     printFloat,
     print1DFloat,
     print2DFloat,
-    print3DFloat
+    print3DFloat,
+    printGroup
     };
+
+int printGroup(VariableObject *target, FILE *output, int format)
+{
+    VariableObject *hptr = NULL;
+    int i = 0, tabs = 0;
+    int (*print_function)(VariableObject *, FILE*, int) = NULL;
+
+    hptr = target->next_lvl;
+
+    if(format == PRINT_MODE_FORMAT)
+        fprintf(output, "[%s]:\n", target->name);
+    else if(format == PRINT_MODE_JSON)
+        fprintf(output, "\"%s\": {", target->name);
+    else if(format == PRINT_MODE_RAW)
+    {
+        fprintf(output, "Group [%s]\n", target->name);
+        return(0);
+    }
+
+    while(hptr)
+    {
+        for(i=0; i < (sizeof(print_function_types)/sizeof(int)); i++)
+        {
+            if(print_function_types[i] == hptr->type)
+            {
+                print_function = print_functions[i];
+                break;
+            }
+        }
+        if(print_function)
+        {
+            if(format ==  PRINT_MODE_FORMAT)
+                fprintf(output, "\t");
+            print_function(hptr, output, format);
+        }
+        hptr = hptr->next;
+    }
+
+    if(format == PRINT_MODE_JSON)
+        fprintf(output, "}");
+}
 
 int printAllVars(VariableObject *anker, FILE *output)
 {
