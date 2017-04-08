@@ -21,6 +21,7 @@ int main()
     new2DString(anker, NULL, "test2", 20, 2, 3);
 
     new3DString(anker, NULL, "test3", 20, 2, 3, 4);
+    set3DStringXYZ(anker, NULL, "test3", 1, 1, 1, L"Hello World111111111");
 
     newInteger(anker, NULL, "test4");
     setInteger(anker, NULL, "test4", 73527);
@@ -35,7 +36,7 @@ int main()
     set2DIntegerXY(anker, NULL, "test6", 1, 0, 2);
     set2DIntegerXY(anker, NULL, "test6", 2, 0, 3);
 
-    new3DInteger(anker, NULL, "test7", 2, 003, 4);
+    new3DInteger(anker, NULL, "test7", 3, 4, 10);
     set3DIntegerXYZ(anker, NULL, "test7", 1, 0, 0, 1);
 
     newBoolean(anker, NULL, "test8");

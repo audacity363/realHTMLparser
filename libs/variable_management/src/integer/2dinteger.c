@@ -70,7 +70,7 @@ int print2DInteger(VariableObject *target, FILE *output, int mode)
         for(x=0; x < target->array_length[1]; x++)
         {
             offset = OFFSET_2DInteger(target->array_length[1], i, x);
-            fprintf(output, "\"%d\"", *((int*)(target->data+offset)));
+            fprintf(output, "%d", *((int*)(target->data+offset)));
             if(x+1 < target->array_length[1])
                 fprintf(output, ", ");
         }

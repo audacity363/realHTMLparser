@@ -105,7 +105,7 @@ int printAllVarsJson(VariableObject *anker, FILE *output)
     }
 }
 
-void printVarPtr(VariableObject *target, FILE *output)
+void printVarPtr(VariableObject *target, int format, FILE *output)
 {
     int i = 0;
 
@@ -119,8 +119,8 @@ void printVarPtr(VariableObject *target, FILE *output)
     
     if(print_function)
     {
-        print_function(target, output, PRINT_MODE_FORMAT);
-        fprintf(output, "\n");
+        print_function(target, output, format);
+        //fprintf(output, "\n");
     }
 }
 

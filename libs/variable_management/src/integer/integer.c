@@ -57,7 +57,7 @@ int printInteger(VariableObject *target, FILE *output, int mode)
     if(mode == PRINT_MODE_FORMAT)
         fprintf(output, "[%s] = [%d]", target->name, *((int*)target->data));
     else if(mode == PRINT_MODE_JSON)
-        fprintf(output, "\"%s\": \"%d\"", target->name, *((int*)target->data));
+        fprintf(output, "\"%s\": %d", target->name, *((int*)target->data));
     else if(mode == PRINT_MODE_RAW)
         fprintf(output, "%d", *((int*)target->data));
 }

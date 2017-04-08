@@ -3,9 +3,9 @@
 
 #define OFFSET_3DString(length, y_length, z_length, x, y, z) \
     ( \
-        (x*((((length*sizeof(wchar_t))*z_length)*y_length)))+ \
-        (y*((length*sizeof(wchar_t))*z_length))+ \
-        (z*(length*sizeof(wchar_t))) \
+        (x*(((((length+1)*sizeof(wchar_t))*z_length)*y_length)))+ \
+        (y*(((length+1)*sizeof(wchar_t))*z_length))+ \
+        (z*((length+1)*sizeof(wchar_t))) \
     )
 
 int new3DString(VariableObject *anker, char *group, char *name, int length, int x_length, int y_length, int z_length);

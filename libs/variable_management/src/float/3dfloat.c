@@ -44,7 +44,7 @@ int set3DFloatXYZ(VariableObject *anker, char *group, char *name, int x, int y, 
 
     int offset = OFFSET_3DFloat(target->array_length[0], 
         target->array_length[1], target->array_length[2], x, y, z);
-    ((double*)target->data)[offset] = val;
+    *((double*)(target->data+offset)) = val;
     return(0);
 }
 
@@ -55,8 +55,8 @@ double get3DFloatXYZ(VariableObject *anker, char *group, char *name, int x, int 
     if((target = getVariable(anker, group, name)) == NULL)
         return(0);
 
-    return(((double*)target->data)[OFFSET_3DFloat(target->array_length[0],
-        target->array_length[1], target->array_length[2], x, y, z)]);
+    return(*((double*)(target->data+OFFSET_3DFloat(target->array_length[0],
+        target->array_length[1], target->array_length[2], x, y, z))));
 }
 
 int print3DFloat(VariableObject *target, FILE *output, int mode)
@@ -79,7 +79,7 @@ int print3DFloat(VariableObject *target, FILE *output, int mode)
             {
                 offset = OFFSET_3DFloat(target->array_length[0], 
                     target->array_length[1], target->array_length[2], i, x, z);
-                fprintf(output, "%f", ((double*)target->data)[offset]);
+                fprintf(output, "%f", *((double*)(target->data+offset)));
                 if(z+1 < target->array_length[2])
                     fprintf(output, ", ");
             }

@@ -20,8 +20,8 @@
 #define RH4N_FLG_COPY  0x00000001 //The data entry is just a pointer to a other variable. Don't free it
 
 #define SET_FLAG(target, flag) target |= flag
-#define UNSET_FLAG(target, flag) target &= ~flags
-#define ISSET_FLAG(target, flag) target & flags
+#define UNSET_FLAG(target, flag) target &= ~flag
+#define ISSET_FLAG(target, flag) target & flag
 
 #define PRINT_MODE_RAW    0
 #define PRINT_MODE_JSON   1

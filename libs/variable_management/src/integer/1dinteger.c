@@ -66,7 +66,7 @@ int print1DInteger(VariableObject *target, FILE *output, int mode)
     for(; i < target->array_length[0]; i++)
     {
         offset = OFFSET_1DInteger(i);
-        fprintf(output, "\"%d\"", *((int*)(target->data+offset)));
+        fprintf(output, "%d", *((int*)(target->data+offset)));
         if(i+1 < target->array_length[0])
             fprintf(output, ", ");
     }

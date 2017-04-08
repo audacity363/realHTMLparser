@@ -2,7 +2,15 @@
 #define RH4N_VARIABLE_MAN_3DINTEGER
 
 #define OFFSET_3DInteger(x_length, y_length, z_length, x, y, z) \
-    ((y*(x_length*sizeof(int))+x) * ((x_length*sizeof(int)*y_length))*z_length + z) * sizeof(int)
+    ( \
+    (((z_length*sizeof(int)) * y_length) * x) + \
+    (((z_length*sizeof(int))) * y) + \
+    (z * sizeof(int)) \
+    ) 
+
+//    ((y*(x_length*sizeof(int))+x) * ((x_length*sizeof(int)*y_length))*z_length + z) * sizeof(int)
+
+//(y_size*x)+(z_size*y)+(z*sizeof(int))
 
 //    ((z*x_length*y_length)+(y*x_length)+x)
 
