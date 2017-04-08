@@ -14,7 +14,9 @@ char *commands[] =
     "end-for",
     "if", 
     "end-if",
-    "genJSON"
+    "genJSON",
+    "printVars",
+    "dumpVars"
 };
 
 int (*function_dic[])(ParserStatus *) = {
@@ -22,7 +24,9 @@ int (*function_dic[])(ParserStatus *) = {
     end_for_handling,
     if_handling,
     end_if_handling,
-    gen_json
+    gen_json,
+    print_vars,
+    dump_vars
 };
 
 

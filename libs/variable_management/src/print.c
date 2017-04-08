@@ -143,8 +143,9 @@ int printAllVarsJson(VariableObject *anker, FILE *output)
         if(print_function)
         {
             print_function(hptr, output, PRINT_MODE_JSON);
-            fprintf(output, "\n");
         }
+        if(hptr->next)
+            fprintf(output, ",");
         print_function = NULL;
         hptr = hptr->next;
     }

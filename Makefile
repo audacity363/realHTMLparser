@@ -4,7 +4,8 @@ OBJ = function_dummys.o \
 	  token.o \
 	  parser.o \
 	  parser_utils.o \
-	  genjson.o
+	  genjson.o \
+	  dump_vars.o
 
 VARIABLE = variable.o \
 		   variable_attributes.o \

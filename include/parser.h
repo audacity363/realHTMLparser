@@ -108,7 +108,8 @@ void getCharfromBuffer(SaveObject *sav, wchar_t *chr);
 
 //---------Handler functions---------
 int gen_json(ParserStatus *stat);
-
+int print_vars(ParserStatus *stat);
+int dump_vars(ParserStatus *status);
 
 extern VariableObject *var_anker;
 #endif
