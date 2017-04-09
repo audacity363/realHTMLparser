@@ -20,7 +20,7 @@ int new1DBoolean(VariableObject *anker, char *group, char *name, int x_length)
         return(-1);
     }
 
-    memset(target->data, target->size, 0x00);
+    memset(target->data, 0x00, target->size);
     return(0);
 }
 

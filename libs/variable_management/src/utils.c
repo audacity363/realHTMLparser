@@ -7,6 +7,8 @@
 
 int rh4n_errno = 0;
 
+void freeVarFork(VariableObject *start);
+
 int initAnker(VariableObject **anker)
 {
     if((*anker = malloc(SIZEOF_VARIABLEOBJ)) == NULL)
@@ -30,6 +32,53 @@ int initAnker(VariableObject **anker)
     
     (*anker)->flags = 0;
     return(0); 
+}
+
+void freeVarAnker(VariableObject *anker)
+{
+    freeVarFork(anker);
+}
+
+void freeVarFork(VariableObject *start)
+{
+    VariableObject *hptr = NULL, *savptr = NULL;
+    hptr = start;
+    //got to the end of the anker when there is an fork free this one first
+    while(hptr)
+    {
+        if(hptr->next_lvl != NULL)
+            freeVarFork(hptr->next_lvl);
+        savptr = hptr;
+        hptr = hptr->next;
+    }
+    
+    hptr = savptr;
+
+    while(hptr != NULL)
+    {
+        free(hptr->name);
+        if(!ISSET_FLAG(hptr->flags, RH4N_FLG_COPY))
+            free(hptr->data);
+        hptr->name = NULL;
+        //reaced first entry
+        if(hptr->prev == NULL)
+        {
+            free(hptr);
+            break;
+        }
+
+        //reaced group head
+        if(hptr == start)
+        {
+            hptr->prev->next_lvl = NULL;
+            free(hptr);
+            break;
+        }
+
+        hptr = hptr->prev;
+        free(hptr->next);
+        hptr->next = NULL;
+    }
 }
 
 //Goes throu the top level variables and returns the requested group
@@ -144,6 +193,7 @@ VariableObject *addNewVariable(VariableObject *anker, char *group, char *name, i
         rh4n_errno = MEMORY_ERROR;
         return(NULL);
     }
+    memset((void*)sav, 0x00, sizeof(VariableObject));
 
     sav->prev = head;
     sav->next_lvl = NULL;
@@ -187,6 +237,8 @@ int addNewGroup(VariableObject *anker, char *group)
         rh4n_errno = MEMORY_ERROR;
         return(-1);
     }
+
+    memset((void*)sav, 0x00, sizeof(VariableObject));
 
     sav->prev = hptr;
     sav->next_lvl = NULL;

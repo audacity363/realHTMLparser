@@ -19,7 +19,7 @@ int newFloat(VariableObject *anker, char *group, char *name)
         return(-1);
     }
 
-    memset(target->data, target->size, 0x00);
+    memset(target->data, 0x00, target->size);
     return(0);
 
 }

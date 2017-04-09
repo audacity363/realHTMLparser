@@ -23,7 +23,7 @@ int new3DFloat(VariableObject *anker, char *group, char *name, int x_length, int
         return(-1);
     }
 
-    memset(target->data, target->size, 0x00);
+    memset(target->data, 0x00, target->size);
     return(0);
 
 }

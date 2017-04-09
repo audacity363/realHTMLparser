@@ -22,7 +22,7 @@ int new3DBoolean(VariableObject *anker, char *group, char *name, int x_length, i
         return(-1);
     }
 
-    memset(target->data, target->size, 0x00);
+    memset(target->data, 0x00, target->size);
     return(0);
 }
 

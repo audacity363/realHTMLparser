@@ -13,7 +13,7 @@ int new3DString(VariableObject *anker, char *group, char *name, int length,
     if((target = addNewVariable(anker, group, name, THREEDSTRING)) == NULL)
         return(-1);
 
-    target->size = (x_length * y_length * z_length *sizeof(wchar_t))*length+1;
+    target->size = ((((length+1)*sizeof(wchar_t))*z_length)*y_length)*x_length;
 
 
     target->array_length[0] = x_length;
@@ -27,7 +27,7 @@ int new3DString(VariableObject *anker, char *group, char *name, int length,
         return(-1);
     }
 
-    memset(target->data, target->size, 0x00);
+    memset(target->data, 0x00, target->size);
     return(0);
 }
 
