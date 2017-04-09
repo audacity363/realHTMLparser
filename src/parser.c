@@ -16,7 +16,8 @@ char *commands[] =
     "end-if",
     "genJSON",
     "printVars",
-    "dumpVars"
+    "dumpVars",
+    "typeof"
 };
 
 int (*function_dic[])(ParserStatus *) = {
@@ -26,7 +27,8 @@ int (*function_dic[])(ParserStatus *) = {
     end_if_handling,
     gen_json,
     print_vars,
-    dump_vars
+    dump_vars,
+    typeof_func
 };
 
 

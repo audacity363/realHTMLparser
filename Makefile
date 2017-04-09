@@ -5,7 +5,8 @@ OBJ = function_dummys.o \
 	  parser.o \
 	  parser_utils.o \
 	  genjson.o \
-	  dump_vars.o
+	  dump_vars.o \
+	  typeof.o
 
 VARIABLE = variable.o \
 		   variable_attributes.o \
@@ -40,7 +41,12 @@ $(VARS): $(VARS_STRING)
 $(VARS_STRING):
 	$(CC) -g -c ./libs/variable_management/src/string/$*.c $(INCLUDE) \
 		-o ./libs/variable_management/bin/$*.o
-
+mem_check:
+	valgrind \
+		--leak-check=full \
+		--show-leak-kinds=all \
+		--track-origins=yes \
+		./main 1> valgrind.log 2>&1
 
 clean: 
 	rm -rf ./bin/*.o

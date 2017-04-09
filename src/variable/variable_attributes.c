@@ -29,7 +29,6 @@ int getVariableAttributes(Token_Object *start, VariableParseData *var_data)
         //Found a seperator
         if(hptr->val == L'.' && in_index == 0)
         {
-
             saveAttribute(var_data, buffer, buffer_length, line, start_col);
             free(buffer);
             buffer = NULL;
@@ -40,6 +39,11 @@ int getVariableAttributes(Token_Object *start, VariableParseData *var_data)
         }
         //ignore spaces
         else if(hptr->type == SPACE)
+        {
+            hptr=hptr->next;
+            continue;
+        }
+        else if(hptr->val == L'\t')
         {
             hptr=hptr->next;
             continue;
@@ -170,7 +174,7 @@ int saveAttribute(VariableParseData *data, char *buffer, int buffer_length, int 
     //Copy the attribute value
     data->attributes[data->number_of_attributes-1].attribute = malloc((buffer_length+1)*SIZEOF_CHAR);
     memcpy(data->attributes[data->number_of_attributes-1].attribute, buffer, buffer_length);
-    data->attributes[data->number_of_attributes-1].attribute[buffer_length+1] = '\0';
+    data->attributes[data->number_of_attributes-1].attribute[buffer_length] = '\0';
 
     target_str = data->attributes[data->number_of_attributes-1].attribute;
 
@@ -243,6 +247,7 @@ char *getIndexString(char *start, VariableAttribute *attr)
 
 
     attr->index[attr->index_type-1] = malloc((length+1)*SIZEOF_CHAR);
+    memset(attr->index[attr->index_type-1], 0x00, (length+1)*SIZEOF_CHAR);
     strncpy(attr->index[attr->index_type-1], start+1, length-1);
 
     return(hptr+1);

@@ -1,9 +1,11 @@
 <test>
 <span>{{ test2.length() }}</span>
 
-{% genJSON(testgrp, test2[1][1][5]) %}
+{% genJSON(testgrp, test2[1]) %}
 
 {% printVars() %}
 
 {% dumpVars() %}
+
+{% typeof(test2[1]) %}
 </test>

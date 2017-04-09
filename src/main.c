@@ -54,12 +54,12 @@ int main()
     newString(var_anker, "newgrp", "test", 50);
     setString(var_anker, "newgrp", "test", L"Hello World");
 
-    new3DInteger(var_anker, NULL, "test1", 3, 4, 6);
-    set3DIntegerXYZ(var_anker, NULL, "test1", 1, 1, 1, 4);
+    new2DString(var_anker, NULL, "test1", 20, 4, 6);
+    set2DStringXY(var_anker, NULL, "test1", 1, 1, L"Test");
 
     new3DString(var_anker, NULL, "test2", 20, 3, 4, 6);
-    set3DStringXYZ(var_anker, NULL, "test2", 1, 1, 5, L"HEllo World");
-    set3DStringXYZ(var_anker, NULL, "test2", 1, 1, 0, L"HEllo World111111111");
+    set3DStringXYZ(var_anker, NULL, "test2", 1, 0, 5, L"HEllo World");
+    set3DStringXYZ(var_anker, NULL, "test2", 2, 3, 5, L"HEllo World111111111");
 
     newInteger(var_anker, NULL, "test3");
     setInteger(var_anker, NULL, "test3", 1);
@@ -102,6 +102,7 @@ int main()
     fclose(fp);
 
     cleanBuffers(&status);
+    freeVarAnker(var_anker);
 }
 
 void cleanBuffers(ParserStatus *status)
