@@ -1,0 +1,73 @@
+((depthindex*col_size+colindex) * row_size + rowindex) * Element_Size
+
+((1*8+0) * 12 + 0) * 4
+
+
+col_size = sizeof(int)*2 = 8
+row_size = (sizeof(int)*2)*3 = 12
+depth_size = ((sizeof(int)*2)*3)*4 = 48
+
+==========================================================
+
+4*4((rowindex*col_size+colindex) * depth_size + depthindex) * Element_Size
+
+((0*8+0) * 48 + 1) * 4
+
+=========================================================
+
+col_size = sizeof(int)*3 = 12
+row_size = (sizeof(int)*3)*4 = 48
+depth_size = ((sizeof(int)*3)*4)*6 = 288
+
+((rowindex*col_size+colindex) * depth_size + depthindex) * Element_Size
+
+((3*12+0) * 288 + 0) * 4
+
+=========================================================
+
+[               
+	[
+        	[0, 0, 0, 0], 
+		[0, 0, 0, 0], 
+		[0, 0, 0, 0], 
+		[0, 0, 0, 0]
+	], 
+	[
+		[1, 0, 0, 0], 
+		[0, 0, 0, 0], 
+		[0, 0, 0, 0], 
+		[0, 0, 0, 0]
+	], 
+	[
+		[0, 0, 0, 0], 
+		[0, 0, 0, 0], 
+		[0, 0, 0, 0], 
+		[0, 0, 0, 0]
+	]
+]
+
+z_size = z_length*sizeof(it) = 4*4 = 16
+y_size = z_size*y_length = 16*4 = 64
+x_size = y_size*x_length = 64*3 = 192
+
+x = 1 y = 0 z = 0
+
+(y_size*x)+(z_size*y)+(z*sizeof(int))
+(64*1)+(16*0)+(0*4)
+
+
+
+=====================================================
+
+[
+	['Test', 'test', 'test'], 
+	['test', 'test', 'test'], 
+	['test', 'test', 'test']
+]
+
+var_size = (length+1)*sizeof(wchar_t)
+y_size   = var_size*y_length
+x_size   = y_size*x_length
+
+(y_size*x)+(var_size*y)
+

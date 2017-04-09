@@ -1,0 +1,15 @@
+<test>
+<span>{{ test2[2][3][5].length() }}</span>
+
+{% genJSON(testgrp, test2[1]) %}
+
+{% printVars() %}
+
+{% dumpVars() %}
+
+{% typeof(test2[1]) %}
+
+{% macro test(test1, test2) %}
+    <h1>Hello World</h1>
+{% end-macro %}
+</test>

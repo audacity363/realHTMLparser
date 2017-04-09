@@ -7,6 +7,7 @@
 #include "dummy_functions.h"
 #include "token.h"
 #include "variable.h"
+#include "macros.h"
 
 char *commands[] = 
 {
@@ -17,7 +18,9 @@ char *commands[] =
     "genJSON",
     "printVars",
     "dumpVars",
-    "typeof"
+    "typeof",
+    "macro",
+    "end-macro",
 };
 
 int (*function_dic[])(ParserStatus *) = {
@@ -28,7 +31,9 @@ int (*function_dic[])(ParserStatus *) = {
     gen_json,
     print_vars,
     dump_vars,
-    typeof_func
+    typeof_func,
+    macro_start,
+    macro_end
 };
 
 

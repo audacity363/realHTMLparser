@@ -105,6 +105,7 @@ int parseChr(ParserStatus *, wchar_t);
 int checkBlock(ParserStatus*);
 char *getFirstCommand(Token_Object**);
 void getCharfromBuffer(SaveObject *sav, wchar_t *chr);
+int parseStaticType(Token_Object *start, int *type, void **data);
 
 //---------Handler functions---------
 int gen_json(ParserStatus *stat);
