@@ -8,6 +8,7 @@
 #include "attr_funcs.h"
 #include "parser_utils.h"
 #include "token.h"
+#include "static_types.h"
 
 char *attr_funcs[] = 
 {
@@ -21,6 +22,7 @@ int (*attr_function_dic[])(VariableObject*) = {
 
 int calculateOffset(int var_type, int index, int *length, int var_length);
 int parseIndex(char *str, int line_no, int col_no);
+int translateVarTypeWithIndex(int input_type, int *output);
 
 //Dissolves every attribute and executes the function or read the value of the variable
 //What ever happens the end result gets written into the data location and the variable 

@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <wchar.h>
+#include <ctype.h>
 
 #include "parser_utils.h"
 

@@ -2,9 +2,11 @@
 #include <stdlib.h>
 #include <string.h>
 #include <wchar.h>
+#include <wctype.h>
 
 #include "parser.h"
 #include "dummy_functions.h"
+#include "token.h"
 
 int if_handling(ParserStatus *status) {}
 int end_if_handling(ParserStatus *status) {}

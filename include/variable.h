@@ -31,4 +31,5 @@ int getVariableAttributes(Token_Object *start, VariableParseData *var_data);
 int rateAttributes(VariableParseData *var_data);
 int saveAttribute(VariableParseData *data, char *buffer, int buffer_length, int line, int col);
 void freeVariableData(VariableParseData *data);
+int execAttributes(VariableParseData *var_data);
 #endif

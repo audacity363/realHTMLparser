@@ -5,8 +5,7 @@
 
 #include "parser.h"
 #include "token.h"
-#include "variable.h"
-#include "macros.h"
+#include "static_types.h"
 
 #define TRUE_STR L"true"
 #define FALSE_STR L"false"

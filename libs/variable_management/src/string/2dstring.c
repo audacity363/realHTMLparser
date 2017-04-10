@@ -78,7 +78,7 @@ int set2DStringXY(VariableObject *anker, char *group, char *name, int x, int y, 
     return(0);
 }
 
-wchar_t *get2DStringX(VariableObject *anker, char *group, char *name, int x, int y)
+wchar_t *get2DStringXY(VariableObject *anker, char *group, char *name, int x, int y)
 {
     VariableObject *target = NULL;
     int offset = 0;

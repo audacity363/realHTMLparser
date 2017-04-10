@@ -6,6 +6,7 @@
 #include "parser.h"
 #include "variable.h"
 #include "dummy_functions.h"
+#include "token.h"
 
 void cleanBuffers(ParserStatus *status);
 
