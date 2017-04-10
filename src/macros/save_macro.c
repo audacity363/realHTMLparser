@@ -43,6 +43,14 @@ int start_save_macro(Token_Object *start, SaveObject *sav_buff)
             return(-1);
         }
     }
+    if(macros.length == -1)
+    {
+        macros.macros = malloc(sizeof(MacroDefinition*));
+        macros.length = 1;
+    }
+    else
+        macros.macros = realloc(macros.macros, (++macros.length)*sizeof(MacroDefinition*));
+
     return(0);
 }
 
@@ -181,6 +189,8 @@ int interpretationMacroParameter(Token_Object *entry, MacroDefinition *macro)
         target->required = 0;
         parseStaticType(hptr, &target->type, &target->val);
     }
+
+    free(buffer);
 
     return(0);
 }

@@ -109,3 +109,30 @@ void printMacro(MacroDefinition *target)
             target->parms[i].required == 0 ? "no" : "yes");
     }
 }
+
+void freeMacro(MacroDefinition **target)
+{
+    int i = 0;
+
+    for(; i < (*target)->number_of_parms; i++)
+    {
+        free((*target)->parms[i].name);
+        free((*target)->parms[i].val);
+    }
+    free((*target)->parms);
+    free((*target)->name);
+    //TODO: Add free body
+
+    free((*target));
+}
+
+void freeAllMacros(MacroEntries *target)
+{
+    int i = 0;
+
+    for(; i < target->length; i++)
+    {
+        freeMacro(&target->macros[i]);
+    }
+    free(target->macros);
+}

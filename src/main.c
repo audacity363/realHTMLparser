@@ -11,6 +11,7 @@
 void cleanBuffers(ParserStatus *status);
 
 VariableObject *var_anker = NULL;
+MacroEntries macros = {-1, NULL};
 
 int main()
 {
@@ -104,6 +105,7 @@ int main()
 
     cleanBuffers(&status);
     freeVarAnker(var_anker);
+    freeAllMacros(&macros);
 }
 
 void cleanBuffers(ParserStatus *status)

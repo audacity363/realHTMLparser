@@ -101,6 +101,8 @@ typedef struct {
     Token_Object *cur_token;
 } ParserStatus;
 
+#include "macros.h"
+
 int parseChr(ParserStatus *, wchar_t);
 int checkBlock(ParserStatus*);
 char *getFirstCommand(Token_Object**);
@@ -117,4 +119,5 @@ int dump_vars(ParserStatus *status);
 int typeof_func(ParserStatus *status);
 
 extern VariableObject *var_anker;
+extern MacroEntries macros;
 #endif
