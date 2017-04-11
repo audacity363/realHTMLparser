@@ -43,11 +43,12 @@ int start_save_macro(ParserStatus *status, Token_Object *start, SaveObject *sav_
             return(-1);
         }
     }
-    macro->body = status->sav.sav_buff[status->sav.real_level];
-    macro->body_length = status->sav.length[status->sav.real_level];
+    macro->body = status->sav.sav_buff[0];
+    macro->body_length = status->sav.length[0];
 
-    status->sav.sav_buff = NULL;
-    status->sav.length = NULL;
+    status->sav.sav_buff[0] = NULL;
+    status->sav.length[0] = -1;
+
     if(macros.length == -1)
     {
         macros.macros = malloc(sizeof(MacroDefinition*));

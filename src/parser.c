@@ -84,8 +84,8 @@ int parseChr(ParserStatus *status, wchar_t p_chr)
         if(status->read_from == READ_FROM_FILE)
             getCharfromFile(status->fp, &chr);
         else {
-            (status->sav.cursor[status->sav.level-1])++;
-            getCharfromBuffer(&status->sav, &chr);
+            //(status->sav.cursor[status->sav.level-1])++;
+            getCharfromBuffer(&status->sav, &chr, status->read_from);
             //printf("Read next char from buffer[%C]\n", chr);
         }
 

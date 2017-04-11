@@ -69,6 +69,13 @@ typedef struct tokenobject {
 } Token_Object;
 
 typedef struct {
+    int cursor;
+
+    int length_of_body;
+    wchar_t *body;
+} MacroSaveObject;
+
+typedef struct {
     Token_Object *head;
     wchar_t **sav_buff;
     int *length;
@@ -77,7 +84,10 @@ typedef struct {
 
     //Depth of the command blocks
     int level;
+
+    MacroSaveObject macro;
 } SaveObject;
+
 
 #define FOR_INDEX 0
 #define IF_INDEX 1
@@ -85,6 +95,7 @@ typedef struct {
 
 #define READ_FROM_FILE 1
 #define READ_FROM_BUFFER 2
+#define READ_FROM_MACRO_BUFFER 3
 typedef struct {
     Token_Object token_tree; 
     int mode;
@@ -112,7 +123,7 @@ typedef struct {
 int parseChr(ParserStatus *, wchar_t);
 int checkBlock(ParserStatus*);
 char *getFirstCommand(Token_Object**);
-void getCharfromBuffer(SaveObject *sav, wchar_t *chr);
+void getCharfromBuffer(SaveObject *sav, wchar_t *chr, int type);
 int parseStaticType(Token_Object *start, int *type, void **data);
 int saveFromTree(ParserStatus *stat);
 int getCharfromFile(FILE *fp, wchar_t *chr);

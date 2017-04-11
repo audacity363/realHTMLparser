@@ -10,6 +10,7 @@
 
 int getNumberOfRequiredArgs(MacroDefinition *def);
 int createVarList(VariableObject *anker, VariableParseData *entries, int length);
+int interpretMacroBody(VariableObject *anker, ParserStatus *status, MacroDefinition *def);
 
 MacroDefinition *searchMacro(MacroEntries *anker, char *name)
 {
@@ -41,13 +42,18 @@ int execMacro(ParserStatus *status, MacroDefinition *def)
 
     int i = 1, length_of_entries = -1, length_of_var_data = -1;
 
-    VariableObject *macro_var_anker = NULL, *var_hptr = NULL;
+    VariableObject *macro_var_anker = NULL;
 
     //Jump over the command
     for(start = status->token_tree.next;
         start != NULL && 
         start->type != OPENBRACKET
         ;start=start->next);
+
+    status->token_tree.next = NULL;
+    status->mode = 0;
+    status->cur_token = &status->token_tree;
+    status->found_block = 0;
 
     end = start->next;
 
@@ -139,6 +145,7 @@ int execMacro(ParserStatus *status, MacroDefinition *def)
 
     createVarList(macro_var_anker, var_data, length_of_var_data);
 
+    interpretMacroBody(macro_var_anker, status, def);
 
     free(entries);
 
@@ -157,6 +164,8 @@ int getNumberOfRequiredArgs(MacroDefinition *def)
     return(i);
 }
 
+//TODO: create new Vars based on the not set optional parms
+//TODO: create internal variable: __name__ = name of the called macro
 int createVarList(VariableObject *anker, VariableParseData *entries, int length)
 {
     VariableObject *hptr = anker;
@@ -175,9 +184,28 @@ int createVarList(VariableObject *anker, VariableParseData *entries, int length)
     return(0);
 }
 
-//TODO: Think about how the body should gets read and given to the parser. Can i use the 
-//sav_buffer from the SaveObject or do i need a callback function which provids the right buffer???
 int interpretMacroBody(VariableObject *anker, ParserStatus *status, MacroDefinition *def)
 {
-    
+    int i = 0;
+
+    VariableObject *sav = var_anker;
+
+    var_anker = anker;
+
+    status->read_from = READ_FROM_MACRO_BUFFER;
+    status->look_for = -1;
+
+    status->sav.macro.body = def->body;
+    status->sav.macro.length_of_body = def->body_length;
+
+    for(status->sav.macro.cursor = 0; 
+        status->sav.macro.cursor < def->body_length;
+        status->sav.macro.cursor++)
+    {
+        parseChr(status, def->body[status->sav.macro.cursor]);
+    }
+
+    var_anker = sav;
+    return(0);
 }
+
