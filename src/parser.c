@@ -124,6 +124,8 @@ int checkBlock(ParserStatus *stat)
     Token_Object *cmd_start = NULL;
     char *cmd_name = NULL;
 
+    MacroDefinition *macro = NULL;
+
     int i = 0,
         (*exec_func)(ParserStatus *) = NULL;
 
@@ -171,7 +173,16 @@ int checkBlock(ParserStatus *stat)
     if(exec_func == NULL)
     {
         D(fprintf(stderr, "Unkown command\n"));
-        return(EXIT);
+        //TODO: Add macro execution here
+        if((macro = searchMacro(&macros, cmd_name)) == NULL)
+        {
+            PRINT_UNKOWN_CMD(tree);
+            free(cmd_name);
+            return(EXIT);
+        }
+        execMacro(stat, macro);
+        free(cmd_name);
+        return(0);
     }
 
     exec_func(stat);

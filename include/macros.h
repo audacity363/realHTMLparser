@@ -13,7 +13,7 @@ typedef struct {
     char *name;
 
     int body_length;
-    wchar_t **body;
+    wchar_t *body;
 
     int number_of_parms;
     MacroParms *parms;
@@ -31,6 +31,10 @@ int maco_exec(ParserStatus *status);
 void freeMacro(MacroDefinition **target);
 void freeAllMacros(MacroEntries *target);
 
-int start_save_macro(Token_Object *start, SaveObject *sav_buff);
+int start_save_macro(ParserStatus *status, Token_Object *start, SaveObject *sav_buff);
 void printMacro(MacroDefinition *target);
+
+
+MacroDefinition *searchMacro(MacroEntries *anker, char *name);
+int execMacro(ParserStatus *status, MacroDefinition *def);
 #endif

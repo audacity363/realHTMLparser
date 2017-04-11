@@ -1,0 +1,183 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <wchar.h>
+
+#include "parser.h"
+#include "token.h"
+#include "variable.h"
+#include "macros.h"
+
+int getNumberOfRequiredArgs(MacroDefinition *def);
+int createVarList(VariableObject *anker, VariableParseData *entries, int length);
+
+MacroDefinition *searchMacro(MacroEntries *anker, char *name)
+{
+    int i = 0;
+
+    for(; i < anker->length; i++)
+    {
+        if(strcmp(anker->macros[i]->name, name) == 0)
+            return(anker->macros[i]);
+    }
+    return(NULL);
+}
+
+
+int execMacro(ParserStatus *status, MacroDefinition *def)
+{
+    printf("Exec Macro: [%s]\n", def->name);
+    
+    if(status->mode == SAVE)
+    {
+        saveFromTree(status);
+        return(0);
+    }
+
+    Token_Object *start = NULL, *end = NULL, *hptr = NULL, *savptr = NULL,
+                 **entries = NULL;
+
+    VariableParseData *var_data = NULL;
+
+    int i = 1, length_of_entries = -1, length_of_var_data = -1;
+
+    VariableObject *macro_var_anker = NULL, *var_hptr = NULL;
+
+    //Jump over the command
+    for(start = status->token_tree.next;
+        start != NULL && 
+        start->type != OPENBRACKET
+        ;start=start->next);
+
+    end = start->next;
+
+    //Search end of command
+    while(end->next)
+    {
+        if(end->next->type == OPENBRACKET)
+            i++;
+        else if(end->next->type == CLOSEBRACKET)
+            i--;
+        if(i == 0)
+            break;
+        end = end->next;
+    }
+    cleanTokenList(end->next);
+    end->next = NULL;
+
+    if(start->next->type != CLOSEBRACKET)
+    {
+        //Split complete aguments into an array
+        hptr = start->next; 
+        entries = malloc(sizeof(Token_Object*)); length_of_entries = 1;
+        entries[0] = start->next;
+
+        while(hptr->next)
+        {
+            if(hptr->next->type == COMMA)
+            {
+                savptr = hptr->next->next;
+                entries = realloc(entries, sizeof(Token_Object*)*(++length_of_entries));
+                entries[length_of_entries-1] = savptr;
+                
+                hptr->next = NULL;
+                hptr = savptr;
+            }
+            hptr = hptr->next;
+        }
+    }
+    else
+    {
+        printf("No agrumets given\n");
+        length_of_entries = 0;
+    }
+    
+    int tmp = getNumberOfRequiredArgs(def);
+    printf("parms:  [%d]/[%d]\n", length_of_entries, tmp);
+    if( tmp > length_of_entries)
+    {
+        fprintf(stderr, "Missing args\n");
+        free(entries);
+        return(-1);
+    }
+
+    //Parse and interpret the arguments
+    for(i=0; i < length_of_entries; i++)
+    {
+        if(length_of_var_data == -1)     
+        {
+            var_data = malloc(sizeof(VariableParseData));
+            memset(&var_data[0], 0x00, sizeof(VariableParseData));
+            var_data[0].number_of_attributes = -1;
+            length_of_var_data = 1;
+        }
+        else
+        {
+            var_data = realloc(var_data, (++length_of_var_data)*sizeof(VariableParseData));
+            memset(&var_data[length_of_var_data-1], 0x00, sizeof(VariableParseData));
+            var_data[length_of_var_data-1].number_of_attributes = -1;
+        }
+        
+        if(getVariableAttributes(entries[i], &var_data[length_of_var_data-1]) < 0)
+        {
+            fprintf(stderr, "Error in getVariableAttributes()\n");
+            free(entries);
+            return(-1);
+        }
+        printAttributes(&var_data[length_of_var_data-1]);
+        if(execAttributes(&var_data[length_of_var_data-1]) < 0)
+        {
+            free(entries);
+            return(-1);
+        }
+        free(var_data[length_of_var_data-1].target.name);
+        var_data[length_of_var_data-1].target.name = malloc((strlen(def->parms[i].name)+1)*SIZEOF_CHAR);
+        strcpy(var_data[length_of_var_data-1].target.name, def->parms[i].name);
+    }
+
+    initAnker(&macro_var_anker);
+
+    createVarList(macro_var_anker, var_data, length_of_var_data);
+
+
+    free(entries);
+
+    return(0);
+}
+
+int getNumberOfRequiredArgs(MacroDefinition *def)
+{
+    int i = 0;
+
+    for(; i < def->number_of_parms; i++)
+    {
+        if(def->parms[i].required == 0)
+            break;
+    }
+    return(i);
+}
+
+int createVarList(VariableObject *anker, VariableParseData *entries, int length)
+{
+    VariableObject *hptr = anker;
+    int i = 0;
+
+    for(; hptr->next != NULL; hptr=hptr->next);
+
+    for(; i < length; i++)
+    {
+        hptr->next = &entries[i].target;
+        entries[i].target.prev = hptr;
+        hptr = hptr->next;
+    }
+
+    printAllVars(anker, stdout);
+    return(0);
+}
+
+//TODO: Think about how the body should gets read and given to the parser. Can i use the 
+//sav_buffer from the SaveObject or do i need a callback function which provids the right buffer???
+int interpretMacroBody(VariableObject *anker, ParserStatus *status, MacroDefinition *def)
+{
+    
+}

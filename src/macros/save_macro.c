@@ -12,7 +12,7 @@ Token_Object *getMacroName(Token_Object *start, char **name, int *length);
 int parseMacroParameter(Token_Object *start, MacroDefinition *macro);
 int interpretationMacroParameter(Token_Object *entry, MacroDefinition *macro);
 
-int start_save_macro(Token_Object *start, SaveObject *sav_buff)
+int start_save_macro(ParserStatus *status, Token_Object *start, SaveObject *sav_buff)
 {
     int name_length = 0, i = 0, found_not_required = 0;
     MacroDefinition *macro = NULL;
@@ -22,7 +22,7 @@ int start_save_macro(Token_Object *start, SaveObject *sav_buff)
     macro = malloc(sizeof(MacroDefinition));
     memset(macro, 0x00, sizeof(MacroDefinition));
     macro->number_of_parms = -1;
-    macro->body_length = -1;
+    //macro->body_length = -1;
 
     //printTokens(start);
     parm_start = getMacroName(start, &macro->name, &name_length);
@@ -43,13 +43,21 @@ int start_save_macro(Token_Object *start, SaveObject *sav_buff)
             return(-1);
         }
     }
+    macro->body = status->sav.sav_buff[status->sav.real_level];
+    macro->body_length = status->sav.length[status->sav.real_level];
+
+    status->sav.sav_buff = NULL;
+    status->sav.length = NULL;
     if(macros.length == -1)
     {
         macros.macros = malloc(sizeof(MacroDefinition*));
+        memset(macros.macros, 0x00, sizeof(MacroDefinition*));
         macros.length = 1;
     }
     else
         macros.macros = realloc(macros.macros, (++macros.length)*sizeof(MacroDefinition*));
+
+    macros.macros[macros.length-1] = macro;
 
     return(0);
 }
@@ -86,8 +94,8 @@ Token_Object *getMacroName(Token_Object *start, char **name, int *length)
     }
 
     
-    *name = realloc(*name, _length*SIZEOF_CHAR);
-    (*name)[_length] = '\0';
+    *name = realloc(*name, (++_length)*SIZEOF_CHAR);
+    (*name)[_length-1] = '\0';
     *length = _length;
     return(hptr);
 }
@@ -102,6 +110,10 @@ int parseMacroParameter(Token_Object *start, MacroDefinition *macro)
     hptr = start->next; 
     entries = malloc(sizeof(Token_Object*)); length_of_entries = 1;
     entries[0] = start->next;
+
+    //No args was defined
+    if(!hptr)
+        return(0);
 
     while(hptr->next)
     {
@@ -125,6 +137,8 @@ int parseMacroParameter(Token_Object *start, MacroDefinition *macro)
         //printfromTree(entries[i]);
         //printf("\n");
     }
+
+    free(entries);
     return(0);
 }
 
@@ -140,9 +154,13 @@ int interpretationMacroParameter(Token_Object *entry, MacroDefinition *macro)
     {
         macro->number_of_parms = 1;
         macro->parms = malloc(sizeof(MacroParms));
+        memset(&macro->parms[0], 0x00, sizeof(MacroParms));
     }
     else
+    {
         macro->parms = realloc(macro->parms, (++macro->number_of_parms)*sizeof(MacroParms));
+        memset(&macro->parms[macro->number_of_parms-1], 0x00, sizeof(MacroParms));
+    }
 
     target = &macro->parms[macro->number_of_parms-1];
     
@@ -177,8 +195,8 @@ int interpretationMacroParameter(Token_Object *entry, MacroDefinition *macro)
         hptr = hptr->next;
     }
 
-    buffer = realloc(buffer, length*SIZEOF_CHAR);
-    buffer[length] = '\0';
+    buffer = realloc(buffer, (++length)*SIZEOF_CHAR);
+    buffer[length-1] = '\0';
 
     target->name = malloc(length*SIZEOF_CHAR);
     strcpy(target->name, buffer);

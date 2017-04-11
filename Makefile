@@ -15,7 +15,8 @@ VARIABLE = variable.o \
 		   functions.o
 
 MACROS = macro_handling.o \
-		 save_macro.o
+		 save_macro.o \
+		 exec_macro.o
 
 VARS = utils.o
 

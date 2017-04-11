@@ -31,7 +31,7 @@ int parseStaticType(Token_Object *start, int *type, void **data)
             break;
         if(length == -1)
         {
-            buffer = malloc(SIZEOF_CHAR);
+            buffer = malloc(SIZEOF_WCHAR);
             length = 1;
         }
         else

@@ -90,7 +90,7 @@ int macro_end(ParserStatus *status)
     end->next = NULL;
 
 
-    start_save_macro(start, &status->sav);
+    start_save_macro(status, start, &status->sav);
 }
 
 int maco_exec(ParserStatus *status)

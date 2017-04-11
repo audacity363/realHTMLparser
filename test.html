@@ -1,3 +1,5 @@
-{% macro test(test1, test2="test") %}
+{% macro test(parm1) %}
     <h1>Hello World</h1>
 {% end-macro %}
+
+{% test(test1[1]) %}

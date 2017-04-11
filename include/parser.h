@@ -19,6 +19,12 @@
 #define PRINT_SYNTAX_ERROR(x) fprintf(stderr, "SyntaxError: invalid Syntax in line [%d] column [%d]\n", \
                                         x->line_no+1, x->col_no);
 
+#define PRINT_UNKOWN_CMD(x) fprintf(stderr, "NameError: Unkown function in line [%d] column [%d]\n", \
+                                        x->line_no+1, x->col_no);
+
+#define PRINT_UNKOWN_VAR(x) fprintf(stderr, "SyntaxError: invalid Syntax in line [%d] column [%d]\n", \
+                                        x->line_no+1, x->col_no);
+
 #define PRINT_SYNTAX_ERROR_VAR_ATTR(x) fprintf(stderr, "SyntaxError: invalid Syntax in line [%d] column [%d]\n", \
                                         x.line+1, x.start_col);
 
