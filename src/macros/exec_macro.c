@@ -198,10 +198,21 @@ int interpretMacroBody(VariableObject *anker, ParserStatus *status, MacroDefinit
     status->sav.macro.body = def->body;
     status->sav.macro.length_of_body = def->body_length;
 
+    status->cur_line = 0;
+    status->cur_col = 0;
+
     for(status->sav.macro.cursor = 0; 
         status->sav.macro.cursor < def->body_length;
         status->sav.macro.cursor++)
     {
+        if(def->body[status->sav.macro.cursor] == L'\n')
+        {
+            status->cur_line++;
+            status->cur_col = 0;
+            continue;
+        }
+        status->cur_line = 0;
+        status->cur_col = 0;
         parseChr(status, def->body[status->sav.macro.cursor]);
     }
 

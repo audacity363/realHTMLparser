@@ -18,7 +18,7 @@ int handle_variable(ParserStatus *status)
 
     execAttributes(&var_data);
 
-    printVarPtr(&var_data.target, PRINT_MODE_RAW, stdout);
+    printVarPtr(&var_data.target, PRINT_MODE_RAW, f_output);
 
     freeVariableData(&var_data);
 

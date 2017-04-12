@@ -12,11 +12,13 @@ void cleanBuffers(ParserStatus *status);
 
 VariableObject *var_anker = NULL;
 MacroEntries macros = {-1, NULL};
+FILE *f_output = NULL;
 
 int main()
 {
     wchar_t cur_chr, *sav_buffer = NULL;
     FILE *fp = fopen("./test.html", "r");
+    f_output = fopen("./out.html", "w");
 
     int found_block = 0,
         col_no = 0,
@@ -102,6 +104,7 @@ int main()
     }
 
     fclose(fp);
+    fclose(f_output);
 
     cleanBuffers(&status);
     freeVarAnker(var_anker);

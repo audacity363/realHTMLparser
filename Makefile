@@ -29,6 +29,10 @@ LIBS = -L./libs/variable_management/ -lvar_management
 
 lib: $(OBJ) 
 	$(CC) -g -o main ./src/main.c $(INCLUDE) ./bin/*.o $(LIBS)
+	@./main
+	@echo "==========================================================================="
+	@cat ./out.html
+	@echo "==========================================================================="
 
 $(OBJ): $(VARIABLE) $(MACROS)
 	$(CC) -g -c ./src/$*.c $(INCLUDE) -o ./bin/$*.o

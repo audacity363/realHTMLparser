@@ -67,7 +67,7 @@ int gen_json(ParserStatus *status)
         hptr = hptr->next;
     }
    
-    fprintf(stdout, "{");
+    fprintf(f_output, "{");
     for(i=0; i < length_of_entries; i++)
     {
         getVariableAttributes(entries[i], &var_data);
@@ -75,12 +75,12 @@ int gen_json(ParserStatus *status)
         //printAttributes(&var_data);
         
         execAttributes(&var_data);
-        printVarPtr(&var_data.target, PRINT_MODE_JSON, stdout);
+        printVarPtr(&var_data.target, PRINT_MODE_JSON, f_output);
         if(i+1 < length_of_entries)
-            fprintf(stdout, ",");
+            fprintf(f_output, ",");
         freeVariableData(&var_data);
     }
-    fprintf(stdout, "}");
+    fprintf(f_output, "}");
     free(entries);
 
     return(0);

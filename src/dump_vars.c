@@ -14,9 +14,9 @@ int print_vars(ParserStatus *status)
         saveFromTree(status);
         return(0);
     }
-    fprintf(stdout, "<pre>");
-    printAllVars(var_anker, stdout);
-    fprintf(stdout, "</pre>");
+    fprintf(f_output, "<pre>");
+    printAllVars(var_anker, f_output);
+    fprintf(f_output, "</pre>");
     return(0);
 }
 
@@ -28,8 +28,8 @@ int dump_vars(ParserStatus *status)
         saveFromTree(status);
         return(0);
     }
-    fprintf(stdout, "{");
-    printAllVarsJson(var_anker, stdout);
-    fprintf(stdout, "}");
+    fprintf(f_output, "{");
+    printAllVarsJson(var_anker, f_output);
+    fprintf(f_output, "}");
     return(0);
 }

@@ -137,4 +137,5 @@ int typeof_func(ParserStatus *status);
 
 extern VariableObject *var_anker;
 extern MacroEntries macros;
+extern FILE *f_output;
 #endif

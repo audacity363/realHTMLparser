@@ -52,7 +52,7 @@ int parseChr(ParserStatus *status, wchar_t p_chr)
     }
 
     if(status->mode != SAVE && !status->found_block)
-        printf("%C", chr);
+        fprintf(f_output, "%C", chr);
 
     if(status->mode == SAVE && !status->found_block)
         saveChr(&status->sav, chr);
