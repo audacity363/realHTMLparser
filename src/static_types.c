@@ -42,6 +42,8 @@ int parseStaticType(Token_Object *start, int *type, void **data)
 
     if(*type == STRING)
     {
+        buffer = realloc(buffer, (++length)*SIZEOF_WCHAR);
+        buffer[length-1] = L'\0';
         *data = (void*)buffer;
         return(0);
     }

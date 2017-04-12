@@ -9,7 +9,7 @@
 #include "macros.h"
 
 int getNumberOfRequiredArgs(MacroDefinition *def);
-int createVarList(VariableObject *anker, VariableParseData *entries, int length);
+int createVarList(VariableObject *anker, VariableParseData *entries, int length, MacroDefinition *def);
 int interpretMacroBody(VariableObject *anker, ParserStatus *status, MacroDefinition *def);
 
 MacroDefinition *searchMacro(MacroEntries *anker, char *name)
@@ -143,7 +143,7 @@ int execMacro(ParserStatus *status, MacroDefinition *def)
 
     initAnker(&macro_var_anker);
 
-    createVarList(macro_var_anker, var_data, length_of_var_data);
+    createVarList(macro_var_anker, var_data, length_of_var_data, def);
 
     interpretMacroBody(macro_var_anker, status, def);
 
@@ -166,9 +166,9 @@ int getNumberOfRequiredArgs(MacroDefinition *def)
 
 //TODO: create new Vars based on the not set optional parms
 //TODO: create internal variable: __name__ = name of the called macro
-int createVarList(VariableObject *anker, VariableParseData *entries, int length)
+int createVarList(VariableObject *anker, VariableParseData *entries, int length, MacroDefinition *def)
 {
-    VariableObject *hptr = anker;
+    VariableObject *hptr = anker, *new = NULL;
     int i = 0;
 
     for(; hptr->next != NULL; hptr=hptr->next);
@@ -177,6 +177,23 @@ int createVarList(VariableObject *anker, VariableParseData *entries, int length)
     {
         hptr->next = &entries[i].target;
         entries[i].target.prev = hptr;
+        hptr = hptr->next;
+    }
+
+    for(i=length; i < def->number_of_parms; i++)
+    {
+        printf("Adding default parm [%s]\n", def->parms[i].name);
+        new = malloc(sizeof(VariableObject));
+        memset(new, 0x00, sizeof(VariableObject));
+
+        new->type = def->parms[i].type;
+        new->name = malloc((strlen(def->parms[i].name)+1)*SIZEOF_CHAR);
+        strcpy(new->name, def->parms[i].name);
+        SET_FLAG(new->flags, RH4N_FLG_COPY);
+        new->data = def->parms[i].val;
+
+        new->prev = hptr;
+        hptr->next = new;
         hptr = hptr->next;
     }
 

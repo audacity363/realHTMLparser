@@ -1,3 +1,4 @@
-{% macro test(parm1) %} <h1>{{ parm1.test1.length()}}</h1> {% end-macro %}
+{% macro test(parm1, parm2="Test") %}
+<h1>{{ parm1.test1.length()}}</h1> {% end-macro %}
 
 {% test(testgrp) %}
