@@ -64,18 +64,24 @@ int macro_end(ParserStatus *status)
         start != NULL && 
         start->type != SPACE
         ;start=start->next);
-
+    //example: {% macro test(test1, test2) %}
+    //start =    ^
+    
     //Jump over the "macro" keyword
     for(start = start->next;
         start != NULL && 
         start->type != SPACE
         ;start=start->next);
+    //example: {% macro test(test1, test2) %}
+    //start =          ^
 
     //Jump over the spaces
     for(start = start->next;
         start != NULL && 
         start->type == SPACE
         ;start=start->next);
+    //example: {% macro test(test1, test2) %}
+    //start =           ^
 
     end = start->next;
     i = 0;
@@ -86,17 +92,17 @@ int macro_end(ParserStatus *status)
             break;
         end = end->next;
     }
+    //example: {% macro test(test1, test2) %}
+    //start =                           ^ 
     cleanTokenList(end->next);
     end->next = NULL;
 
 
     start_save_macro(status, start, &status->sav);
-}
 
-int maco_exec(ParserStatus *status)
-{
+    cleanTokenList(macro_head);
+    return(0);
 }
-
 
 void printMacro(MacroDefinition *target)
 {
@@ -121,7 +127,7 @@ void freeMacro(MacroDefinition **target)
     }
     free((*target)->parms);
     free((*target)->name);
-    //TODO: Add free body
+    free((*target)->body);
 
     free((*target));
 }

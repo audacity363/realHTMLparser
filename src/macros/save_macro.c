@@ -25,6 +25,7 @@ int start_save_macro(ParserStatus *status, Token_Object *start, SaveObject *sav_
     //macro->body_length = -1;
 
     //printTokens(start);
+    cleanTokenList(start);
     parm_start = getMacroName(start, &macro->name, &name_length);
 
     parseMacroParameter(parm_start, macro);
@@ -68,10 +69,10 @@ int start_save_macro(ParserStatus *status, Token_Object *start, SaveObject *sav_
 //name into name and the length int length
 Token_Object *getMacroName(Token_Object *start, char **name, int *length)
 {
-    Token_Object *hptr = start;
+    Token_Object *hptr = start, *sav = start;
     int _length = -1;
 
-    for(;hptr->next != NULL && hptr->type != OPENBRACKET; hptr=hptr->next)
+    for(;hptr->next != NULL && hptr->type != OPENBRACKET; sav=hptr, hptr=hptr->next)
     {
         if(hptr->type == SPACE)
             continue;
@@ -94,6 +95,7 @@ Token_Object *getMacroName(Token_Object *start, char **name, int *length)
         (*name)[_length-1] = (char)hptr->val;
     }
 
+    sav->next = NULL;
     
     *name = realloc(*name, (++_length)*SIZEOF_CHAR);
     (*name)[_length-1] = '\0';
@@ -138,6 +140,8 @@ int parseMacroParameter(Token_Object *start, MacroDefinition *macro)
         //printfromTree(entries[i]);
         //printf("\n");
     }
+    for(i=0; i < length_of_entries; i++)
+        cleanTokenList(entries[i]);
 
     free(entries);
     return(0);

@@ -84,8 +84,6 @@ int execAttributes(VariableParseData *var_data)
         target->next_lvl = var->next_lvl;
     }
     target->data = var->data;
-    target->name = malloc(1);
-    *target->name = '\0';
     target->length = var->length;
     target->name = malloc(strlen(var->name)+1);
     strcpy(target->name, var->name);

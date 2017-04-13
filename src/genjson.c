@@ -79,6 +79,7 @@ int gen_json(ParserStatus *status)
         if(i+1 < length_of_entries)
             fprintf(f_output, ",");
         freeVariableData(&var_data);
+        //cleanTokenList(entries[i]);
     }
     fprintf(f_output, "}");
     free(entries);

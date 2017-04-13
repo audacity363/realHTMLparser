@@ -36,13 +36,15 @@ int execMacro(ParserStatus *status, MacroDefinition *def)
     }
 
     Token_Object *start = NULL, *end = NULL, *hptr = NULL, *savptr = NULL,
-                 **entries = NULL;
+                 **entries = NULL, *head_sav = NULL;
 
     VariableParseData *var_data = NULL;
 
     int i = 1, length_of_entries = -1, length_of_var_data = -1;
 
     VariableObject *macro_var_anker = NULL;
+
+    head_sav = status->token_tree.next;
 
     //Jump over the command
     for(start = status->token_tree.next;
@@ -77,6 +79,7 @@ int execMacro(ParserStatus *status, MacroDefinition *def)
         hptr = start->next; 
         entries = malloc(sizeof(Token_Object*)); length_of_entries = 1;
         entries[0] = start->next;
+        start->next = NULL;
 
         while(hptr->next)
         {
@@ -147,7 +150,21 @@ int execMacro(ParserStatus *status, MacroDefinition *def)
 
     interpretMacroBody(macro_var_anker, status, def);
 
+    for(i=0; i < length_of_var_data; i++)
+    {
+        freeVariableData(&var_data[i]);
+    }
+
+    for(i=0; i < length_of_entries; i++)
+    {
+        cleanTokenList(entries[i]);
+    }
     free(entries);
+
+    cleanTokenList(head_sav);
+
+    freeVarAnker(macro_var_anker);
+
 
     return(0);
 }
@@ -234,6 +251,8 @@ int interpretMacroBody(VariableObject *anker, ParserStatus *status, MacroDefinit
     }
 
     var_anker = sav;
+
+
     return(0);
 }
 
