@@ -107,6 +107,7 @@ int execMacro(ParserStatus *status, MacroDefinition *def)
     {
         fprintf(stderr, "Missing args\n");
         free(entries);
+        cleanTokenList(head_sav);
         return(-1);
     }
 
@@ -131,6 +132,7 @@ int execMacro(ParserStatus *status, MacroDefinition *def)
         {
             fprintf(stderr, "Error in getVariableAttributes()\n");
             free(entries);
+            cleanTokenList(head_sav);
             return(-1);
         }
         printAttributes(&var_data[length_of_var_data-1]);
@@ -197,7 +199,7 @@ int createVarList(VariableObject *anker, VariableParseData *entries, int length,
         hptr = hptr->next;
     }
 
-    for(i=length; i < def->number_of_parms; i++)
+    for(i=(length == -1) ? 0 : length; i < def->number_of_parms; i++)
     {
         printf("Adding default parm [%s]\n", def->parms[i].name);
         new = malloc(sizeof(VariableObject));
