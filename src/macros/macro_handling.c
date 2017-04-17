@@ -58,6 +58,7 @@ int macro_end(ParserStatus *status)
     //macro_head: ^
 
     //TODO: find a nicer way to jump to the macro name
+    //TODO: replace with the jumpOverCommand function
     //example: {% macro test(test1, test2) %}
     //                 ^
     

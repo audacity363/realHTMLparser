@@ -16,8 +16,8 @@
 #define SIZEOF_CHAR sizeof(char)
 
 #define CHECK_UNICODE_CHAR(x) x < 0x21 || x > 0x7E
-#define PRINT_SYNTAX_ERROR(x) fprintf(stderr, "SyntaxError: invalid Syntax in line [%d] column [%d]\n", \
-                                        x->line_no+1, x->col_no);
+#define PRINT_SYNTAX_ERROR(x) fprintf(stderr, "SyntaxError: invalid Syntax in line [%d] column [%d] [%s] [%d]\n", \
+                                        x->line_no+1, x->col_no, __FILE__, __LINE__);
 
 #define PRINT_UNKOWN_CMD(x) fprintf(stderr, "NameError: Unkown function in line [%d] column [%d]\n", \
                                         x->line_no+1, x->col_no);

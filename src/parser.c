@@ -8,6 +8,7 @@
 #include "token.h"
 #include "variable.h"
 #include "macros.h"
+#include "for.h"
 
 char *commands[] = 
 {

@@ -18,6 +18,10 @@ MACROS = macro_handling.o \
 		 save_macro.o \
 		 exec_macro.o
 
+FOR = for_handling.o \
+	  exec_for.o \
+	  parse_for.o
+
 VARS = utils.o
 
 VARS_STRING = 1dstring.o
@@ -34,7 +38,7 @@ lib: $(OBJ)
 	@cat ./out.html
 	@echo "==========================================================================="
 
-$(OBJ): $(VARIABLE) $(MACROS)
+$(OBJ): $(VARIABLE) $(MACROS) $(FOR)
 	$(CC) -g -c ./src/$*.c $(INCLUDE) -o ./bin/$*.o
 
 $(VARIABLE):
@@ -42,6 +46,9 @@ $(VARIABLE):
 
 $(MACROS):
 	$(CC) -g -c ./src/macros/$*.c $(INCLUDE) -o ./bin/$*.o
+
+$(FOR):
+	$(CC) -g -c ./src/for/$*.c $(INCLUDE) -o ./bin/$*.o
 
 vars: $(VARS)
 	@echo "Done..."
