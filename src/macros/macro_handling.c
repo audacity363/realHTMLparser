@@ -44,7 +44,7 @@ int macro_end(ParserStatus *status)
     }
 
     Token_Object *macro_head = status->sav.head,
-                 *start = NULL, *end = NULL;
+                 *start = NULL, *end = NULL, *hptr = NULL;
     int i = 0;
 
     cleanTokenList(status->token_tree.next);
@@ -54,6 +54,8 @@ int macro_end(ParserStatus *status)
     status->mode = 0;
     status->cur_token = &status->token_tree;
     status->found_block = 0;
+    //example:    {% macro test(test1, test2) %}
+    //macro_head: ^
 
     //TODO: find a nicer way to jump to the macro name
     //example: {% macro test(test1, test2) %}
@@ -65,7 +67,7 @@ int macro_end(ParserStatus *status)
         start->type != SPACE
         ;start=start->next);
     //example: {% macro test(test1, test2) %}
-    //start =    ^
+    //start =    ^ 
     
     //Jump over the "macro" keyword
     for(start = start->next;

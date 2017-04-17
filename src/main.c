@@ -16,6 +16,7 @@ FILE *f_output = NULL;
 
 int main()
 {
+    printf("Token obj: [%d]\n", sizeof(Token_Object));
     wchar_t cur_chr, *sav_buffer = NULL;
     FILE *fp = fopen("./test.html", "r");
     f_output = fopen("./out.html", "w");

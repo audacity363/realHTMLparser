@@ -25,7 +25,6 @@ int start_save_macro(ParserStatus *status, Token_Object *start, SaveObject *sav_
     //macro->body_length = -1;
 
     //printTokens(start);
-    cleanTokenList(start);
     parm_start = getMacroName(start, &macro->name, &name_length);
 
     parseMacroParameter(parm_start, macro);
@@ -95,6 +94,9 @@ Token_Object *getMacroName(Token_Object *start, char **name, int *length)
         (*name)[_length-1] = (char)hptr->val;
     }
 
+    //example: {% macro test(test1, test2) %}
+    //sav=                 ^ 
+    //hptr=                 ^ 
     sav->next = NULL;
     
     *name = realloc(*name, (++_length)*SIZEOF_CHAR);
@@ -105,18 +107,29 @@ Token_Object *getMacroName(Token_Object *start, char **name, int *length)
 
 int parseMacroParameter(Token_Object *start, MacroDefinition *macro)
 {
-    Token_Object *hptr = NULL, **entries = NULL, *savptr = NULL; 
+    Token_Object *hptr = NULL, **entries = NULL, *savptr = NULL, *last_one_found = NULL; 
 
     int length_of_entries = -1, i = 0; 
 
     //Split complete aguments into an array
+    if(start->type != OPENBRACKET)
+    {
+        PRINT_SYNTAX_ERROR(start);
+        return(-1);
+    }
     hptr = start->next; 
+    start->next = NULL;
+    free(start);
+
     entries = malloc(sizeof(Token_Object*)); length_of_entries = 1;
-    entries[0] = start->next;
+    entries[0] = hptr;
 
     //No args was defined
     if(!hptr)
+    {
+        free(entries);
         return(0);
+    }
 
     while(hptr->next)
     {
@@ -125,9 +138,9 @@ int parseMacroParameter(Token_Object *start, MacroDefinition *macro)
             savptr = hptr->next->next;
             entries = realloc(entries, sizeof(Token_Object*)*(++length_of_entries));
             entries[length_of_entries-1] = savptr;
-            
+            free(hptr->next);
             hptr->next = NULL;
-            hptr = savptr;
+            last_one_found = hptr = savptr;
             continue;
         }
         hptr = hptr->next;
@@ -144,6 +157,7 @@ int parseMacroParameter(Token_Object *start, MacroDefinition *macro)
         cleanTokenList(entries[i]);
 
     free(entries);
+    //cleanTokenList(last_one_found);
     return(0);
 }
 
