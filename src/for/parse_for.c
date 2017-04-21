@@ -13,23 +13,27 @@
 int parseMultipleVars(Token_Object *start, LoopProperties *for_status);
 int parseSingleVar(Token_Object *start, LoopProperties *for_status);
 Token_Object *jumpOverIn(Token_Object *start, int set_null);
+int checkForParm(VariableParseData *target);
 
 
 int parseForHead(Token_Object *start, LoopProperties *for_status)
 {
+    int ret = 0;
+
     //Multiple vars were given
     if(start->type ==  OPENBRACKET)
     {
-        parseMultipleVars(start, for_status);
+        ret = parseMultipleVars(start, for_status);
     }
     else
     {
-        parseSingleVar(start, for_status);
+        ret = parseSingleVar(start, for_status);
     }
-    return(0);
+    return(ret);
 
 }
 
+//TODO: tidying up this function
 int parseMultipleVars(Token_Object *start, LoopProperties *for_status)
 {
     char **names = NULL;
@@ -197,6 +201,11 @@ int parseMultipleVars(Token_Object *start, LoopProperties *for_status)
         {
             return(-1);
         }
+
+        if(checkForParm(&for_status->vars[for_status->length_of_vars-1]) == -1)
+        {
+            return(-1);
+        }
         
         free(for_status->vars[for_status->length_of_vars-1].target.name);
         for_status->vars[for_status->length_of_vars-1].target.name = malloc((strlen(names[i])+1)*SIZEOF_CHAR);
@@ -288,25 +297,31 @@ Token_Object *jumpOverIn(Token_Object *start, int set_null)
 }
 
 
-int checkForParms(LoopProperties *for_status)
+int checkForParm(VariableParseData *target)
+{
+    if(target->target.type == FLOAT ||
+       target->target.type == INTEGER ||
+       target->target.type == BOOL ||
+       target->target.type == STRING)
+    {
+        fprintf(stderr, "Format from [%s] is not supported in a for loop\n", target->target.name);
+        return(-1);
+    }
+
+     return(0);
+}
+
+int getForLength(LoopProperties *for_status)
 {
     int max_length = 1000000000, i = 0;
 
     for(; i < for_status->length_of_vars; i++) 
     {
-        if(for_status->vars[i].target.type == FLOAT ||
-           for_status->vars[i].target.type == INTEGER ||
-           for_status->vars[i].target.type == BOOL ||
-           for_status->vars[i].target.type == STRING)
-        {
-            fprintf(stderr, "Format from [%s] is not supported in a for loop\n", for_status->vars[i].target.name);
-            return(-1);
-        }
-
         if(for_status->vars[i].target.array_length[0] < max_length)
             max_length = for_status->vars[i].target.array_length[0];
      }
     
      printf("For_length: [%d]\n", max_length);
-     return(0);
+     return(max_length);
+
 }

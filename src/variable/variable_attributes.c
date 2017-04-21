@@ -88,6 +88,8 @@ int getVariableAttributes(Token_Object *start, VariableParseData *var_data)
     }
     if(buffer != NULL)
     {
+        buffer = realloc(buffer, SIZEOF_CHAR*(++buffer_length));
+        buffer[buffer_length-1] = '\0';
         saveAttribute(var_data, buffer, buffer_length, line, start_col);
         free(buffer);
     }
@@ -258,7 +260,7 @@ char *getIndexString(char *start, VariableAttribute *attr)
 //options)
 int rateAttributes(VariableParseData *var_data)
 {
-    int number = var_data->number_of_attributes-1, offset = 0;
+    int number = var_data->number_of_attributes, offset = 0;
 
    //Only a function was given. Without any variable or group name
     if(var_data->attributes[0].type == FUNCTION)

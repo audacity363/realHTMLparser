@@ -81,6 +81,32 @@ void freeVarFork(VariableObject *start)
     }
 }
 
+int deleteVar(VariableObject *anker, char *group, char *name)
+{
+    VariableObject *target = NULL, *hptr = NULL;
+
+    if((target = getVariable(anker, group, name)) == NULL)
+    {
+        return(-1);
+    }
+
+    hptr = target->prev;
+    hptr->next = target->next;
+    //Check if it is the end of the list
+    if(hptr->next)
+    {
+        hptr->next->prev = hptr;
+    }
+
+    free(target->name);
+    if(!ISSET_FLAG(target->flags, RH4N_FLG_COPY))
+    {
+        free(target->data);
+    }
+    free(target);
+    return(0);
+}
+
 //Goes throu the top level variables and returns the requested group
 //If nothing was found it returns NULL
 VariableObject *getGroup(VariableObject *anker, char *group)

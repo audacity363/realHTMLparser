@@ -27,10 +27,7 @@ int exec_for(ParserStatus *status, Token_Object *start)
         return(-1);
     }
 
-    if(checkForParms(&for_status))
-    {
-        return(-1);
-    }
+    for_status.length = getForLength(&for_status);
     //Start running the for loop
 
     status->sav.head = NULL;
@@ -62,19 +59,28 @@ int exec_for(ParserStatus *status, Token_Object *start)
     //Can't use a pointer to the cursor array index because this function 
     //gets called recursive. So the realloc for the cursor array could move the
     //memory to a nother location and the pointer would be invalid
+    
+    printf("Length of the loop: [%d]\n", for_status.length);
 
-    for(status->sav.cursor[for_level]=0;
-        status->sav.cursor[for_level] < for_length;
-        status->sav.cursor[for_level]++)
+    initForVariables(var_anker, &for_status);
+
+    MY_FOR_HEAD(for_status)
     {
-        D(printf("Sending: [%C] on [%d/%d]\n", 
-            (iswprint(for_body[status->sav.cursor[for_level]]) != 0 
-            ? for_body[status->sav.cursor[for_level]] : L'.'),
-            status->sav.cursor[for_level], for_length));
+        nextForVariable(&for_status);
+        for(status->sav.cursor[for_level]=0;
+            status->sav.cursor[for_level] < for_length;
+            status->sav.cursor[for_level]++)
+        {
+            D(printf("Sending: [%C] on [%d/%d]\n", 
+                (iswprint(for_body[status->sav.cursor[for_level]]) != 0 
+                ? for_body[status->sav.cursor[for_level]] : L'.'),
+                status->sav.cursor[for_level], for_length));
 
-        parseChr(status, for_body[status->sav.cursor[for_level]]);
+            parseChr(status, for_body[status->sav.cursor[for_level]]);
+        }
     }
     status->sav.level--;
+    cleanupForVariables(&for_status);
 
     return(0);
 }

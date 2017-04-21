@@ -239,7 +239,7 @@ int parseIndex(char *str, int line_no, int col_no)
                  *cur = &anker;
 
     wchar_t buff = L'\0';
-    int i = 0;
+    int i = 0, index = -1;
 
     if(isdigit_str(str))
     {
@@ -247,20 +247,30 @@ int parseIndex(char *str, int line_no, int col_no)
             NULL, 10));
     }
 
-    for(; i < strlen(str); i++)
+    for(i=0; i < strlen(str); i++)
     {
         mbtowc(&buff, &str[i], 1);
 
         cur = safeToken(cur, buff, line_no, col_no+i);
     }
 
-    getVariableAttributes(anker.next, &var_data);
+    if(getVariableAttributes(anker.next, &var_data) < 0)
+    {
+        fprintf(stderr, "Error in getVariableAttributes()\n");
+        return(-1);
+    }
 
-    execAttributes(&var_data);
+    if(execAttributes(&var_data) < 0)
+    {
+        fprintf(stderr, "Error in execAttributes()\n");
+        return(-1);
+    }
 
     //printVarPtr(&var_data.target, PRINT_MODE_FORMAT, stdout);
     
     cleanTokenList(anker.next);
+    index = *((int*)var_data.target.data);
+
     freeVariableData(&var_data);
-    return(*((int*)var_data.target.data));
+    return(index);
 }

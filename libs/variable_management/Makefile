@@ -51,7 +51,7 @@ mem_test:
 clean:
 	rm -rf ./bin/*.o
 	rm -rf ./bin/string/*.o
-	rm -ef ./bin/integer/*.o
-	rm -ef ./bin/bool/*.o
-	rm -ef ./bin/float/*.o
+	rm -rf ./bin/integer/*.o
+	rm -rf ./bin/bool/*.o
+	rm -rf ./bin/float/*.o
 	rm -rf ./libvar_management.a

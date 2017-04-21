@@ -20,7 +20,8 @@ MACROS = macro_handling.o \
 
 FOR = for_handling.o \
 	  exec_for.o \
-	  parse_for.o
+	  parse_for.o \
+	  for_variables.o
 
 VARS = utils.o
 
