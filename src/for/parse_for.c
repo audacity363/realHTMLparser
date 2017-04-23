@@ -232,7 +232,7 @@ int parseSingleVar(Token_Object *start, LoopProperties *for_status)
 
     int name_length = -1;
 
-    Token_Object *hptr = start;
+    Token_Object *hptr = start, *sav = NULL, *end = NULL;
 
     while(hptr)
     {
@@ -271,6 +271,57 @@ int parseSingleVar(Token_Object *start, LoopProperties *for_status)
     name[name_length-1] = '\0';
 
     printf("Name of for var: [%s]\n", name);
+
+    sav = jumpOverIn(hptr->next, 0);
+    hptr->next = NULL;
+    cleanTokenList(start);
+
+    //Jump to the end of the command
+    end = sav->next;
+    while(end->next)
+    {
+        if(end->next->type == SPACE)
+            break;
+        end = end->next;
+    }
+
+    cleanTokenList(end->next);
+    end->next = NULL;
+
+    printfromTree(sav);
+    printf("\n");
+
+    for_status->vars = malloc(sizeof(VariableParseData));
+    memset(&for_status->vars[0], 0x00, sizeof(VariableParseData));
+    for_status->vars[0].number_of_attributes = -1;
+    for_status->length_of_vars = 1;
+
+
+    if(getVariableAttributes(sav, 
+            &for_status->vars[0]) < 0)
+    {
+        fprintf(stderr, "Error in getVariableAttributes()\n");
+        return(-1);
+    }
+
+    if(execAttributes(&for_status->vars[for_status->length_of_vars-1]) < 0)
+    {
+        return(-1);
+    }
+
+    printAttributes(&for_status->vars[for_status->length_of_vars-1]);
+
+    if(checkForParm(&for_status->vars[for_status->length_of_vars-1]) == -1)
+    {
+        return(-1);
+    }
+
+    free(for_status->vars[0].target.name);
+    for_status->vars[0].target.name = 
+        malloc((strlen(name)+1)*SIZEOF_CHAR);
+
+    strcpy(for_status->vars[0].target.name, name);
+    printVarPtr(&for_status->vars[0].target, PRINT_MODE_FORMAT, stdout);
 
     free(name);
     return(0);

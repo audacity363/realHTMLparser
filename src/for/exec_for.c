@@ -14,13 +14,18 @@ int exec_for(ParserStatus *status, Token_Object *start)
 {
     int for_level = status->sav.real_level,
         for_length = status->sav.length[for_level],
-        *cursor = NULL;
+        *cursor = NULL,
+        start_line = 0, save_line = 0, save_col = 0;
 
     wchar_t *for_body = status->sav.sav_buff[for_level];
 
     LoopProperties for_status = {-1, -1, -1, NULL};
 
     cleanTokenList(status->token_tree.next);
+
+    start_line = start->line_no+1;
+    save_line = status->cur_line; save_col = status->cur_col;
+
 
     if(parseForHead(start, &for_status) < 0)
     {
@@ -67,10 +72,28 @@ int exec_for(ParserStatus *status, Token_Object *start)
     MY_FOR_HEAD(for_status)
     {
         nextForVariable(&for_status);
+
+        status->cur_line = start_line;
+        status->cur_col = 0;
+
         for(status->sav.cursor[for_level]=0;
             status->sav.cursor[for_level] < for_length;
             status->sav.cursor[for_level]++)
         {
+            if(for_body[status->sav.cursor[for_level]] == L'\n')
+            {
+                status->cur_line++;
+                if(status->cur_col == 0)
+                {
+                    continue;
+                }
+                status->cur_col = 0;
+            }
+            else
+            {
+                status->cur_col++;
+            }
+
             D(printf("Sending: [%C] on [%d/%d]\n", 
                 (iswprint(for_body[status->sav.cursor[for_level]]) != 0 
                 ? for_body[status->sav.cursor[for_level]] : L'.'),
@@ -82,5 +105,10 @@ int exec_for(ParserStatus *status, Token_Object *start)
     status->sav.level--;
     cleanupForVariables(&for_status);
 
+    printf("Save line: [%d]\n", save_line);
+    status->cur_line = save_line;
+    status->cur_col  = save_col;
+
+    status->read_from = READ_FROM_FILE;
     return(0);
 }
