@@ -265,8 +265,8 @@ int rateAttributes(VariableParseData *var_data)
    //Only a function was given. Without any variable or group name
     if(var_data->attributes[0].type == FUNCTION)
     {
-        PRINT_SYNTAX_ERROR_VAR_ATTR(var_data->attributes[0]);
-        return(-1);
+        //PRINT_SYNTAX_ERROR_VAR_ATTR(var_data->attributes[0]);
+        return(0);
     }
     
     if(number == 1)

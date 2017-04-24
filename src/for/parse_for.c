@@ -111,8 +111,10 @@ int parseMultipleVars(Token_Object *start, LoopProperties *for_status)
         printf("Name of for var: No. %d [%s]\n", i, names[i]);
     }
 
-    sav = jumpOverIn(hptr->next, 0);
+    sav = jumpOverIn(hptr->next, 1);
+    cleanTokenList(hptr->next);
     hptr->next = NULL;
+
     cleanTokenList(start);
     
     //Jump to the end of the command
@@ -132,8 +134,8 @@ int parseMultipleVars(Token_Object *start, LoopProperties *for_status)
     cleanTokenList(end->next);
     end->next = NULL;
 
-    printfromTree(sav);
-    printf("\n");
+    /*printfromTree(sav);
+    printf("\n");*/
     if(sav->type != OPENBRACKET)
     {
         PRINT_SYNTAX_ERROR(sav);
@@ -147,6 +149,7 @@ int parseMultipleVars(Token_Object *start, LoopProperties *for_status)
         return(-1);
     }
     hptr = sav->next;
+    free(sav);
 
     //Split the given parms into a array
     entries = malloc(sizeof(Token_Object*)); length_of_entries = 1;
@@ -157,6 +160,7 @@ int parseMultipleVars(Token_Object *start, LoopProperties *for_status)
         if(hptr->next->type == COMMA)
         {
             sav = hptr->next->next;
+            free(hptr->next);
             entries = realloc(entries, sizeof(Token_Object*)*(++length_of_entries));
             entries[length_of_entries-1] = sav;
 
@@ -220,6 +224,11 @@ int parseMultipleVars(Token_Object *start, LoopProperties *for_status)
         free(names[i]);
     }
 
+    for(i=0; i < length_of_entries; i++)
+        cleanTokenList(entries[i]);
+
+    free(entries);
+
     free(names);
     free(name_length);
     return(0);
@@ -272,7 +281,8 @@ int parseSingleVar(Token_Object *start, LoopProperties *for_status)
 
     printf("Name of for var: [%s]\n", name);
 
-    sav = jumpOverIn(hptr->next, 0);
+    sav = jumpOverIn(hptr->next, 1);
+    cleanTokenList(hptr->next);
     hptr->next = NULL;
     cleanTokenList(start);
 
@@ -322,6 +332,8 @@ int parseSingleVar(Token_Object *start, LoopProperties *for_status)
 
     strcpy(for_status->vars[0].target.name, name);
     printVarPtr(&for_status->vars[0].target, PRINT_MODE_FORMAT, stdout);
+
+    cleanTokenList(sav);
 
     free(name);
     return(0);
@@ -376,3 +388,4 @@ int getForLength(LoopProperties *for_status)
      return(max_length);
 
 }
+

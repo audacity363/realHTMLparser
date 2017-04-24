@@ -21,4 +21,7 @@ int parseForHead(Token_Object *start, LoopProperties *for_status);
 int getForLength(LoopProperties *for_status);
 
 int initForVariables(VariableObject *anker, LoopProperties *for_status);
+
+
+int checkIfFunction(char *name, LoopProperties *for_status);
 #endif

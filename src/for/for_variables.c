@@ -82,5 +82,13 @@ int cleanupForVariables(LoopProperties *for_status)
         hptr->next = NULL;
         hptr->prev = NULL;
     }
+
+    for(i=0; i < for_status->length_of_vars; i++)
+    {
+        freeVariableData(&for_status->vars[i]);
+    }
+    free(for_status->vars);
+    free(for_status->old_type);
+    free(for_status->data_start);
     return(0);
 }

@@ -15,7 +15,8 @@ int exec_for(ParserStatus *status, Token_Object *start)
     int for_level = status->sav.real_level,
         for_length = status->sav.length[for_level],
         *cursor = NULL,
-        start_line = 0, save_line = 0, save_col = 0;
+        start_line = 0, save_line = 0, save_col = 0,
+        i = 0;
 
     wchar_t *for_body = status->sav.sav_buff[for_level];
 
