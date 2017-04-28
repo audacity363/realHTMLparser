@@ -38,7 +38,8 @@ int parseMultipleVars(Token_Object *start, LoopProperties *for_status)
 {
     char **names = NULL;
 
-    int *name_length = NULL, length = -1, i = 0, length_of_entries = -1;
+    int *name_length = NULL, length = -1, i = 0, length_of_entries = -1,
+        in_function = 0;
 
     Token_Object *hptr = start->next, *sav = NULL, **entries = NULL, *end = NULL;
 
@@ -159,14 +160,21 @@ int parseMultipleVars(Token_Object *start, LoopProperties *for_status)
     {
         if(hptr->next->type == COMMA)
         {
-            sav = hptr->next->next;
-            free(hptr->next);
-            entries = realloc(entries, sizeof(Token_Object*)*(++length_of_entries));
-            entries[length_of_entries-1] = sav;
+            if(in_function == 0)
+            {
+                sav = hptr->next->next;
+                free(hptr->next);
+                entries = realloc(entries, sizeof(Token_Object*)*(++length_of_entries));
+                entries[length_of_entries-1] = sav;
 
-            hptr->next = NULL;
-            hptr = sav;
+                hptr->next = NULL;
+                hptr = sav;
+            }
         }
+        else if(hptr->next->type == OPENBRACKET)
+            in_function++;        
+        else if(hptr->next->type == CLOSEBRACKET)
+            in_function--;
         hptr = hptr->next;
     }
 

@@ -204,6 +204,15 @@ int saveAttribute(VariableParseData *data, char *buffer, int buffer_length, int 
     {
         data->attributes[data->number_of_attributes-1].type = FUNCTION;
         function[0] = '\0';
+        if(function[1] == ')')
+        {
+            data->attributes[data->number_of_attributes-1].function_parms = 0;
+            data->attributes[data->number_of_attributes-1].parms = NULL;
+        }
+        else
+        {
+            parseFunctionParms(&function[1]);
+        }
     }
     else
     {
@@ -212,6 +221,64 @@ int saveAttribute(VariableParseData *data, char *buffer, int buffer_length, int 
     }
 
     return(0);
+}
+
+int parseFunctionParms(char *buffer)
+{
+    char *end_function = NULL,
+         **c_parms = NULL, *start = NULL;
+
+    int length = 0, in_function = 0, length_of_c_parms = -1, i = 0;
+
+
+    if((end_function = strrchr(buffer, ')')) == NULL)
+    {
+        return(-1);
+    }
+    *end_function = '\0';
+
+    length = strlen(buffer);
+
+    start = buffer;
+
+    for(i=0; i < length; i++)
+    {
+        if(buffer[i] == '(')
+            in_function++;
+        else if(buffer[i] == ')' && in_function != 0)
+            in_function--;
+        else if(buffer[i] == ',' && in_function == 0)
+        {
+            buffer[i] = '\0';
+            if(length_of_c_parms == -1)
+            {
+                c_parms = malloc(sizeof(char*));
+                length_of_c_parms = 1;
+            }
+            else
+                c_parms = realloc(c_parms, (++length_of_c_parms)*sizeof(char*));
+
+            c_parms[length_of_c_parms-1] = start;
+            start = &buffer[i+1];
+        }
+    }
+    if(start+strlen(start) == end_function)
+    {
+        if(length_of_c_parms == -1)
+        {
+            c_parms = malloc(sizeof(char*));
+            length_of_c_parms = 1;
+        }
+        else
+            c_parms = realloc(c_parms, (++length_of_c_parms)*sizeof(char*));
+
+        c_parms[length_of_c_parms-1] = start;
+    }
+
+    for(i=0; i < length_of_c_parms; i++)
+    {
+        printf("[%s]\n", c_parms[i]);
+    }
 }
 
 //parses one Index String and saves it into the attribute struct

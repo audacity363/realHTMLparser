@@ -7,6 +7,11 @@ typedef struct {
     int index_type;
     char **index;
 
+    //If the typeof the attribute is equals function the given parms
+    //get saved in the parms array
+    int function_parms;
+    VariableObject *parms;
+
     int line;
     int start_col;
 } VariableAttribute;
