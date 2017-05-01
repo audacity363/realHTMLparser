@@ -163,6 +163,8 @@ int saveAttribute(VariableParseData *data, char *buffer, int buffer_length, int 
     char *function = NULL, *open_index = NULL,
          *target_str = NULL, *sav = NULL;
 
+    int in_function = 0, i = 0;
+
     if(data->number_of_attributes == -1)
     {
         data->attributes = malloc(sizeof(VariableAttribute));
@@ -188,7 +190,25 @@ int saveAttribute(VariableParseData *data, char *buffer, int buffer_length, int 
     data->attributes[data->number_of_attributes-1].index_type = -1;
     data->attributes[data->number_of_attributes-1].index = NULL;
 
-    if((open_index = strchr(target_str, '[')) != NULL)
+    for(i=0; i < strlen(target_str); i++)
+    {
+        if(target_str[i] == '(')
+            in_function++;
+        else if(target_str[i] == ')')
+            in_function--;
+        if(target_str[i] == '[' && in_function == 0)
+        {
+            sav = getIndexString(target_str[i], &data->attributes[data->number_of_attributes-1]);
+            target_str[i] = '\0';
+
+            while(strlen(sav) > 0)
+            {
+                sav = getIndexString(sav, &data->attributes[data->number_of_attributes-1]);
+            }
+        }
+    }
+
+    /*if((open_index = strchr(target_str, '[')) != NULL)
     {
         sav = getIndexString(open_index, &data->attributes[data->number_of_attributes-1]);
         *open_index = '\0';
@@ -197,7 +217,7 @@ int saveAttribute(VariableParseData *data, char *buffer, int buffer_length, int 
         {
             sav = getIndexString(sav, &data->attributes[data->number_of_attributes-1]);
         }
-    }
+    }*/
 
     //Check if the attribute is function
     if((function = strchr(data->attributes[data->number_of_attributes-1].attribute, '(')) != NULL)
@@ -275,10 +295,13 @@ int parseFunctionParms(char *buffer)
         c_parms[length_of_c_parms-1] = start;
     }
 
+    printf("Function parms: -------------------\n");
     for(i=0; i < length_of_c_parms; i++)
     {
         printf("[%s]\n", c_parms[i]);
     }
+    printf("------------------------------------\n");
+    return(0);
 }
 
 //parses one Index String and saves it into the attribute struct
