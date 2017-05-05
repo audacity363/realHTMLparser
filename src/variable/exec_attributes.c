@@ -76,19 +76,51 @@ int execAttributes(VariableParseData *var_data)
             }
         }
     }
-    //printVarPtr(var, stdout);
+        //printVarPtr(var, stdout);
 
-    target->type = var->type;
-    if(var->type == GROUP)
-    {
-        target->next_lvl = var->next_lvl;
-    }
     target->data = var->data;
     target->length = var->length;
     target->name = malloc(strlen(var->name)+1);
     strcpy(target->name, var->name);
 
     SET_FLAG(target->flags, RH4N_FLG_COPY);
+
+    if((var = getVariable(var_anker, groupname, varname)) != NULL)
+    {
+        target->type = var->type;
+        target->data = var->data;
+        target->length = var->length;
+        target->name = malloc(strlen(var->name)+1);
+        strcpy(target->name, var->name);
+
+        SET_FLAG(target->flags, RH4N_FLG_COPY);
+    }
+    else if(rh4n_errno == GROUP_NOT_DEFINED)
+    {
+        PRINT_UNKWON_GRP_ATTR(var_data->attributes[0]);
+        return(-1);
+    }
+    else if(rh4n_errno == VARIABLE_NOT_DEFINED)
+    {
+        if((var = getGroup(var_anker, varname)) != NULL)
+        {
+            target->next_lvl = var->next_lvl;
+            target->type = var->type;
+            target->data = var->data;
+            target->length = var->length;
+            target->name = malloc(strlen(var->name)+1);
+            strcpy(target->name, var->name);
+
+            SET_FLAG(target->flags, RH4N_FLG_COPY);
+        }
+        else if(rh4n_errno == GROUP_NOT_DEFINED)
+        {
+            //TODO: write a function for parsing static types out of a string
+            parseStaticTypeString(varname, NULL, NULL);
+            PRINT_UNKWON_VAR_ATTR(var_data->attributes[offset-1]);
+            return(-1);
+        }
+    }
 
     array_length[0] = target->array_length[0] = var->array_length[0];
     array_length[1] = target->array_length[1] = var->array_length[1];

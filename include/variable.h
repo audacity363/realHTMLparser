@@ -37,4 +37,5 @@ int rateAttributes(VariableParseData *var_data);
 int saveAttribute(VariableParseData *data, char *buffer, int buffer_length, int line, int col);
 void freeVariableData(VariableParseData *data);
 int execAttributes(VariableParseData *var_data);
+int parseFunctionParms(char *buffer, VariableAttribute *attr_target);
 #endif

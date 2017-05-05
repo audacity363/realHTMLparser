@@ -198,7 +198,7 @@ int saveAttribute(VariableParseData *data, char *buffer, int buffer_length, int 
             in_function--;
         if(target_str[i] == '[' && in_function == 0)
         {
-            sav = getIndexString(target_str[i], &data->attributes[data->number_of_attributes-1]);
+            sav = getIndexString(&target_str[i], &data->attributes[data->number_of_attributes-1]);
             target_str[i] = '\0';
 
             while(strlen(sav) > 0)
@@ -231,7 +231,7 @@ int saveAttribute(VariableParseData *data, char *buffer, int buffer_length, int 
         }
         else
         {
-            parseFunctionParms(&function[1]);
+            parseFunctionParms(&function[1], &data->attributes[data->number_of_attributes-1]);
         }
     }
     else
@@ -243,12 +243,18 @@ int saveAttribute(VariableParseData *data, char *buffer, int buffer_length, int 
     return(0);
 }
 
-int parseFunctionParms(char *buffer)
+int parseFunctionParms(char *buffer, VariableAttribute *attr_target)
 {
     char *end_function = NULL,
          **c_parms = NULL, *start = NULL;
 
     int length = 0, in_function = 0, length_of_c_parms = -1, i = 0;
+
+    Token_Object *list = NULL;
+    VariableParseData tmp = 
+    {
+        {NULL, -1, NULL, 0, {0, 0, 0}, 0, 0, NULL, NULL, NULL}, -1, NULL
+    };
 
 
     if((end_function = strrchr(buffer, ')')) == NULL)
@@ -299,6 +305,14 @@ int parseFunctionParms(char *buffer)
     for(i=0; i < length_of_c_parms; i++)
     {
         printf("[%s]\n", c_parms[i]);
+        list = StringToTokenList(c_parms[i]);
+        //printTokens(list);
+        getVariableAttributes(list->next, &tmp);
+        printAttributes(&tmp);
+        execAttributes(&tmp);
+        printVarPtr(&tmp.target, PRINT_MODE_FORMAT, stdout);
+        printf("\n");
+        memset(&tmp, 0x00, sizeof(VariableParseData));
     }
     printf("------------------------------------\n");
     return(0);

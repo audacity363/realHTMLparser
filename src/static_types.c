@@ -48,7 +48,7 @@ int parseStaticType(Token_Object *start, int *type, void **data)
         return(0);
     }
 
-    if(wcscmp(buffer, TRUE_STR) == 0)
+    /*if(wcscmp(buffer, TRUE_STR) == 0)
     {
         *type = BOOL;
         *data = malloc(sizeof(bool));
@@ -72,9 +72,49 @@ int parseStaticType(Token_Object *start, int *type, void **data)
         *data = malloc(sizeof(int));
         *((int*)(*data)) = (int)wcstol(buffer, NULL, 10);
     }
-    printf("value: [%S]\n", buffer);
+    printf("value: [%S]\n", buffer);*/
+    parseStaticTypeString(buffer, type, data);
 
     free(buffer);
     
     return(0);
+}
+
+int parseStaticTypeString(char *string, int *type, void **data)
+{
+    if(*string == '"') 
+    {
+        *type == STRING;
+        buffer = realloc(buffer, (strlen(string)-1)*SIZEOF_WCHAR);
+        buffer[strlen(string)-1] = L'\0';
+        *data = (void*)(string+1);
+
+        *data = malloc()
+        return(0);
+    }
+
+    if(wcscmp(buffer, TRUE_STR) == 0)
+    {
+        *type = BOOL;
+        *data = malloc(sizeof(bool));
+        *((bool*)(*data)) = true;
+    }
+    else if(wcscmp(buffer, FALSE_STR) == 0)
+    {
+        *type = BOOL;
+        *data = malloc(sizeof(bool));
+        *((bool*)(*data)) = false;
+    }
+    else if((point = wcschr(buffer, '.')) != NULL)
+    {
+        *type = FLOAT;
+        *data = malloc(sizeof(double));
+        *((double*)(*data)) = wcstod(buffer, NULL);
+    }
+    else
+    {
+        *type = INTEGER;
+        *data = malloc(sizeof(int));
+        *((int*)(*data)) = (int)wcstol(buffer, NULL, 10);
+    }   
 }

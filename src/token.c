@@ -98,6 +98,32 @@ void cleanTokenList(Token_Object *first)
     //first->next = NULL;
 }
 
+Token_Object *StringToTokenList(char *target)
+{
+    int i = 0, length = 0;
+    Token_Object *start = NULL, *sav = NULL;
+    wchar_t *w_target = NULL;
+
+    start = malloc(sizeof(Token_Object));
+    memset(start, 0x00, sizeof(Token_Object));
+
+    w_target = malloc(sizeof(wchar_t)*(strlen(target)+1));
+    memset(w_target, 0x00, sizeof(wchar_t)*(strlen(target)+1));
+        
+    mbstowcs(w_target, target, strlen(target)+1);
+    length = wcslen(w_target);
+
+    sav = start;
+
+    for(i=0; i < length; i++)
+    {
+        sav = safeToken(sav, w_target[i], 0, 0);
+    }
+    free(w_target);
+
+    return(start);
+}
+
 void printTokens(Token_Object *first)
 {
     Token_Object *hptr = first->next;
