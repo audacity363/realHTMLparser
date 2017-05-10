@@ -14,12 +14,28 @@ VariableObject *var_anker = NULL;
 MacroEntries macros = {-1, NULL};
 FILE *f_output = NULL;
 
-int main()
+int main(int argc, char *argv[])
 {
-    printf("Token obj: [%d]\n", sizeof(Token_Object));
+    char *inputfile = "./test.html",
+         *outputfile = "./out.html";
+    if(argc == 2)
+    {
+        inputfile = argv[1];
+    }
+    else if(argc == 3)
+    {
+        inputfile = argv[1];
+        outputfile = argv[2];
+    }
+
+    //printf("Token obj: [%d]\n", sizeof(Token_Object));
     wchar_t cur_chr, *sav_buffer = NULL;
-    FILE *fp = fopen("./test.html", "r");
-    f_output = fopen("./out.html", "w");
+
+    printf("Using input: [%s]\n", inputfile);
+    printf("Using output: [%s]\n", outputfile);
+
+    FILE *fp = fopen(inputfile, "r");
+    f_output = fopen(outputfile, "w");
 
     int found_block = 0,
         col_no = 0,
@@ -74,7 +90,7 @@ int main()
 
     addNewGroup(var_anker, "testgrp");
     new1DInteger(var_anker, "testgrp", "test1", 5);
-    set1DIntegerX(var_anker, "testgrp", "test1", 2, 6);
+    set1DIntegerX(var_anker, "testgrp", "test1", 1, 6);
 
 
     printAllVars(var_anker, stdout);
