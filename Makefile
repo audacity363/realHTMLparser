@@ -29,9 +29,12 @@ VARS = utils.o
 VARS_STRING = 1dstring.o
 
 INCLUDE = -I./include \
-		  -I./libs/variable_management/include/
+		  -I./libs/variable_management/include/ \
+		  -I./libs/jsmn
 
 LIBS = -L./libs/variable_management/ -lvar_management
+
+TESTOBJ = json.o json_array.o
 
 lib: $(OBJ) 
 	$(CC) -g -o main ./src/main.c $(INCLUDE) ./bin/*.o $(LIBS)
@@ -70,6 +73,18 @@ mem_check:
 		--track-origins=yes \
 		./main 1> valgrind.log 2>&1
 
+$(TESTOBJ):
+	$(CC) -g -c ./tests/automatic_tests/src/$*.c $(INCLUDE) \
+		-o ./tests/automatic_tests/bin/$*.o
+
+test: $(TESTOBJ) #$(OBJ)
+	$(CC) -g ./tests/automatic_tests/src/tests.c -o ./tests/automatic_tests/parser_test \
+		./bin/*.o ./tests/automatic_tests/bin/*.o $(INCLUDE) $(LIBS) \
+			-L./libs/jsmn/ -ljsmn
+	./tests/automatic_tests/parser_test /tmp/test_in /tmp/test_out ./tests/automatic_tests/test_json
+
 clean: 
 	rm -rf ./bin/*.o
 	rm -rf ./main
+	rm -rf ./tests/automatic_tests/bin/*.o
+	rm -rf ./tests/automatic_tests/parser_test

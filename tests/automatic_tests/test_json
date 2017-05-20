@@ -1,0 +1,24 @@
+{
+    [
+        {
+            "name": "var1",
+            "value": [[["val111", "val112"], ["val121", "val122"]], [["val211", "val212"], ["val221", "val222"]], [["val311", "val312"], ["val321", "val322"]]]
+        },
+        {
+            "name": "var2",
+            "value": "Hello World"
+        },
+        {
+            "name": "var3",
+            "value": true
+        },
+        {
+            "name": "var4",
+            "value": 82.7362
+        },
+        {
+            "name": "var5",
+            "value": -728
+        }
+    ]
+}
