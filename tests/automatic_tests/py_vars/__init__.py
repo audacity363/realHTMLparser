@@ -20,3 +20,8 @@ class Variables:
             if var.get_name() == name:
                 return var.get_value()
         return None
+    
+    def add_new_var(self, type, value, length = [0, 0, 0]):
+        name = "var"+str(len(self.parser_vars)+1)
+        self.parser_vars.append(definition.Variable(type, name, value, length[0],
+            length[1], length[2]))

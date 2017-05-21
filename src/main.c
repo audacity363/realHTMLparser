@@ -16,7 +16,7 @@ FILE *f_output = NULL;
 
 int main(int argc, char *argv[])
 {
-    char *inputfile = "./test.html",
+    char *inputfile = "./tests/test.html",
          *outputfile = "./out.html";
     if(argc == 2)
     {
@@ -34,8 +34,18 @@ int main(int argc, char *argv[])
     printf("Using input: [%s]\n", inputfile);
     printf("Using output: [%s]\n", outputfile);
 
-    FILE *fp = fopen(inputfile, "r");
-    f_output = fopen(outputfile, "w");
+    FILE *fp;
+    if((fp = fopen(inputfile, "r")) == NULL)
+    {
+        fprintf(stderr, "Can not open inputfile\n");
+        return(-1);
+    }
+
+    if((f_output = fopen(outputfile, "w")) == NULL)
+    {
+        fprintf(stderr, "Can not open outputfile\n");
+        return(-1);
+    }
 
     int found_block = 0,
         col_no = 0,
@@ -74,9 +84,17 @@ int main(int argc, char *argv[])
     addNewGroup(var_anker, "newgrp");
     newString(var_anker, "newgrp", "test", 50);
     setString(var_anker, "newgrp", "test", L"Hello World");
-
+    
+    wchar_t tmp[21];
+    int i,x;
     new2DString(var_anker, NULL, "test1", 20, 4, 6);
-    set2DStringXY(var_anker, NULL, "test1", 1, 1, L"Test");
+
+    for(i=0; i < 4; i++)
+        for(x=0; x < 6; x++)
+        {
+            swprintf(tmp, 20, L"test%d%d", i, x);
+            set2DStringXY(var_anker, NULL, "test1", i, x, tmp);
+        }
 
     new3DString(var_anker, NULL, "test2", 20, 3, 4, 6);
     set3DStringXYZ(var_anker, NULL, "test2", 1, 0, 5, L"HEllo World");

@@ -33,7 +33,17 @@ template = """
 </html>
 """
 
+tmp = []
+
+for x in range(4):
+    tmp1 = []
+    for y in range(6):
+        tmp1.append("test"+str(x)+str(y))
+    tmp.append(tmp1)
+
 variables = py_vars.Variables()
+variables.add_new_var(py_vars.definition.TWODSTRING, tmp, [4, 6, 0])
+
 json_str = variables.gen_json()
 
 template_path = getTempFilename()

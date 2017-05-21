@@ -8,6 +8,7 @@ typedef struct {
     int length_of_vars;    
     int *old_type;
     void **data_start;
+    int **original_length;
     VariableParseData *vars;
 } LoopProperties;
 

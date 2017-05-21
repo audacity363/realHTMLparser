@@ -34,12 +34,24 @@ int initForVariables(VariableObject *anker, LoopProperties *for_status)
 
     for_status->old_type = malloc(for_status->length_of_vars*sizeof(int));
     for_status->data_start = malloc(for_status->length_of_vars*sizeof(void*));
+
+    //TODO: Free original_length
+    for_status->original_length = malloc(for_status->length_of_vars*sizeof(int*));
     memset(for_status->old_type, 0x00, for_status->length_of_vars*sizeof(int));
 
     for(i=0; i < for_status->length_of_vars;i++)
     {
         for_status->old_type[i] = for_status->vars[i].target.type;
         for_status->data_start[i] = for_status->vars[i].target.data;
+
+        for_status->original_length[i] = malloc(sizeof(int)*3);
+        memcpy(for_status->original_length[i], for_status->vars[i].target.array_length,
+            sizeof(int)*3);
+
+        for_status->vars[i].target.array_length[0] = for_status->vars[i].target.array_length[1];
+        for_status->vars[i].target.array_length[1] = for_status->vars[i].target.array_length[2];
+
+
         translateVarTypeWithIndex(for_status->vars[i].target.type, &for_status->vars[i].target.type);
 
         for_status->vars[i].target.prev = hptr;
@@ -57,7 +69,7 @@ int nextForVariable(LoopProperties *for_status)
     for(; i < for_status->length_of_vars; i++)
     {
         data_offset = calculateOffset(for_status->old_type[i], for_status->index, 
-            for_status->vars[i].target.array_length, for_status->vars[i].target.length);
+            for_status->original_length[i], for_status->vars[i].target.length);
         for_status->vars[i].target.data = for_status->data_start[i]+data_offset;
     }
     setInteger(var_anker, "loop", "i", for_status->index);
