@@ -55,7 +55,7 @@ int handleOneDArray(char *varname, jsmntok_t *tokens, int offset, char *json_str
     {
         values[i-1] = strndup(json_str+tokens[offset+i].start, tokens[offset+i].end - tokens[offset+i].start);
         //printf("%d, %d: %.*s\n", x, i, start[i].end - start[i].start, json_str+start[i].start);
-        printf("%d: %s\n", i-1, values[i-1]);
+        //printf("%d: %s\n", i-1, values[i-1]);
     }
 
     if(vartype != ONEDSTRING)
@@ -83,13 +83,13 @@ int handleOneDArray(char *varname, jsmntok_t *tokens, int offset, char *json_str
 
         new1DString(var_anker, NULL, varname, max_length, value_length);
 
-        wc_value = malloc(max_length*SIZEOF_WCHAR);
+        wc_value = malloc((max_length+1)*SIZEOF_WCHAR);
 
         for(i=0; i < value_length; i++)
         {
+            memset(wc_value, 0x00, (max_length+1)*SIZEOF_WCHAR);
             mbstowcs(wc_value, values[i], strlen(values[i]));
             set1DStringX(var_anker, NULL, varname, i, wc_value);
-            memset(wc_value, 0x00, value_length*SIZEOF_WCHAR);
         }
         free(wc_value);
     }
@@ -144,7 +144,7 @@ int handleTwoDArray(char *varname, jsmntok_t *tokens, int offset, char *json_str
     double d_val = 0;
 
     if(tokens[offset+2].type == JSMN_STRING)
-        vartype = ONEDSTRING;
+        vartype = TWODSTRING;
 
     x_length = tokens[offset].size;
     values = malloc(x_length*sizeof(char*));
@@ -167,7 +167,7 @@ int handleTwoDArray(char *varname, jsmntok_t *tokens, int offset, char *json_str
             if(strlen(values[x][i-1]) > max_length)
                 max_length = strlen(values[x][i-1]);
 
-            printf("%d, %d: %s\n", x, i-1, values[x][i-1]);
+            //printf("%d, %d: %s\n", x, i-1, values[x][i-1]);
         }
     }
 
@@ -188,18 +188,19 @@ int handleTwoDArray(char *varname, jsmntok_t *tokens, int offset, char *json_str
                 return(-1);
         }
     }
+    printf("Two Dimensions:\n\tx = %d\n\ty = %d\n", x_length, max_y);
     if(vartype == TWODSTRING)
     {
         new2DString(var_anker, NULL, varname, max_length, x_length, max_y);
 
-        wc_value = malloc(max_length*(max_length+1));
+        wc_value = malloc((max_length+1)*SIZEOF_WCHAR);
 
         for(x=0; x < x_length; x++)
             for(y=0; y < y_length[x]; y++)
             {
+                memset(wc_value, 0x00, (max_length+1)*SIZEOF_WCHAR);
                 mbstowcs(wc_value, values[x][y], strlen(values[x][y]));
                 set2DStringXY(var_anker, NULL, varname, x, y, wc_value);
-                memset(wc_value, 0x00, (max_length+1)*SIZEOF_WCHAR);
             }
         free(wc_value);
     }

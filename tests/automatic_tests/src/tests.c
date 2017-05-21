@@ -44,7 +44,6 @@ int main(int argc, char *argv[])
     loadJson(argv[3]);
 
     printAllVars(var_anker, stdout);
-    return(0);
 
     FILE *fp = fopen(inputfile, "r");
     f_output = fopen(outputfile, "w");
@@ -108,6 +107,7 @@ int main(int argc, char *argv[])
 
 
     printAllVars(var_anker, stdout);
+#endif
 
     while(1)
     {
@@ -133,7 +133,6 @@ int main(int argc, char *argv[])
             break;
         }
     }
-#endif
 
     fclose(fp);
     fclose(f_output);

@@ -46,7 +46,7 @@ int loadJson(char *filepath)
     FILE *jsonfile = NULL;
 
     jsmn_parser jsparser;
-    jsmntok_t jstokens[1024];
+    jsmntok_t jstokens[7000];
 
     if((jsonfile = fopen(filepath, "r")) == NULL)
     {
@@ -65,9 +65,9 @@ int loadJson(char *filepath)
     }
 
     fread(json_str, filesize, 1, jsonfile);
-    json_str[filesize-1] = '\0';
+    json_str[filesize] = '\0';
 
-    printf("json: [%s]\n", json_str);
+    //printf("json: [%s]\n", json_str);
 
     jsmn_init(&jsparser);
     elements = jsmn_parse(&jsparser, json_str, strlen(json_str), jstokens, 
@@ -130,8 +130,8 @@ int parseVarObject(char *json_str, jsmntok_t *tokens, int offset)
             i++;
         }
 		else if (jsoneq(json_str, &tokens[offset+i], "value") == 0) {
-			printf("- Var value: %.*s\n", tokens[offset+i+1].end-tokens[offset+i+1].start,
-					json_str + tokens[offset+i+1].start);
+			/*printf("- Var value: %.*s\n", tokens[offset+i+1].end-tokens[offset+i+1].start,
+					json_str + tokens[offset+i+1].start);*/
             value = strndup(json_str+tokens[offset+i+1].start, tokens[offset+i+1].end-tokens[offset+i+1].start);
             entries++;
             if(tokens[offset+i+1].type == JSMN_STRING)
