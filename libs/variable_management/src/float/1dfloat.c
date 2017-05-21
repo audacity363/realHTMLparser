@@ -39,7 +39,7 @@ int set1DFloatX(VariableObject *anker, char *group, char *name, int x, double va
         return(-1);
     }
     
-    *((int*)(target->data+OFFSET_1DFloat(x))) = val;
+    *((double*)(target->data+OFFSET_1DFloat(x))) = val;
     return(0);
 }
 
@@ -66,7 +66,7 @@ int print1DFloat(VariableObject *target, FILE *output, int mode)
     for(; i < target->array_length[0]; i++)
     {
         offset = OFFSET_1DFloat(i);
-        fprintf(output, "\"%f\"", *((double*)(target->data+offset)));
+        fprintf(output, "%f", *((double*)(target->data+offset)));
         if(i+1 < target->array_length[0])
             fprintf(output, ", ");
     }

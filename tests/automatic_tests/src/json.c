@@ -6,6 +6,7 @@
 
 #include "parser.h"
 #include "jsmn.h"
+#include "json.h"
 
 int convertToInt(char *str)
 {
@@ -19,6 +20,13 @@ double convertToDouble(char *str)
     double val = 0;
     val = strtod(str, NULL);
     return(val);
+}
+
+bool convertToBool(char *str)
+{
+    if(str[0] == 't')
+        return(true);
+    return(false);
 }
 
 int jsoneq(char *json, jsmntok_t *tok, const char *s) 
@@ -38,7 +46,7 @@ int loadJson(char *filepath)
     FILE *jsonfile = NULL;
 
     jsmn_parser jsparser;
-    jsmntok_t jstokens[128];
+    jsmntok_t jstokens[1024];
 
     if((jsonfile = fopen(filepath, "r")) == NULL)
     {
@@ -85,7 +93,7 @@ int loadJson(char *filepath)
         return(-1);
     }
     
-    for(i=2; i < elements; i++)
+    for(i=3; i < elements; i++)
     {
         if(jstokens[i].type == JSMN_OBJECT)
         {
