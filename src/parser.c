@@ -41,6 +41,7 @@ int (*function_dic[])(ParserStatus *) = {
 
 int parseChr(ParserStatus *status, wchar_t p_chr)
 {
+    //printf("Parse: [%C]\n", p_chr);
     int ret = 0;
     wchar_t chr = p_chr;
 
@@ -186,7 +187,11 @@ int checkBlock(ParserStatus *stat)
         return(0);
     }
 
-    exec_func(stat);
+    if(exec_func(stat) < 0)
+    {
+        free(cmd_name);
+        return(EXIT);
+    }
 
     free(cmd_name);
     return(0);

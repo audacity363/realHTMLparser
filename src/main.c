@@ -100,6 +100,8 @@ int main(int argc, char *argv[])
     set3DStringXYZ(var_anker, NULL, "test2", 1, 0, 5, L"HEllo World");
     set3DStringXYZ(var_anker, NULL, "test2", 2, 3, 5, L"HEllo World111111111");
 
+    new1DString(var_anker, NULL, "test5", 10, 12);
+
     newInteger(var_anker, NULL, "test3");
     setInteger(var_anker, NULL, "test3", 1);
 
@@ -109,6 +111,8 @@ int main(int argc, char *argv[])
     addNewGroup(var_anker, "testgrp");
     new1DInteger(var_anker, "testgrp", "test1", 5);
     set1DIntegerX(var_anker, "testgrp", "test1", 1, 6);
+    newString(var_anker, NULL, "teststr", 13);
+    setString(var_anker, NULL, "teststr", L"HEllo World");
 
 
     printAllVars(var_anker, stdout);
@@ -159,6 +163,7 @@ void cleanBuffers(ParserStatus *status)
     free(status->sav.length);
 
     cleanTokenList(status->token_tree.next);
+    status->token_tree.next = NULL;
     cleanTokenList(status->sav.head);
 }
 

@@ -48,7 +48,6 @@ int end_for_handling(ParserStatus *status)
 
     //Parse for head
     start = jumpOverCommand(for_head, 1);
-    cleanTokenList(for_head);
 
     //Jump to the end of the block
     for(end=start; end->next->type != COMMANDBLOCK; end=end->next);

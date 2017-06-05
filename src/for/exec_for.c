@@ -22,7 +22,7 @@ int exec_for(ParserStatus *status, Token_Object *start)
 
     LoopProperties for_status = {-1, -1, -1, NULL};
 
-    cleanTokenList(status->token_tree.next);
+    //cleanTokenList(status->token_tree.next);
 
     start_line = start->line_no+1;
     save_line = status->cur_line; save_col = status->cur_col;
